@@ -87,7 +87,7 @@ namespace UnityFighters
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Format(Object context, string format, params object[] args)
+        public static void Print(Object context, string format, params object[] args)
         {
             UnityEngine.Debug.LogFormat(context, format, args);
         }
@@ -105,7 +105,7 @@ namespace UnityFighters
         //   args:
         //     Format arguments.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Format(string format, params object[] args)
+        public static void Print(string format, params object[] args)
         {
             UnityEngine.Debug.LogFormat(format, args);
         }
