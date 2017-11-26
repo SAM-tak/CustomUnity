@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UnityFighters
 {
-    static public class Log
+    static public class Print
     {
         //
         // 概要:
@@ -15,7 +15,7 @@ namespace UnityFighters
         //   message:
         //     String or object to be converted to string representation for display.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Print(object message)
+        static public void Log(object message)
         {
             UnityEngine.Debug.Log(message);
         }
@@ -30,7 +30,7 @@ namespace UnityFighters
         //   message:
         //     String or object to be converted to string representation for display.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Print(string message)
+        static public void Log(string message)
         {
             UnityEngine.Debug.Log(message);
         }
@@ -48,7 +48,7 @@ namespace UnityFighters
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Print(Object context, object message)
+        static public void Log(Object context, object message)
         {
             UnityEngine.Debug.Log(message, context);
         }
@@ -66,7 +66,7 @@ namespace UnityFighters
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Print(Object context, string message)
+        static public void Log(Object context, string message)
         {
             UnityEngine.Debug.Log(message, context);
         }
@@ -87,7 +87,7 @@ namespace UnityFighters
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Print(Object context, string format, params object[] args)
+        public static void Log(Object context, string format, params object[] args)
         {
             UnityEngine.Debug.LogFormat(context, format, args);
         }
@@ -105,7 +105,7 @@ namespace UnityFighters
         //   args:
         //     Format arguments.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Print(string format, params object[] args)
+        public static void Log(string format, params object[] args)
         {
             UnityEngine.Debug.LogFormat(format, args);
         }

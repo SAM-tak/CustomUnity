@@ -41,7 +41,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Log.cs" />
+    <Compile Include="Print.cs" />
     <Compile Include="MonoBehaviour.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
