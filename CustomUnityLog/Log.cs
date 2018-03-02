@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CustomUnity
 {
-    static public class Print
+    static public class Log
     {
         //
         // 概要:
@@ -15,7 +15,7 @@ namespace CustomUnity
         //   message:
         //     String or object to be converted to string representation for display.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Log(object message)
+        static public void Info(object message)
         {
             UnityEngine.Debug.Log(message);
         }
@@ -30,7 +30,7 @@ namespace CustomUnity
         //   message:
         //     String or object to be converted to string representation for display.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Log(string message)
+        static public void Info(string message)
         {
             UnityEngine.Debug.Log(message);
         }
@@ -48,7 +48,7 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Log(Object context, object message)
+        static public void Info(Object context, object message)
         {
             UnityEngine.Debug.Log(message, context);
         }
@@ -66,7 +66,7 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Log(Object context, string message)
+        static public void Info(Object context, string message)
         {
             UnityEngine.Debug.Log(message, context);
         }
@@ -87,7 +87,7 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Log(Object context, string format, params object[] args)
+        public static void Info(Object context, string format, params object[] args)
         {
             UnityEngine.Debug.LogFormat(context, format, args);
         }
@@ -105,7 +105,7 @@ namespace CustomUnity
         //   args:
         //     Format arguments.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Log(string format, params object[] args)
+        public static void Info(string format, params object[] args)
         {
             UnityEngine.Debug.LogFormat(format, args);
         }

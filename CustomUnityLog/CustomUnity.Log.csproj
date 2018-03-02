@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="StateMachineBehaviour.cs" />
-    <Compile Include="Print.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="MonoBehaviour.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
