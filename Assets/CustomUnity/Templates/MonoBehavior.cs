@@ -3,7 +3,7 @@ using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    public abstract class MonoBehaviour : MonoBehaviourWithLog
+    public abstract class MonoBehaviour : CustomUnity.MonoBehaviour
     {
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void Profiling(string memberName)
