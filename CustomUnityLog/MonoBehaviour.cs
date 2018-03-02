@@ -1,8 +1,8 @@
 using System.Diagnostics;
 
-namespace UnityFighters
+namespace CustomUnity
 {
-    public class MonoBehaviour : UnityEngine.MonoBehaviour
+    public class MonoBehaviourWithLog : UnityEngine.MonoBehaviour
     {
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void Log(object message)

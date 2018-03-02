@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using UnityEngine;
 
-namespace UnityFighters
+namespace CustomUnity
 {
     static public class Print
     {

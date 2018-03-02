@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityFighterLog", "UnityFighterLog\UnityFighterLog.csproj", "{4E845C21-358C-4562-9BFB-E9C3053E1FE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomUnity.Log", "CustomUnityLog\CustomUnity.Log.csproj", "{4E845C21-358C-4562-9BFB-E9C3053E1FE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
