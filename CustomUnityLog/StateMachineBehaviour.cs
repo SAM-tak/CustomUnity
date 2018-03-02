@@ -2,7 +2,7 @@
 
 namespace CustomUnity
 {
-    public class StateMachineBehaviour : UnityEngine.StateMachineBehaviour
+    public abstract class StateMachineBehaviour : UnityEngine.StateMachineBehaviour
     {
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void Log(object message)

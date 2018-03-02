@@ -46,8 +46,12 @@
   <ItemGroup>
     <Compile Include="StateMachineBehaviour.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="MonoBehaviourWithLog.cs" />
+    <Compile Include="MonoBehaviour.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>
