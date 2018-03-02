@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace UnityFighters
+namespace CustomUnity
 {
     public struct ProfileSampler : System.IDisposable
     {

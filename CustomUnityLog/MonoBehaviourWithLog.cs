@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace CustomUnity
 {
-    public class MonoBehaviourWithLog : UnityEngine.MonoBehaviour
+    public abstract class MonoBehaviourWithLog : UnityEngine.MonoBehaviour
     {
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void Log(object message)

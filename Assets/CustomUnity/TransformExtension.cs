@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UnityFighters
+namespace CustomUnity
 {
 	public static class TransformExtension
 	{

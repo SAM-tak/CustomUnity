@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Linq;
 
-namespace UnityFighters
+namespace CustomUnity
 {
     [System.Serializable]
 	public sealed class GameObjectPool
@@ -10,13 +10,13 @@ namespace UnityFighters
         public int quantity;
 
         struct Entry {
-			public Entry(GameObject go, int frame)
+			public Entry(GameObject go, float time)
 			{
 				this.go = go;
-				this.frame = frame;
+				this.time = time;
 			}
 			public GameObject go;
-			public int frame;
+			public float time;
 		}
 		Entry[] objs;
         
@@ -49,20 +49,20 @@ namespace UnityFighters
 
         public GameObject Spawn(Vector3 position, Quaternion rotation)
 		{
-			int oldestFrame = int.MaxValue;
+			float oldestTime = float.MaxValue;
 			int retIndex = 0;
 			for(int i = 0; i < objs.Length; i++) {
 				if(!objs[i].go.activeSelf) {
 					retIndex = i;
 					break;
 				}
-				if(objs[i].frame < oldestFrame) {
-					oldestFrame = objs[i].frame;
+				if(objs[i].time < oldestTime) {
+                    oldestTime = objs[i].time;
 					retIndex = i;
 				}
 			}
 			var ret = objs[retIndex];
-			ret.frame = GameMaster.instance.FrameCount;
+			ret.time = Time.timeSinceLevelLoad;
 			ret.go.transform.position = position;
 			ret.go.transform.rotation = rotation;
 			ret.go.SetActive(false);

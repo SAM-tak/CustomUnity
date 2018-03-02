@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace UnityFighters
+namespace CustomUnity
 {
 	public sealed class EnumUtils
 	{

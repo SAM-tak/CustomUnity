@@ -3,7 +3,7 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace UnityFighters
+namespace CustomUnity
 {
 	public static class ObjectExtension
 	{

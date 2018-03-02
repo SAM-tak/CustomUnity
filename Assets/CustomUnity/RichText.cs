@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using UnityEngine;
 
-namespace UnityFighters
+namespace CustomUnity
 {
     /// <summary>
     /// Rich text.
