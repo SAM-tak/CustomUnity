@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 namespace CustomUnity
 {
-	public static class ObjectExtension
-	{
+    public static class ObjectExtension
+    {
         static Dictionary<Object, string> cache;
         static Dictionary<Object, Dictionary<string, Dictionary<int, string>>> memberCache;
 
@@ -15,7 +15,7 @@ namespace CustomUnity
             if(!Application.isPlaying) return obj.name;
             if(cache == null) {
                 cache = new Dictionary<Object, string>(256);
-                SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
+                SceneManager.activeSceneChanged += OnActiveSceneChanged;
             }
             if(!cache.ContainsKey(obj)) cache[obj] = obj.name;
             return cache[obj];
@@ -45,7 +45,7 @@ namespace CustomUnity
             return memberCache[obj][memberName][id];
         }
 
-        static void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
+        static void OnActiveSceneChanged(Scene arg0, Scene arg1)
         {
             cache.Clear();
             if(memberCache != null) memberCache.Clear();
@@ -62,7 +62,7 @@ namespace CustomUnity
         {
             ProfileSampler.EndAndBegin(obj, memberName, id);
         }
-        
+
         static public ProfileSampler NewProfiling(this Object obj, string memberName, int id = 0)
         {
             return ProfileSampler.Create(obj, memberName, id);

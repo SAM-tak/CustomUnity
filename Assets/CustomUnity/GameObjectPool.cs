@@ -63,9 +63,9 @@ namespace CustomUnity
 			}
 			var ret = objs[retIndex];
 			ret.time = Time.timeSinceLevelLoad;
-			ret.go.transform.position = position;
+            ret.go.SetActive(false);
+            ret.go.transform.position = position;
 			ret.go.transform.rotation = rotation;
-			ret.go.SetActive(false);
 			ret.go.SetActive(true);
 			objs[retIndex] = ret;
 			return ret.go;
