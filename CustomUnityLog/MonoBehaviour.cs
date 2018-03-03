@@ -5,19 +5,19 @@ namespace CustomUnity
     public abstract class MonoBehaviour : UnityEngine.MonoBehaviour
     {
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void Log(object message)
+        protected void LogInfo(object message)
         {
             UnityEngine.Debug.Log(message, this);
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void Log(string message)
+        protected void LogInfo(string message)
         {
             UnityEngine.Debug.Log(message, this);
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void Log(string format, params object[] args)
+        protected void LogInfo(string format, params object[] args)
         {
             UnityEngine.Debug.LogFormat(this, format, args);
         }
