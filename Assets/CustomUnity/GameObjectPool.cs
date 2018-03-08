@@ -4,7 +4,7 @@ using System.Linq;
 namespace CustomUnity
 {
     [System.Serializable]
-	public sealed class GameObjectPool
+    public sealed class GameObjectPool
 	{
         public GameObject prefab;
         public int quantity;
