@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace CustomUnity
 {
-    [CreateAssetMenu(menuName = "GameObject Pool Setting")]
+    [CreateAssetMenu(menuName = "Custom Unity/GameObject Pool Setting")]
     public class GameObjectPoolSetting : ScriptableObject
     {
         [System.Serializable]
