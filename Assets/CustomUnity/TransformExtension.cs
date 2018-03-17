@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace CustomUnity
 {
-	public static class TransformExtension
-	{
+    public static class TransformExtension
+    {
         static System.Text.StringBuilder work = null;
 
         public static string GetPath(this Transform transform, Transform root = null)
@@ -16,9 +16,9 @@ namespace CustomUnity
             }
             return work.ToString();
         }
-        
+
         public static Transform FindRecursive(this Transform transform, string name)
-		{
+        {
             if(transform.GetName().Equals(name)) {
                 return transform;
             }
