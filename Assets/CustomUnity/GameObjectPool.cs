@@ -6,7 +6,6 @@ namespace CustomUnity
     [System.Serializable]
     public sealed class GameObjectPool
     {
-        public string name;
         public GameObject prefab;
         public int quantity;
         
@@ -17,10 +16,9 @@ namespace CustomUnity
         }
 
         Entry[] objs;
-        
+
+        public string Name { get { return prefab ? prefab.name : null; } }
         public int ActiveCount { get { return objs.Count(i => i.go.activeSelf); } }
-        
-        public string Name { get { return string.IsNullOrEmpty(name) ? prefab.name : name; } }
 
         public void SetUp()
         {
@@ -31,11 +29,12 @@ namespace CustomUnity
                         go = Object.Instantiate(prefab),
                         time = 0
                     };
+                    objs[i].go.SetActive(false);
                 }
             }
         }
-
-        public void Reset()
+        
+        public void InactivateAll()
         {
             foreach(var i in objs) i.go.SetActive(false);
         }
