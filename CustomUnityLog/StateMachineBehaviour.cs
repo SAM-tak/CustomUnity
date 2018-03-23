@@ -9,13 +9,7 @@ namespace CustomUnity
         {
             UnityEngine.Debug.Log(message, this);
         }
-
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void LogInfo(string message)
-        {
-            UnityEngine.Debug.Log(message, this);
-        }
-
+        
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogInfo(string format, params object[] args)
         {

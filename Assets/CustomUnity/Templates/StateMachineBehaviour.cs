@@ -6,15 +6,10 @@ namespace YourProjectNamespace
     public abstract class StateMachineBehaviour : CustomUnity.StateMachineBehaviour
     {
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void Profiling(string memberName)
+        protected void Profiling(string memberName, int id = 0)
         {
-            ProfileSampler.Begin(this, memberName, 0);
-        }
-
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void Profiling(string memberName, int id)
-        {
-            ProfileSampler.EndAndBegin(this, memberName, id);
+            if(id == 0) ProfileSampler.Begin(this, memberName, id);
+            else ProfileSampler.EndAndBegin(this, memberName, id);
         }
 
         protected ProfileSampler NewProfiling(string memberName, int id = 0)

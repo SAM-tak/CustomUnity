@@ -4,18 +4,22 @@ namespace CustomUnity
 {
     public abstract class MonoBehaviour : UnityEngine.MonoBehaviour
     {
+        /// <summary>
+        /// イベント関数用
+        /// </summary>
+        /// <param name="message"></param>
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        protected void DebugLog(string message)
+        {
+            UnityEngine.Debug.Log(message, this);
+        }
+
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogInfo(object message)
         {
             UnityEngine.Debug.Log(message, this);
         }
-
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void LogInfo(string message)
-        {
-            UnityEngine.Debug.Log(message, this);
-        }
-
+        
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogInfo(string format, params object[] args)
         {

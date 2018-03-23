@@ -19,22 +19,7 @@ namespace CustomUnity
         {
             UnityEngine.Debug.Log(message);
         }
-
-        //
-        // 概要:
-        //     ///
-        //     Logs message to the Unity Console.
-        //     ///
-        //
-        // パラメーター:
-        //   message:
-        //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Info(string message)
-        {
-            UnityEngine.Debug.Log(message);
-        }
-
+        
         //
         // 概要:
         //     ///
@@ -52,25 +37,7 @@ namespace CustomUnity
         {
             UnityEngine.Debug.Log(message, context);
         }
-
-        //
-        // 概要:
-        //     ///
-        //     Logs message to the Unity Console.
-        //     ///
-        //
-        // パラメーター:
-        //   message:
-        //     String or object to be converted to string representation for display.
-        //
-        //   context:
-        //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Info(Object context, string message)
-        {
-            UnityEngine.Debug.Log(message, context);
-        }
-
+        
         //
         // 概要:
         //     ///
@@ -142,22 +109,7 @@ namespace CustomUnity
         {
             UnityEngine.Debug.LogError(message);
         }
-
-        //
-        // 概要:
-        //     ///
-        //     A variant of Debug.Log that logs an error message to the console.
-        //     ///
-        //
-        // パラメーター:
-        //   message:
-        //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Error(string message)
-        {
-            UnityEngine.Debug.LogError(message);
-        }
-
+        
         //
         // 概要:
         //     ///
@@ -244,22 +196,7 @@ namespace CustomUnity
         {
             UnityEngine.Debug.LogWarning(message);
         }
-
-        //
-        // 概要:
-        //     ///
-        //     A variant of Debug.Log that logs a warning message to the console.
-        //     ///
-        //
-        // パラメーター:
-        //   message:
-        //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Warning(string message)
-        {
-            UnityEngine.Debug.LogWarning(message);
-        }
-
+        
         //
         // 概要:
         //     ///
