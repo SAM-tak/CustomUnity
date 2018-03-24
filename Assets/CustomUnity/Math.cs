@@ -142,6 +142,39 @@ namespace CustomUnity
         }
 
         /// <summary>
+        /// Make element-wise reciprocal
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Vector2 Reciprocal(Vector2 a)
+        {
+            return new Vector2(1 / a.x, 1 / a.y);
+        }
+
+        /// <summary>
+        /// Make element-wise reciprocal
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns>Hadamard product</returns>
+        public static Vector3 Reciprocal(Vector3 a)
+        {
+            return new Vector3(1 / a.x, 1 / a.y, 1 / a.z);
+        }
+
+        /// <summary>
+        /// Make element-wise reciprocal
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns>Hadamard product</returns>
+        public static Vector4 Reciprocal(Vector4 a)
+        {
+            return new Vector4(1 / a.x, 1 / a.y, 1 / a.z, 1 / a.w);
+        }
+
+        /// <summary>
         /// Clamp to 0 - 1
         /// </summary>
         /// <param name="a">Targer</param>
@@ -196,15 +229,15 @@ namespace CustomUnity
         /// </summary>
         /// <param name="current">現在値</param>
         /// <param name="target">目標値</param>
-        /// <param name="rate">係数</param>
+        /// <param name="halfLife">半減期</param>
         /// <param name="deltaTime">経過時間</param>
         /// <returns>次の値</returns>
-        public static float RubberStep(float current, float target, float rate, float deltaTime)
+        public static float RubberStep(float current, float target, float halfLife, float deltaTime)
         {
             float delta = target - current;
             if(Mathf.Abs(delta) > float.Epsilon) {
-                rate = rate * rate * 60; // これどうしたもんかな
-                float a = 0.5f * rate * deltaTime * deltaTime;
+                float rate = 1.0f / halfLife;
+                float a = rate * deltaTime * deltaTime;
                 float a2 = a * a;
                 return current + delta * Mathf.Clamp01(rate * deltaTime * (1.0f + a + 0.5f * a2 + (1.0f / 6.0f) * a2 * a));
             }
@@ -216,14 +249,14 @@ namespace CustomUnity
         /// </summary>
         /// <param name="current">現在値</param>
         /// <param name="target">目標値</param>
-        /// <param name="rate">係数</param>
+        /// <param name="halfLife">半減期</param>
         /// <param name="deltaTime">経過時間</param>
         /// <returns>次の値</returns>
-        public static Vector2 RubberStep(Vector2 current, Vector2 target, float rate, float deltaTime)
+        public static Vector2 RubberStep(Vector2 current, Vector2 target, float halfLife, float deltaTime)
         {
             Vector2 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                rate = rate * rate * 60; // これどうしたもんかな
+                float rate = 1.0f / halfLife;
                 float a = 0.5f * rate * deltaTime * deltaTime;
                 float a2 = a * a;
                 return current + delta * Mathf.Clamp01(rate * deltaTime * (1.0f + a + 0.5f * a2 + (1.0f / 6.0f) * a2 * a));
@@ -236,14 +269,14 @@ namespace CustomUnity
         /// </summary>
         /// <param name="current">現在値</param>
         /// <param name="target">目標値</param>
-        /// <param name="rate">係数</param>
+        /// <param name="halfLife">半減期</param>
         /// <param name="deltaTime">経過時間</param>
         /// <returns>次の値</returns>
-        public static Vector3 RubberStep(Vector3 current, Vector3 target, float rate, float deltaTime)
+        public static Vector3 RubberStep(Vector3 current, Vector3 target, float halfLife, float deltaTime)
         {
             Vector3 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                rate = rate * rate * 60; // これどうしたもんかな
+                float rate = 1.0f / halfLife;
                 float a = 0.5f * rate * deltaTime * deltaTime;
                 float a2 = a * a;
                 return current + delta * Mathf.Clamp01(rate * deltaTime * (1.0f + a + 0.5f * a2 + (1.0f / 6.0f) * a2 * a));
@@ -252,19 +285,39 @@ namespace CustomUnity
         }
 
         /// <summary>
-        /// ゴムひも補間（異方性係数バージョン）
+        /// ゴムひも補間
         /// </summary>
         /// <param name="current">現在値</param>
         /// <param name="target">目標値</param>
-        /// <param name="rate">係数</param>
+        /// <param name="halfLife">半減期</param>
         /// <param name="deltaTime">経過時間</param>
         /// <returns>次の値</returns>
-        public static Vector2 RubberStep(Vector2 current, Vector2 target, Vector2 rate, float deltaTime)
+        public static Vector4 RubberStep(Vector4 current, Vector4 target, float halfLife, float deltaTime)
+        {
+            Vector4 delta = target - current;
+            if(delta.sqrMagnitude > float.Epsilon) {
+                float rate = 1.0f / halfLife;
+                float a = 0.5f * rate * deltaTime * deltaTime;
+                float a2 = a * a;
+                return current + delta * Mathf.Clamp01(rate * deltaTime * (1.0f + a + 0.5f * a2 + (1.0f / 6.0f) * a2 * a));
+            }
+            return target;
+        }
+
+        /// <summary>
+        /// ゴムひも補間（異方性半減期バージョン）
+        /// </summary>
+        /// <param name="current">現在値</param>
+        /// <param name="target">目標値</param>
+        /// <param name="halfLife">半減期</param>
+        /// <param name="deltaTime">経過時間</param>
+        /// <returns>次の値</returns>
+        public static Vector2 RubberStep(Vector2 current, Vector2 target, Vector2 halfLife, float deltaTime)
         {
             Vector2 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                rate = Times(rate, rate) * 60; // これどうしたもんかな
-                Vector2 a = 0.5f * deltaTime * deltaTime * rate;
+                Vector2 rate = Reciprocal(halfLife);
+                Vector2 a = 0.5f * rate * deltaTime * deltaTime;
                 Vector2 a2 = Times(a, a);
                 Vector2 k = Vector2.one + a + 0.5f * a2 + (1.0f / 6.0f) * Times(a2, a);
                 return current + Times(delta, Clamp01(Times(rate * deltaTime, k)));
@@ -273,21 +326,42 @@ namespace CustomUnity
         }
 
         /// <summary>
-        /// ゴムひも補間（異方性係数バージョン）
+        /// ゴムひも補間（異方性半減期バージョン）
         /// </summary>
         /// <param name="current">現在値</param>
         /// <param name="target">目標値</param>
-        /// <param name="rate">係数</param>
+        /// <param name="halfLife">半減期</param>
         /// <param name="deltaTime">経過時間</param>
         /// <returns>次の値</returns>
-        public static Vector3 RubberStep(Vector3 current, Vector3 target, Vector3 rate, float deltaTime)
+        public static Vector3 RubberStep(Vector3 current, Vector3 target, Vector3 halfLife, float deltaTime)
         {
             Vector3 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                rate = Times(rate, rate) * 60; // これどうしたもんかな
-                Vector3 a = 0.5f * deltaTime * deltaTime * rate;
+                Vector3 rate = Reciprocal(halfLife);
+                Vector3 a = 0.5f * rate * deltaTime * deltaTime;
                 Vector3 a2 = Times(a, a);
                 Vector3 k = Vector3.one + a + 0.5f * a2 + (1.0f / 6.0f) * Times(a2, a);
+                return current + Times(delta, Clamp01(Times(rate * deltaTime, k)));
+            }
+            return target;
+        }
+
+        /// <summary>
+        /// ゴムひも補間（異方性半減期バージョン）
+        /// </summary>
+        /// <param name="current">現在値</param>
+        /// <param name="target">目標値</param>
+        /// <param name="halfLife">半減期</param>
+        /// <param name="deltaTime">経過時間</param>
+        /// <returns>次の値</returns>
+        public static Vector4 RubberStep(Vector4 current, Vector4 target, Vector4 halfLife, float deltaTime)
+        {
+            Vector4 delta = target - current;
+            if(delta.sqrMagnitude > float.Epsilon) {
+                Vector4 rate = Reciprocal(halfLife);
+                Vector4 a = 0.5f * rate * deltaTime * deltaTime;
+                Vector4 a2 = Times(a, a);
+                Vector4 k = Vector4.one + a + 0.5f * a2 + (1.0f / 6.0f) * Times(a2, a);
                 return current + Times(delta, Clamp01(Times(rate * deltaTime, k)));
             }
             return target;
