@@ -1,4 +1,6 @@
+using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace CustomUnity
 {
@@ -27,6 +29,18 @@ namespace CustomUnity
                     var ret = transform.GetChild(i).FindRecursive(name);
                     if(ret) return ret;
                 }
+            }
+            return null;
+        }
+
+        public static GameObject[] GetChildGameObjects(this Transform transform)
+        {
+            if(transform.childCount > 0) {
+                var ret = new GameObject[transform.childCount];
+                for(var i = 0; i < transform.childCount; i++) {
+                    ret[i] = transform.GetChild(i).gameObject;
+                }
+                return ret;
             }
             return null;
         }

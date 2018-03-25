@@ -6,6 +6,12 @@ namespace YourProjectNamespace
     public abstract class StateMachineBehaviour : CustomUnity.StateMachineBehaviour
     {
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        protected void DebugBreak()
+        {
+            UnityEngine.Debug.Break();
+        }
+
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void Profiling(string memberName, int id = 0)
         {
             if(id == 0) ProfileSampler.Begin(this, memberName, id);

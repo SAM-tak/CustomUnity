@@ -59,5 +59,21 @@ namespace CustomUnity
                 lastLapFrameCount = Time.frameCount;
             }
         }
+
+#if UNITY_EDITOR
+        [MenuItem("GameObject/UI/FPSCounter")]
+        static void CreateFPSCounter(MenuCommand menuCommand)
+        {
+            var pf = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/FPSCounter.prefab");
+            if(pf) {
+                var parent = (Selection.activeObject ?? menuCommand.context) as GameObject;
+                var go = Instantiate(pf, parent?.transform);
+                go.UniqueName(pf.name);
+                // Register the creation in the undo system
+                Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
+                Selection.activeObject = go;
+            }
+        }
+#endif
     }
 }

@@ -187,7 +187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c928754a9325404e81677f451996a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flags: 7
+  goalFlags: 7
   onSetFlagsAll:
     m_PersistentCalls:
       m_Calls:

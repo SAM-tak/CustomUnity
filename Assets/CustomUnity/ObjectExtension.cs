@@ -30,13 +30,15 @@ namespace CustomUnity
             }
             if(!memberCache.ContainsKey(obj)) {
                 memberCache[obj] = new Dictionary<string, Dictionary<int, string>>();
-                var l = new Dictionary<int, string>();
-                l.Add(id, id == 0 ? objname + "." + memberName : objname + "." + memberName + " " + id);
+                var l = new Dictionary<int, string> {
+                    { id, id == 0 ? objname + "." + memberName : objname + "." + memberName + " " + id }
+                };
                 memberCache[obj].Add(memberName, l);
             }
             else if(!memberCache[obj].ContainsKey(memberName)) {
-                var l = new Dictionary<int, string>();
-                l.Add(id, id == 0 ? objname + "." + memberName : objname + "." + memberName + " " + id);
+                var l = new Dictionary<int, string> {
+                    { id, id == 0 ? objname + "." + memberName : objname + "." + memberName + " " + id }
+                };
                 memberCache[obj].Add(memberName, l);
             }
             else if(!memberCache[obj][memberName].ContainsKey(id)) {
