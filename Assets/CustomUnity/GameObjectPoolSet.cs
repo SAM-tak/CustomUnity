@@ -40,13 +40,11 @@ namespace CustomUnity
 
         public GameObject Spawn(Transform root, SpawnObjectParameter parameter)
         {
-            //Log.Info("parameter.name = {0}", parameter.name);
             GameObjectPool pool;
             if(parameter && index.TryGetValue(parameter.prefabName, out pool)) {
-                //Log.Info("parameter.prefabName = {0}", parameter.prefabName);
-                var pivot = parameter.GetPivotNode(root);
+                var pivot = parameter.GetOriginNode(root);
                 var go = pool.Spawn(parameter.GetPosition(pivot), parameter.GetRotation(pivot));
-                if(go) go.transform.parent = parameter.parenting ? pivot : null;
+                if(go) go.transform.parent = parameter.parentToOrigin ? pivot : null;
                 return go;
             }
             return null;
@@ -56,9 +54,9 @@ namespace CustomUnity
         {
             GameObjectPool pool;
             if(parameter && index.TryGetValue(parameter.prefabName, out pool)) {
-                var pivot = parameter.GetPivotNode(root);
+                var pivot = parameter.GetOriginNode(root);
                 var go = pool.TrySpawn(parameter.GetPosition(pivot), parameter.GetRotation(pivot));
-                if(go) go.transform.parent = parameter.parenting ? pivot : null;
+                if(go) go.transform.parent = parameter.parentToOrigin ? pivot : null;
                 return go;
             }
             return null;

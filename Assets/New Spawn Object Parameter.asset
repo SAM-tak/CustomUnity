@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Name: New Spawn Object Parameter
   m_EditorClassIdentifier: 
   prefabName: GameObject
-  pivotPath: 
-  parenting: 1
+  originPath: 
+  parentToOrigin: 1
   localPosition: 0
   position: {x: 1, y: -1, z: 0}
   localRotation: 0

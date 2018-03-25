@@ -2,20 +2,20 @@ using UnityEngine;
 
 namespace CustomUnity
 {
-    [CreateAssetMenu(menuName = "Custom Unity/SpawnObject Parameter")]
+    [CreateAssetMenu(menuName = "Custom Unity/Spawn Object Parameter")]
     public class SpawnObjectParameter : ScriptableObject
     {
         public string prefabName;
-        public string pivotPath;
-        public bool parenting;
+        public string originPath;
+        public bool parentToOrigin;
         public bool localPosition;
         public Vector3 position;
         public bool localRotation;
         public Vector3 rotation;
 
-        public Transform GetPivotNode(Transform root)
+        public Transform GetOriginNode(Transform root)
         {
-            return string.IsNullOrEmpty(pivotPath) ? root : (root?.Find(pivotPath) ?? root);
+            return string.IsNullOrEmpty(originPath) ? root : (root?.Find(originPath) ?? root);
         }
 
         public Vector3 GetPosition(Transform pivot)
