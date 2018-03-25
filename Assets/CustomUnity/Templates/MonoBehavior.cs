@@ -21,7 +21,10 @@ namespace YourProjectNamespace
         /// </summary>
         protected void DebugBreak()
         {
+#if(UNITY_EDITOR || DEVELOPMENT_BUILD)
+            UnityEngine.Debug.Log("DebugBreak", this);
             UnityEngine.Debug.Break();
+#endif
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
