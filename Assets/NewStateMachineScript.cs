@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace YourProjectNamespace
 {
@@ -7,7 +8,7 @@ namespace YourProjectNamespace
         // OnStateEnter is called before OnStateEnter is called on any state inside this state machine
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            Log("OnStateEnter " + stateInfo.shortNameHash);
+            LogInfo("OnStateEnter " + stateInfo.shortNameHash);
         }
 
         // OnStateUpdate is called before OnStateUpdate is called on any state inside this state machine
@@ -33,12 +34,14 @@ namespace YourProjectNamespace
         // OnStateMachineEnter is called when entering a statemachine via its Entry Node
         override public void OnStateMachineEnter(Animator animator, int stateMachinePathHash)
         {
-            Log("OnStateMachineEnter");
+            LogInfo("OnStateMachineEnter");
         }
-
+        
         // OnStateMachineExit is called when exiting a statemachine via its Exit Node
-        //override public void OnStateMachineExit(Animator animator, int stateMachinePathHash) {
-        //
-        //}
+        override public void OnStateMachineExit(Animator animator, int stateMachinePathHash)
+        {
+            var behaviourScript = animator.GetComponent<NewBehaviourScript>();
+            behaviourScript?.OnAnimationExit(animator, stateMachinePathHash);
+        }
     }
 }

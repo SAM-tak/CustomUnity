@@ -373,3 +373,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f58cd2c842530414d9c1e2a2173755b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameObjectPools:
+    pools:
+    - prefab: {fileID: 1886363687544398, guid: a2c2ea53e8182444f9964b118d4f8288, type: 2}
+      quantity: 3
+    - prefab: {fileID: 1611556853208686, guid: db4d11d2e50de2241989b913ecaa1d84, type: 2}
+      quantity: 2
+  event1:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2093497822}
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Exit
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  animationExitEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2093497821}
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null

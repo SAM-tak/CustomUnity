@@ -45,5 +45,11 @@ namespace CustomUnity
         {
             UnityEngine.Debug.LogException(exception, this);
         }
+
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        protected void DebugBreak()
+        {
+            UnityEngine.Debug.Break();
+        }
     }
 }

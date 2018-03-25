@@ -37,4 +37,8 @@ namespace CustomUnity
 	public class EnumFlagsAttribute : PropertyAttribute
     {
     }
+
+    public class ReadOnlyEnumFlagsAttribute : PropertyAttribute
+    {
+    }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace CustomUnity
 {
     [CreateAssetMenu(menuName = "Custom Unity/GameObject Pool Setting")]
-    public class GameObjectPoolSetting : ScriptableObject
+    public class GameObjectPoolSetSetting : ScriptableObject
     {
         [System.Serializable]
         public class Entry
@@ -24,6 +24,11 @@ namespace CustomUnity
                 };
             }
             return ret;
+        }
+
+        public GameObjectPoolSet ToObjectPoolSet()
+        {
+            return new GameObjectPoolSet { pools = ToObjectPoolArray() };
         }
     }
 }
