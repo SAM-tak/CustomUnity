@@ -43,17 +43,17 @@ namespace CustomUnity
         {
             if(Time.frameCount % 30 == 0 && Time.frameCount > lastLapFrameCount) {
                 var fps = lastLapForFps > 0 ? 30f / (Time.realtimeSinceStartup - lastLapForFps) : 1f / Time.unscaledDeltaTime;
-                if(fps > 999) {
+                if(fps > 999.9) {
                     if(digits[0]) digits[0].sprite = digitSprites[9];
                     if(digits[1]) digits[1].sprite = digitSprites[9];
                     if(digits[2]) digits[2].sprite = digitSprites[9];
                     if(digits[3]) digits[3].sprite = digitSprites[9];
                 }
                 else {
-                    if(digits[0]) digits[0].sprite = digitSprites[Mathf.Min(9, (int)(fps / 100) % 10)];
-                    if(digits[1]) digits[1].sprite = digitSprites[Mathf.Min(9, (int)(fps / 10) % 10)];
-                    if(digits[2]) digits[2].sprite = digitSprites[Mathf.Min(9, (int)(fps) % 10)];
-                    if(digits[3]) digits[3].sprite = digitSprites[Mathf.Min(9, (int)(fps * 10) % 10)];
+                    if(digits[0]) digits[0].sprite = digitSprites[Mathf.Min(9, (int)(fps / 100))];
+                    if(digits[1]) digits[1].sprite = digitSprites[(int)(fps / 10) % 10];
+                    if(digits[2]) digits[2].sprite = digitSprites[(int)(fps) % 10];
+                    if(digits[3]) digits[3].sprite = digitSprites[(int)(fps * 10) % 10];
                 }
                 lastLapForFps = Time.realtimeSinceStartup;
                 lastLapFrameCount = Time.frameCount;
