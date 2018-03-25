@@ -1,30 +1,60 @@
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+using System.Linq;
+#endif
 
 namespace CustomUnity
 {
-    [RequireComponent(typeof(Text))]
     public class FPSCounter : MonoBehaviour
     {
+        public Sprite[] digitSprites;
+
+        Image[] digits = new Image[4];
         float lastLapForFps;
         int lastLapFrameCount;
-        StringBuilder stringBuilder = new StringBuilder(16);
+
+#if UNITY_EDITOR
+        void Reset()
+        {
+            digitSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/CustomUnity/Sprites/fps counter digit.png")
+                .Where(x => x is Sprite)
+                .Select(x => x as Sprite)
+                .OrderBy(x => x.name)
+                .Take(10)
+                .ToArray();
+        }
+#endif
 
         // Use this for initialization
         void Start()
         {
+            digits[0] = transform.Find("Digit100.0")?.gameObject.GetComponent<Image>();
+            digits[1] = transform.Find("Digit010.0")?.gameObject.GetComponent<Image>();
+            digits[2] = transform.Find("Digit001.0")?.gameObject.GetComponent<Image>();
+            digits[3] = transform.Find("Digit000.1")?.gameObject.GetComponent<Image>();
             lastLapForFps = lastLapFrameCount = 0;
         }
 
         // Update is called once per frame
         void Update()
         {
-            var text = GetComponent<Text>();
             if(Time.frameCount % 30 == 0 && Time.frameCount > lastLapFrameCount) {
-                stringBuilder.Clear();
-                stringBuilder.AppendFormat("{0:00.00}", lastLapForFps > 0 ? 30f / (Time.realtimeSinceStartup - lastLapForFps) : 1f / Time.unscaledDeltaTime);
-                text.text = stringBuilder.ToString();
+                var fps = lastLapForFps > 0 ? 30f / (Time.realtimeSinceStartup - lastLapForFps) : 1f / Time.unscaledDeltaTime;
+                if(fps > 999) {
+                    if(digits[0]) digits[0].sprite = digitSprites[9];
+                    if(digits[1]) digits[1].sprite = digitSprites[9];
+                    if(digits[2]) digits[2].sprite = digitSprites[9];
+                    if(digits[3]) digits[3].sprite = digitSprites[9];
+                }
+                else {
+                    if(digits[0]) digits[0].sprite = digitSprites[Mathf.Min(9, (int)(fps / 100) % 10)];
+                    if(digits[1]) digits[1].sprite = digitSprites[Mathf.Min(9, (int)(fps / 10) % 10)];
+                    if(digits[2]) digits[2].sprite = digitSprites[Mathf.Min(9, (int)(fps) % 10)];
+                    if(digits[3]) digits[3].sprite = digitSprites[Mathf.Min(9, (int)(fps * 10) % 10)];
+                }
                 lastLapForFps = Time.realtimeSinceStartup;
                 lastLapFrameCount = Time.frameCount;
             }
