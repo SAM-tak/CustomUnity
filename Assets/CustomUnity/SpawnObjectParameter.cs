@@ -18,14 +18,14 @@ namespace CustomUnity
             return string.IsNullOrEmpty(originPath) ? root : (root?.Find(originPath) ?? root);
         }
 
-        public Vector3 GetPosition(Transform pivot)
+        public Vector3 GetPosition(Transform origin)
         {
-            return pivot ? (localPosition ? pivot.TransformPoint(position) : pivot.position + position) : position;
+            return origin ? (localPosition ? origin.TransformPoint(position) : origin.position + position) : position;
         }
 
-        public Quaternion GetRotation(Transform pivot)
+        public Quaternion GetRotation(Transform origin)
         {
-            return localRotation && pivot ? Quaternion.Euler(rotation) * pivot.rotation : Quaternion.Euler(rotation);
+            return localRotation && origin ? Quaternion.Euler(rotation) * origin.rotation : Quaternion.Euler(rotation);
         }
     }
 }

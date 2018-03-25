@@ -16,9 +16,7 @@ namespace CustomUnity
                 i.SetUp();
                 if(setUpProcPerObject != null) i.ForEachObjects(setUpProcPerObject);
                 index.Add(i.Name, i);
-                Log.Info(i.Name);
             }
-            Log.Info(index.Keys);
         }
 
         public void InactivateAll()
@@ -28,13 +26,15 @@ namespace CustomUnity
 
         public GameObject Spawn(string name, Vector3 position, Quaternion rotation)
         {
-            if(index.ContainsKey(name)) return index[name].Spawn(position, rotation);
+            GameObjectPool pool;
+            if(index.TryGetValue(name, out pool)) return pool.Spawn(position, rotation);
             return null;
         }
 
         public GameObject TrySpawn(string name, Vector3 position, Quaternion rotation)
         {
-            if(index.ContainsKey(name)) return index[name].TrySpawn(position, rotation);
+            GameObjectPool pool;
+            if(index.TryGetValue(name, out pool)) return pool.TrySpawn(position, rotation);
             return null;
         }
 
@@ -42,9 +42,9 @@ namespace CustomUnity
         {
             GameObjectPool pool;
             if(parameter && index.TryGetValue(parameter.prefabName, out pool)) {
-                var pivot = parameter.GetOriginNode(root);
-                var go = pool.Spawn(parameter.GetPosition(pivot), parameter.GetRotation(pivot));
-                if(go) go.transform.parent = parameter.parentToOrigin ? pivot : null;
+                var origin = parameter.GetOriginNode(root);
+                var go = pool.Spawn(parameter.GetPosition(origin), parameter.GetRotation(origin));
+                if(go) go.transform.parent = parameter.parentToOrigin ? origin : null;
                 return go;
             }
             return null;
@@ -54,9 +54,9 @@ namespace CustomUnity
         {
             GameObjectPool pool;
             if(parameter && index.TryGetValue(parameter.prefabName, out pool)) {
-                var pivot = parameter.GetOriginNode(root);
-                var go = pool.TrySpawn(parameter.GetPosition(pivot), parameter.GetRotation(pivot));
-                if(go) go.transform.parent = parameter.parentToOrigin ? pivot : null;
+                var origin = parameter.GetOriginNode(root);
+                var go = pool.TrySpawn(parameter.GetPosition(origin), parameter.GetRotation(origin));
+                if(go) go.transform.parent = parameter.parentToOrigin ? origin : null;
                 return go;
             }
             return null;
