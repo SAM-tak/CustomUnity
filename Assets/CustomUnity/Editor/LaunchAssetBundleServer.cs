@@ -74,11 +74,8 @@ namespace CustomUnity
             AssetBundleBuildScript.CreateAssetBundleDirectory();
             AssetBundleBuildScript.WriteServerURL();
 
-            var args = assetBundlesDirectory;
-            args = string.Format("\"{0}\" {1}", args, Process.GetCurrentProcess().Id);
-            var startInfo = GetProfileStartInfoForMono(GetMonoInstallation(), GetMonoProfileVersion(), pathToAssetServer, args, true);
-            startInfo.WorkingDirectory = assetBundlesDirectory;
-            startInfo.UseShellExecute = false;
+            var args = string.Format("\"{0}\" {1}", assetBundlesDirectory, Process.GetCurrentProcess().Id);
+            var startInfo = GetProfileStartInfoForMono(GetMonoInstallation(), GetMonoProfileVersion(), pathToAssetServer, assetBundlesDirectory, args);
             var launchProcess = Process.Start(startInfo);
             if(launchProcess == null || launchProcess.HasExited == true || launchProcess.Id == 0) {
                 //Unable to start process
@@ -180,7 +177,7 @@ namespace CustomUnity
             return input;
         }
 
-        public static ProcessStartInfo GetProfileStartInfoForMono(string monodistribution, string profile, string executable, string arguments, bool setMonoEnvironmentVariables)
+        public static ProcessStartInfo GetProfileStartInfoForMono(string monodistribution, string profile, string executable, string workingDirectory, string arguments)
         {
             var monoexe = Path.Combine(monodistribution, "bin", "mono");
             var profileAbspath = Path.Combine(monodistribution, "lib", "mono", profile);
@@ -192,13 +189,13 @@ namespace CustomUnity
                 Arguments = PrepareFileName(executable) + " " + arguments,
                 CreateNoWindow = true,
                 FileName = monoexe,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                WorkingDirectory = Application.dataPath + "/..",
-                UseShellExecute = false
+                RedirectStandardError = Application.platform != RuntimePlatform.WindowsEditor,
+                RedirectStandardOutput = Application.platform != RuntimePlatform.WindowsEditor,
+                WorkingDirectory = workingDirectory,
+                UseShellExecute = Application.platform == RuntimePlatform.WindowsEditor
             };
 
-            if(setMonoEnvironmentVariables) {
+            if(Application.platform != RuntimePlatform.WindowsEditor) {
                 startInfo.EnvironmentVariables["MONO_PATH"] = profileAbspath;
                 startInfo.EnvironmentVariables["MONO_CFG_DIR"] = Path.Combine(monodistribution, "etc");
             }
