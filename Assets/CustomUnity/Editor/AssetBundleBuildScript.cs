@@ -69,7 +69,7 @@ namespace CustomUnity
                 downloadURL = "http://" + localIP + ":7888/";
             }
 
-            var assetBundleManagerResourcesDirectory = "Assets/AssetBundleManager/Resources";
+            var assetBundleManagerResourcesDirectory = "Assets/CustomUnity/Resources";
             var assetBundleUrlPath = Path.Combine(assetBundleManagerResourcesDirectory, "AssetBundleServerURL.bytes");
             Directory.CreateDirectory(assetBundleManagerResourcesDirectory);
             File.WriteAllText(assetBundleUrlPath, downloadURL);
