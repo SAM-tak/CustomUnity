@@ -366,5 +366,78 @@ namespace CustomUnity
             }
             return target;
         }
+
+        /// <summary>
+        /// ゴムひも補間（異方性半減期バージョン）
+        /// </summary>
+        /// <param name="current">現在値</param>
+        /// <param name="target">目標値</param>
+        /// <param name="halfLife">半減期</param>
+        /// <param name="deltaTime">経過時間</param>
+        /// <returns>次の値</returns>
+        public static Vector2 RubberStep(Vector2 current, Vector2 target, Vector2 increaseHalfLife, Vector2 decleaseHalfLife, float deltaTime)
+        {
+            Vector2 delta = target - current;
+            if(delta.sqrMagnitude > float.Epsilon) {
+                Vector2 halfLife = new Vector2(delta.x >= 0 ? increaseHalfLife.x : decleaseHalfLife.x, delta.y >= 0 ? increaseHalfLife.y : decleaseHalfLife.y);
+                Vector2 rate = Reciprocal(halfLife);
+                Vector2 a = 0.5f * rate * deltaTime * deltaTime;
+                Vector2 a2 = Times(a, a);
+                Vector2 k = Vector2.one + a + 0.5f * a2 + (1.0f / 6.0f) * Times(a2, a);
+                return current + Times(delta, Clamp01(Times(rate * deltaTime, k)));
+            }
+            return target;
+        }
+
+        /// <summary>
+        /// ゴムひも補間（異方性半減期バージョン）
+        /// </summary>
+        /// <param name="current">現在値</param>
+        /// <param name="target">目標値</param>
+        /// <param name="halfLife">半減期</param>
+        /// <param name="deltaTime">経過時間</param>
+        /// <returns>次の値</returns>
+        public static Vector3 RubberStep(Vector3 current, Vector3 target, Vector3 increaseHalfLife, Vector3 decreaseHalfLife, float deltaTime)
+        {
+            Vector3 delta = target - current;
+            if(delta.sqrMagnitude > float.Epsilon) {
+                Vector3 halfLife = new Vector3(
+                    delta.x >= 0 ? increaseHalfLife.x : decreaseHalfLife.x,
+                    delta.y >= 0 ? increaseHalfLife.y : decreaseHalfLife.y,
+                    delta.z >= 0 ? increaseHalfLife.z : decreaseHalfLife.z);
+                Vector3 rate = Reciprocal(halfLife);
+                Vector3 a = 0.5f * rate * deltaTime * deltaTime;
+                Vector3 a2 = Times(a, a);
+                Vector3 k = Vector3.one + a + 0.5f * a2 + (1.0f / 6.0f) * Times(a2, a);
+                return current + Times(delta, Clamp01(Times(rate * deltaTime, k)));
+            }
+            return target;
+        }
+
+        /// <summary>
+        /// ゴムひも補間（異方性半減期バージョン）
+        /// </summary>
+        /// <param name="current">現在値</param>
+        /// <param name="target">目標値</param>
+        /// <param name="halfLife">半減期</param>
+        /// <param name="deltaTime">経過時間</param>
+        /// <returns>次の値</returns>
+        public static Vector4 RubberStep(Vector4 current, Vector4 target, Vector4 increaseHalfLife, Vector4 decreaseHalfLife, float deltaTime)
+        {
+            Vector4 delta = target - current;
+            if(delta.sqrMagnitude > float.Epsilon) {
+                Vector4 halfLife = new Vector4(
+                    delta.x >= 0 ? increaseHalfLife.x : decreaseHalfLife.x,
+                    delta.y >= 0 ? increaseHalfLife.y : decreaseHalfLife.y,
+                    delta.z >= 0 ? increaseHalfLife.z : decreaseHalfLife.z,
+                    delta.w >= 0 ? increaseHalfLife.w : decreaseHalfLife.w);
+                Vector4 rate = Reciprocal(halfLife);
+                Vector4 a = 0.5f * rate * deltaTime * deltaTime;
+                Vector4 a2 = Times(a, a);
+                Vector4 k = Vector4.one + a + 0.5f * a2 + (1.0f / 6.0f) * Times(a2, a);
+                return current + Times(delta, Clamp01(Times(rate * deltaTime, k)));
+            }
+            return target;
+        }
     }
 }
