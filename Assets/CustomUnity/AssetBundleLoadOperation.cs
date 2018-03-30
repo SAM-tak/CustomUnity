@@ -20,6 +20,11 @@ namespace CustomUnity
         {
         }
 
+        public virtual float Progress()
+        {
+            return IsDone() ? 1.0f : 0.0f;
+        }
+
         abstract public bool Update();
 
         abstract public bool IsDone();
@@ -96,12 +101,15 @@ namespace CustomUnity
                 // At the time of unload request is already set to null, so capture it to local variable.
                 var localRequest = request;
                 // Dispose of request only when bundle is unloaded to keep the ODR pin alive.
-                AssetBundle.unload += () => {
-                    localRequest.Dispose();
-                };
+                AssetBundle.OnUnload += localRequest.Dispose;
             }
 
             request = null;
+        }
+
+        public override float Progress()
+        {
+            return IsDone() ? 1.0f : request.progress;
         }
     }
 #endif
@@ -159,6 +167,11 @@ namespace CustomUnity
         {
             return m_Url;
         }
+
+        public override float Progress()
+        {
+            return IsDone() ? 1.0f : m_WWW != null ? m_WWW.progress : 0.0f;
+        }
     }
 
 #if UNITY_EDITOR
@@ -188,6 +201,11 @@ namespace CustomUnity
         public override bool IsDone()
         {
             return m_Operation == null || m_Operation.isDone;
+        }
+
+        public override float Progress()
+        {
+            return IsDone() ? 1.0f : m_Operation != null ? m_Operation.progress : 0.0f;
         }
     }
 #endif
@@ -230,6 +248,11 @@ namespace CustomUnity
             }
 
             return m_Request != null && m_Request.isDone;
+        }
+
+        public override float Progress()
+        {
+            return IsDone() ? 1.0f : m_Request != null ? m_Request.progress : 0.0f;
         }
     }
 
@@ -309,6 +332,11 @@ namespace CustomUnity
 
             return m_Request != null && m_Request.isDone;
         }
+
+        public override float Progress()
+        {
+            return IsDone() ? 1.0f : m_Request.progress;
+        }
     }
 
     public class AssetBundleLoadManifestOperation : AssetBundleLoadAssetOperationFull
@@ -322,7 +350,7 @@ namespace CustomUnity
             base.Update();
 
             if(m_Request != null && m_Request.isDone) {
-                AssetBundleManager.AssetBundleManifestObject = GetAsset<AssetBundleManifest>();
+                AssetBundleManager.Manifest = GetAsset<AssetBundleManifest>();
                 return false;
             }
             return true;

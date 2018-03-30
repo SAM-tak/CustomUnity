@@ -5,6 +5,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 
 namespace CustomUnity
 {
@@ -16,34 +18,29 @@ namespace CustomUnity
         int m_ServerPID = 0;
 
         [MenuItem(kLocalAssetbundleServerMenu)]
-        public static void ToggleLocalAssetBundleServer()
+        static void ToggleLocalAssetBundleServer()
         {
-            bool isRunning = IsRunning();
-            if(!isRunning) {
-                Run();
-            }
-            else {
-                KillRunningAssetBundleServer();
-            }
+            if(IsRunning()) KillRunningAssetBundleServer();
+            else Run();
         }
 
         [MenuItem(kLocalAssetbundleServerMenu, true)]
-        public static bool ToggleLocalAssetBundleServerValidate()
+        static bool ToggleLocalAssetBundleServerValidate()
         {
-            bool isRunnning = IsRunning();
-            Menu.SetChecked(kLocalAssetbundleServerMenu, isRunnning);
+            var isRunning = IsRunning();
+            if(!isRunning) EditorPrefs.SetString(AssetBundleManager.kLocalAssetBundleServerURL, null);
+            Menu.SetChecked(kLocalAssetbundleServerMenu, isRunning);
             return true;
         }
-
+        
         static bool IsRunning()
         {
             if(instance.m_ServerPID == 0) return false;
-
             try {
                 var process = Process.GetProcessById(instance.m_ServerPID);
-                if(process == null) return false;
-
-                return !process.HasExited;
+                if(process != null && !process.HasExited) return true;
+                instance.m_ServerPID = 0;
+                return false;
             }
             catch {
                 return false;
@@ -52,28 +49,28 @@ namespace CustomUnity
 
         static void KillRunningAssetBundleServer()
         {
+            EditorApplication.quitting -= KillRunningAssetBundleServer;
+
+            if(instance.m_ServerPID == 0) return;
+            EditorPrefs.SetString(AssetBundleManager.kLocalAssetBundleServerURL, null);
             // Kill the last time we ran
             try {
-                if(instance.m_ServerPID == 0) return;
-
                 var lastProcess = Process.GetProcessById(instance.m_ServerPID);
                 lastProcess.Kill();
                 instance.m_ServerPID = 0;
             }
-            catch {
+            catch(Exception ex) {
+                Log.Exception(ex);
             }
         }
-
+        
         static void Run()
         {
             var pathToAssetServer = Path.GetFullPath("Assets/CustomUnity/Editor/AssetBundleServer.exe");
             var assetBundlesDirectory = Path.Combine(Environment.CurrentDirectory, "AssetBundles");
 
             KillRunningAssetBundleServer();
-
-            AssetBundleBuildScript.CreateAssetBundleDirectory();
-            AssetBundleBuildScript.WriteServerURL();
-
+            
             var args = string.Format("\"{0}\" {1}", assetBundlesDirectory, Process.GetCurrentProcess().Id);
             var startInfo = GetProfileStartInfoForMono(GetMonoInstallation(), GetMonoProfileVersion(), pathToAssetServer, assetBundlesDirectory, args);
             var launchProcess = Process.Start(startInfo);
@@ -84,66 +81,71 @@ namespace CustomUnity
             else {
                 //We seem to have launched, let's save the PID
                 instance.m_ServerPID = launchProcess.Id;
+
+                var localIP = "localhost";
+                try {
+                    var host = Dns.GetHostEntry(Dns.GetHostName());
+                    foreach(var ip in host.AddressList) {
+                        if(ip.AddressFamily == AddressFamily.InterNetwork) {
+                            localIP = ip.ToString();
+                            break;
+                        }
+                    }
+                }
+                catch {
+                    localIP = "localhost";
+                }
+                EditorPrefs.SetString(AssetBundleManager.kLocalAssetBundleServerURL, "http://" + localIP + ":7888/");
+                Log.Info("Started AssetBundleServer : http://{0}:7888/", localIP);
+
+                if(startInfo.RedirectStandardOutput) {
+                    launchProcess.OutputDataReceived += (sender, eventArgs) => {
+                        if(eventArgs.Data != null) Log.Info("<color=grey>[AssetBundleServer]</color>{0}", eventArgs.Data);
+                    };
+                    launchProcess.BeginOutputReadLine();
+                }
+                if(startInfo.RedirectStandardError) {
+                    launchProcess.ErrorDataReceived += (sender, eventArgs) => {
+                        if(eventArgs.Data != null) Log.Error("<color=grey>[AssetBundleServer]</color>{0}", eventArgs.Data);
+                    };
+                    launchProcess.BeginErrorReadLine();
+                }
+                if(startInfo.RedirectStandardOutput || startInfo.RedirectStandardError) {
+                    EditorApplication.quitting += KillRunningAssetBundleServer;
+                }
             }
         }
-
-        static bool UpperVersion(string testee, string version)
-        {
-            var a = testee.Split('.').Select(int.Parse).ToArray();
-            var b = version.Split('.').Select(int.Parse).ToArray();
-            for(int i = 0; i < a.Length && i < b.Length; ++i) {
-                if(a[i] > b[i]) return true;
-            }
-            return a.Length > b.Length;
-        }
-
+        
         static string GetMonoProfileVersion()
         {
             var path = Path.Combine(GetMonoInstallation(), "lib", "mono");
 
-            var foldersWithApi = Directory.GetDirectories(path).Where(f => f.Contains("-api")).ToArray();
             var profileVersion = "1.0";
-
-            for(int i = 0; i < foldersWithApi.Length; i++) {
-                foldersWithApi[i] = Path.GetFileName(foldersWithApi[i]).Split('-').First();
-                
-                if(UpperVersion(foldersWithApi[i], profileVersion)) {
-                    profileVersion = foldersWithApi[i];
-                }
+            foreach(var i in Directory.GetDirectories(path).Where(f => f.Contains("-api")).Select(x => Path.GetFileName(x).Split('-').First())) {
+                var a = i.Split('.').Select(int.Parse);
+                var b = profileVersion.Split('.').Select(int.Parse);
+                if(a.Zip(b, (x, y) => x > y).Any() || a.Count() > b.Count()) profileVersion = i;
             }
 
             return profileVersion;
         }
-
-        public static string GetFrameWorksFolder()
+        
+        static string GetMonoInstallation()
         {
             var editorAppPath = EditorApplication.applicationPath;
             if(Application.platform == RuntimePlatform.OSXEditor) {
-                return Path.Combine(editorAppPath, "Contents");
+                return Path.Combine(editorAppPath, "Contents", "MonoBleedingEdge");
             }
             else {
-                return Path.Combine(Path.GetDirectoryName(editorAppPath), "Data");
+                return Path.Combine(Path.GetDirectoryName(editorAppPath), "Data", "MonoBleedingEdge");
             }
         }
 
-        public static string GetProfileDirectory(BuildTarget target, string profile)
-        {
-            var monoprefix = GetMonoInstallation();
-            return Path.Combine(monoprefix, "lib", "mono", profile);
-        }
-
-        public static string GetMonoInstallation()
-        {
-            return Path.Combine(GetFrameWorksFolder(), "MonoBleedingEdge");
-        }
-
-        private static readonly Regex UnsafeCharsWindows = new Regex(@"[^A-Za-z0-9_\-\.\:\,\/\@\\]");
-        private static readonly Regex UnescapeableChars = new Regex(@"[\x00-\x08\x10-\x1a\x1c-\x1f\x7f\xff]");
-        private static readonly Regex Quotes = new Regex(@"""");
-
-        public ProcessStartInfo processStartInfo = null;
-
-        public static string PrepareFileName(string input)
+        static readonly Regex UnsafeCharsWindows = new Regex(@"[^A-Za-z0-9_\-\.\:\,\/\@\\]");
+        static readonly Regex UnescapeableChars = new Regex(@"[\x00-\x08\x10-\x1a\x1c-\x1f\x7f\xff]");
+        static readonly Regex Quotes = new Regex(@"""");
+        
+        static string PrepareFileName(string input)
         {
             if(Application.platform == RuntimePlatform.OSXEditor) {
                 return EscapeCharsQuote(input);
@@ -151,7 +153,7 @@ namespace CustomUnity
             return EscapeCharsWindows(input);
         }
 
-        public static string EscapeCharsQuote(string input)
+        static string EscapeCharsQuote(string input)
         {
             if(input.IndexOf('\'') == -1) {
                 return "'" + input + "'";
@@ -162,7 +164,7 @@ namespace CustomUnity
             return null;
         }
 
-        public static string EscapeCharsWindows(string input)
+        static string EscapeCharsWindows(string input)
         {
             if(input.Length == 0) {
                 return "\"\"";
@@ -177,7 +179,7 @@ namespace CustomUnity
             return input;
         }
 
-        public static ProcessStartInfo GetProfileStartInfoForMono(string monodistribution, string profile, string executable, string workingDirectory, string arguments)
+        static ProcessStartInfo GetProfileStartInfoForMono(string monodistribution, string profile, string executable, string workingDirectory, string arguments)
         {
             var monoexe = Path.Combine(monodistribution, "bin", "mono");
             var profileAbspath = Path.Combine(monodistribution, "lib", "mono", profile);
@@ -195,7 +197,7 @@ namespace CustomUnity
                 UseShellExecute = Application.platform == RuntimePlatform.WindowsEditor
             };
 
-            if(Application.platform != RuntimePlatform.WindowsEditor) {
+            if(!startInfo.UseShellExecute) {
                 startInfo.EnvironmentVariables["MONO_PATH"] = profileAbspath;
                 startInfo.EnvironmentVariables["MONO_CFG_DIR"] = Path.Combine(monodistribution, "etc");
             }
