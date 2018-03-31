@@ -8,18 +8,18 @@ namespace YourProjectNamespace
     {
         public GameObjectPoolSet gameObjectPools;
 
-        void SpawnObject(SpawnObjectParameter parameter)
+        public void SpawnObject(SpawnObjectParameter parameter)
         {
             Log.Info("SpawnObject " + parameter.ToStringFields());
             gameObjectPools?.Spawn(transform, parameter);
             //DebugBreak();
         }
 
-        void TrySpawnObject(SpawnObjectParameter parameter)
+        public void TrySpawnObject(SpawnObjectParameter parameter)
         {
             gameObjectPools?.TrySpawn(transform, parameter);
         }
-
+        
         public UnityEvent @event1;
         void FireEvent1()
         {
@@ -36,7 +36,7 @@ namespace YourProjectNamespace
         public UnityEvent @animationExitEvent;
         public void OnAnimationExit(Animator animator, int stateMachinePathHash)
         {
-            LogInfo("OnAnimationExit");
+            LogInfo("OnAnimationExit".Aqua());
             @animationExitEvent?.Invoke();
         }
 

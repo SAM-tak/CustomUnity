@@ -22,12 +22,7 @@ namespace CustomUnity
         public UnityEvent onSetFlagsAll;
 
         public Flags CurrentFlags { get; private set; }
-
-        void OnEnable()
-        {
-            CurrentFlags = 0;
-        }
-
+        
         [EnumAction(typeof(Flags))]
         public void SetFlag(int flag)
         {
@@ -37,7 +32,15 @@ namespace CustomUnity
         public void SetFlag(Flags flag)
         {
             CurrentFlags |= flag;
-            if((CurrentFlags & goalFlags) == goalFlags) @onSetFlagsAll?.Invoke();
+            if((CurrentFlags & goalFlags) == goalFlags) {
+                @onSetFlagsAll?.Invoke();
+                ClearFlags();
+            }
+        }
+
+        public void ClearFlags()
+        {
+            CurrentFlags = 0;
         }
     }
 }

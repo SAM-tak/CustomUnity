@@ -276,7 +276,7 @@ AnimationClip:
   m_GenerateMotionCurves: 0
   m_Events:
   - time: 0.33333334
-    functionName: SpawnObject
+    functionName: Fire
     data: 
     objectReferenceParameter: {fileID: 11400000, guid: 9816a36befa7e2f438ba628327687b1d,
       type: 2}

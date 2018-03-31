@@ -31,7 +31,7 @@ namespace CustomUnity
             }
         }
 
-        void ClearSignals()
+        public void ClearSignals()
         {
             foreach(var k in signals.Keys.ToArray()) signals[k] = false;
         }
