@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4330146495018302}
   - component: {fileID: 198708207809238512}
   - component: {fileID: 199928743707410334}
-  - component: {fileID: 114065432830796474}
+  - component: {fileID: 114365094972780206}
   m_Layer: 0
   m_Name: Particle System (1)
   m_TagString: Untagged
@@ -38,9 +38,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4140182610263404}
   - component: {fileID: 95419815621232934}
-  - component: {fileID: 114538078214688052}
+  - component: {fileID: 114436186894681380}
   m_Layer: 0
-  m_Name: GameObject2
+  m_Name: GameObject3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 4143421988219060}
   - component: {fileID: 198442451511912708}
   - component: {fileID: 199364049220072044}
-  - component: {fileID: 114077836978072672}
+  - component: {fileID: 114497440392566668}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
@@ -123,7 +123,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114065432830796474
+--- !u!114 &114365094972780206
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -131,53 +131,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1357366783864810}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 882e66bee0ae0fe49bfe4f11d71bad5f, type: 3}
+  m_Script: {fileID: 11500000, guid: de75c000929b6624c8ac784bc6a6b91e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  event:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114538078214688052}
-        m_MethodName: SetFlag
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
---- !u!114 &114077836978072672
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1627376166031974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 882e66bee0ae0fe49bfe4f11d71bad5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  event:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114538078214688052}
-        m_MethodName: SetFlag
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
---- !u!114 &114538078214688052
+  event: {fileID: 114436186894681380}
+--- !u!114 &114436186894681380
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -185,11 +143,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1611556853208686}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 812b81cabe262824787d4009b7238b08, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c928754a9325404e81677f451996a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goalFlags: 3
-  onSetFlagsAll:
+  event:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1611556853208686}
@@ -205,6 +162,18 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114497440392566668
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1627376166031974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de75c000929b6624c8ac784bc6a6b91e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  event: {fileID: 114436186894681380}
 --- !u!198 &198442451511912708
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -264,4 +264,6 @@ CustomUnity.csproj
 CustomUnity.Editor.csproj
 CustomUnity.sln
 Temp/
-UnityPackageManager/
+!Packages/manifest.json
+Assembly-CSharp.csproj
+Assembly-CSharp-Editor.csproj

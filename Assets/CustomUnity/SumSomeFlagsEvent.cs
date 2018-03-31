@@ -19,7 +19,7 @@ namespace CustomUnity
         }
         [EnumFlags]
         public Flags goalFlags;
-        public UnityEvent @onSetFlagsAll;
+        public UnityEvent onSetFlagsAll;
 
         public Flags CurrentFlags { get; private set; }
 

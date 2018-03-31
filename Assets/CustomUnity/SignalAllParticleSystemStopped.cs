@@ -4,20 +4,21 @@ using System.Linq;
 
 namespace CustomUnity
 {
-    public class AllParticleSystemStoppedEvent : MonoBehaviour
+    public class SignalAllParticleSystemStopped : MonoBehaviour
     {
-        public UnityEvent @event;
+        public SumAllSignalsEvent @event;
 
         ParticleSystem[] particleSystems;
 
         void Start()
         {
             particleSystems = GetComponentsInChildren<ParticleSystem>();
+            @event?.DefineSignal(this);
         }
-        
+
         void LateUpdate()
         {
-            if(particleSystems.All(x => x.isStopped)) @event?.Invoke();
+            if(particleSystems.All(x => x.isStopped)) @event?.EmitSignal(this);
         }
     }
 }

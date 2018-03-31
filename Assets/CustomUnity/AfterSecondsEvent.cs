@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace CustomUnity
 {
-    public class SignalAfterSeconds : LateFixedUpdateBehaviour
+    public class AfterSecondsEvent : LateFixedUpdateBehaviour
     {
         public float time;
         public bool unsacled;

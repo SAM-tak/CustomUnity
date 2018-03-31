@@ -107,6 +107,31 @@ namespace CustomUnity
 
             return new Vector3(pitch * Mathf.Rad2Deg, yaw * Mathf.Rad2Deg, roll * Mathf.Rad2Deg);
         }
+        
+        public static Vector2 SetX(this Vector2 self, float x)
+        {
+            return new Vector2(x, self.y);
+        }
+
+        public static Vector2 SetY(this Vector2 self, float y)
+        {
+            return new Vector2(self.x, y);
+        }
+
+        public static Vector3 SetX(this Vector3 self, float x)
+        {
+            return new Vector3(x, self.y, self.z);
+        }
+
+        public static Vector3 SetY(this Vector3 self, float y)
+        {
+            return new Vector3(self.x, y, self.z);
+        }
+
+        public static Vector3 SetZ(this Vector3 self, float z)
+        {
+            return new Vector3(self.x, self.y, z);
+        }
 
         /// <summary>
         /// Make Hadamard product
