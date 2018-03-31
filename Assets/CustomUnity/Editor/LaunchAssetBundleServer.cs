@@ -12,10 +12,15 @@ namespace CustomUnity
 {
     internal class LaunchAssetBundleServer : ScriptableSingleton<LaunchAssetBundleServer>
     {
+        const string AssetBundlesOutputPath = "AssetBundles";
+
         const string kLocalAssetbundleServerMenu = "Assets/AssetBundles/Local AssetBundle Server";
 
         [SerializeField]
         int m_ServerPID = 0;
+
+        [SerializeField]
+        string assetBundlesDirectory = Path.Combine(Environment.CurrentDirectory, AssetBundlesOutputPath);
 
         [MenuItem(kLocalAssetbundleServerMenu)]
         static void ToggleLocalAssetBundleServer()
@@ -43,6 +48,7 @@ namespace CustomUnity
                 return false;
             }
             catch {
+                instance.m_ServerPID = 0;
                 return false;
             }
         }
@@ -60,17 +66,27 @@ namespace CustomUnity
                 instance.m_ServerPID = 0;
             }
             catch(Exception ex) {
+                instance.m_ServerPID = 0;
                 Log.Exception(ex);
             }
         }
         
         static void Run()
         {
-            var pathToAssetServer = Path.GetFullPath("Assets/CustomUnity/Editor/AssetBundleServer.exe");
-            var assetBundlesDirectory = Path.Combine(Environment.CurrentDirectory, "AssetBundles");
+            if(!Directory.Exists(instance.assetBundlesDirectory)) {
+                instance.assetBundlesDirectory = Path.Combine(Environment.CurrentDirectory, AssetBundlesOutputPath);
+            }
+            var assetBundlesDirectory = EditorUtility.OpenFolderPanel(
+                "Select AssetBundles Directory",
+                Path.GetDirectoryName(instance.assetBundlesDirectory), 
+                Path.GetFileName(instance.assetBundlesDirectory));
+            if(string.IsNullOrEmpty(assetBundlesDirectory)) return;
+            
+            instance.assetBundlesDirectory = assetBundlesDirectory;
 
             KillRunningAssetBundleServer();
             
+            var pathToAssetServer = Path.GetFullPath("Assets/CustomUnity/Editor/AssetBundleServer.exe");
             var args = string.Format("\"{0}\" {1}", assetBundlesDirectory, Process.GetCurrentProcess().Id);
             var startInfo = GetProfileStartInfoForMono(GetMonoInstallation(), GetMonoProfileVersion(), pathToAssetServer, assetBundlesDirectory, args);
             var launchProcess = Process.Start(startInfo);

@@ -63,8 +63,6 @@ namespace CustomUnity
     /// </summary>
     public class AssetBundleManager : MonoBehaviour
     {
-        public const string AssetBundlesOutputPath = "AssetBundles";
-
         public enum LogMode { All, JustErrors };
         public enum LogType { Info, Warning, Error };
 
