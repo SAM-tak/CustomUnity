@@ -18,7 +18,7 @@ namespace CustomUnity
         Entry[] objs;
 
         public string Name { get { return prefab ? prefab.name : null; } }
-        public int ActiveCount { get { return objs.Count(i => i.go.activeSelf); } }
+        public int ActiveCount { get { return objs.Count(i => i.go.activeInHierarchy); } }
 
         public void SetUp()
         {
@@ -36,7 +36,10 @@ namespace CustomUnity
         
         public void InactivateAll()
         {
-            foreach(var i in objs) i.go.SetActive(false);
+            foreach(var i in objs) {
+                i.go.SetActive(false);
+                i.go.transform.parent = null;
+            }
         }
 
         public void ForEachActiveObjects(System.Action<GameObject> action)
@@ -48,13 +51,13 @@ namespace CustomUnity
         {
             foreach(var i in objs) action(i.go);
         }
-
+        
         public GameObject Spawn(Vector3 position, Quaternion rotation)
         {
             float oldestTime = float.MaxValue;
             int retIndex = 0;
             for(int i = 0; i < objs.Length; i++) {
-                if(!objs[i].go.activeSelf) {
+                if(!objs[i].go.activeInHierarchy) {
                     retIndex = i;
                     break;
                 }

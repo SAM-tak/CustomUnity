@@ -1,26 +1,42 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace CustomUnity
 {
     public class SumAllSignalsEvent : MonoBehaviour
     {
+        public Animator[] animators;
         public UnityEvent @event;
 
-        public readonly Dictionary<UnityEngine.Object, bool> signals = new Dictionary<UnityEngine.Object, bool>();
+        public readonly Dictionary<Object, bool> signals = new Dictionary<Object, bool>();
+
+        void OnEnable()
+        {
+            foreach(var i in signals.Keys.Where(x => x is SignalOnEnterState).ToArray()) signals.Remove(i);
+            foreach(var i in animators) {
+                var behaviours = i.GetBehaviours<SignalOnEnterState>();
+                foreach(var j in behaviours) DefineSignal(j);
+            }
+        }
         
-        public void DefineSignal(UnityEngine.Object key)
+        void Reset()
+        {
+            animators = GetComponentsInChildren<Animator>();
+        }
+
+        public void DefineSignal(Object key)
         {
             signals[key] = false;
         }
 
-        public void UndefineSignal(UnityEngine.Object key)
+        public void UndefineSignal(Object key)
         {
             if(signals.ContainsKey(key)) signals.Remove(key);
         }
 
-        public void EmitSignal(UnityEngine.Object key)
+        public void EmitSignal(Object key)
         {
             if(signals.ContainsKey(key)) {
                 signals[key] = true;
@@ -28,6 +44,9 @@ namespace CustomUnity
                     @event?.Invoke();
                     ClearSignals();
                 }
+            }
+            else {
+                LogError("Object {0} emit signal without define signal.", key.name);
             }
         }
 
