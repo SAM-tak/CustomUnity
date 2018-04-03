@@ -1,7 +1,9 @@
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace CustomUnity
 {
+    [AddComponentMenu("CustomUnity/Flag/SumSomeFlagsEvent")]
     public class SumSomeFlagsEvent : MonoBehaviour
     {
         [System.Flags]
@@ -19,7 +21,7 @@ namespace CustomUnity
         }
         [EnumFlags]
         public Flags goalFlags;
-        public UnityEvent onSetFlagsAll;
+        public UnityEvent @event;
 
         public Flags CurrentFlags { get; private set; }
         
@@ -33,7 +35,7 @@ namespace CustomUnity
         {
             CurrentFlags |= flag;
             if((CurrentFlags & goalFlags) == goalFlags) {
-                @onSetFlagsAll?.Invoke();
+                @event?.Invoke();
                 ClearFlags();
             }
         }

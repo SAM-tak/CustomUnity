@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 namespace CustomUnity
 {
+    [AddComponentMenu("CustomUnity/Signal/SumAllSignalsEvent")]
     public class SumAllSignalsEvent : MonoBehaviour
     {
         public Animator[] animators;

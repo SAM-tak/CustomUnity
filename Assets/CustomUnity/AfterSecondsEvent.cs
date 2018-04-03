@@ -3,6 +3,7 @@ using UnityEngine.Events;
 
 namespace CustomUnity
 {
+    [AddComponentMenu("CustomUnity/AfterSecondsEvent")]
     public class AfterSecondsEvent : LateFixedUpdateBehaviour
     {
         public float time;

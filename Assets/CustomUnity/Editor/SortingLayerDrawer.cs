@@ -12,26 +12,30 @@ namespace CustomUnity
     [CustomPropertyDrawer(typeof(SortingLayerAttribute))]
     public class SortingLayerDrawerAttribute : PropertyDrawer
     {
-        static SerializedProperty sortinglayer = null;
-        static SerializedProperty SortingLayer {
+        static string[] sortingLayerNames = null;
+        static string[] SortingLayerNames {
             get {
-                if(sortinglayer == null) {
+                if(sortingLayerNames == null) {
                     var tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-                    sortinglayer = tagManager.FindProperty("m_SortingLayers");
+                    var sortinglayers = tagManager.FindProperty("m_SortingLayers");
+                    sortingLayerNames = new string[sortinglayers.arraySize + 2];
+                    for(int i = 0; i < sortinglayers.arraySize; i++) sortingLayerNames[i] = sortinglayers.GetArrayElementAtIndex(i).displayName;
+                    sortingLayerNames[sortinglayers.arraySize + 1] = "Refrash Sorting Layer List";
                 }
-                return sortinglayer;
+                return sortingLayerNames;
             }
         }
         
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var layers = new string[SortingLayer.arraySize];
-            for(int i = 0; i < SortingLayer.arraySize; i++) layers[i] = SortingLayer.GetArrayElementAtIndex(i).displayName;
-            var selectedIndex = Array.FindIndex(layers, x => x == property.stringValue);
-            if(selectedIndex == -1) selectedIndex = Array.FindIndex(layers, x => x.Equals("Default"));
-            selectedIndex = EditorGUI.Popup(position, label.text, selectedIndex, layers);
+            var selectedIndex = Array.FindIndex(SortingLayerNames, x => x == property.stringValue);
+            if(selectedIndex == -1) selectedIndex = Array.FindIndex(SortingLayerNames, x => x.Equals("Default"));
+            selectedIndex = EditorGUI.Popup(position, label.text, selectedIndex, SortingLayerNames);
 
-            if(0 <= selectedIndex && selectedIndex < layers.Length) property.stringValue = layers[selectedIndex];
+            if(0 <= selectedIndex) {
+                if(selectedIndex < SortingLayerNames.Length - 1) property.stringValue = SortingLayerNames[selectedIndex];
+                else sortingLayerNames = null;
+            }
         }
     }
 }

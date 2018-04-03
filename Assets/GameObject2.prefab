@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goalFlags: 3
-  onSetFlagsAll:
+  event:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1611556853208686}

@@ -2,15 +2,14 @@ using UnityEngine;
 
 namespace CustomUnity
 {
-    [RequireComponent(typeof(ParticleSystem))]
+    [AddComponentMenu("CustomUnity/Signal/SignalParticleSystemStopped"), RequireComponent(typeof(ParticleSystem))]
     public class SignalParticleSystemStopped : MonoBehaviour
     {
         public SumAllSignalsEvent @event;
 
         void OnValidate()
         {
-            var particleSystem = GetComponent<ParticleSystem>();
-            var main = particleSystem.main;
+            var main = GetComponent<ParticleSystem>().main;
             main.stopAction = ParticleSystemStopAction.Callback;
         }
 

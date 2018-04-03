@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace CustomUnity
 {
-    [ExecuteInEditMode, RequireComponent(typeof(Renderer))]
+    [ExecuteInEditMode, RequireComponent(typeof(Renderer)), AddComponentMenu("CustomUnity/SortingLayer")]
     public class SortingLayer : MonoBehaviour
     {
         [SerializeField, SortingLayer]
@@ -26,7 +26,7 @@ namespace CustomUnity
             LayerName = layerName;
             OrderInLayer = orderInLayer;
         }
-
+        
         public string LayerName {
             get {
                 return layerName;
