@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace CustomUnity
 {
@@ -18,35 +19,30 @@ namespace CustomUnity
             return work.ToString();
         }
 
-        public static Transform FindRecursive(this Transform transform, string name, bool depthFirst = false)
+        public static Transform FindRecursive(this Transform transform, string name)
         {
-            if(!depthFirst && transform.GetName().Equals(name)) {
-                return transform;
-            }
-            if(transform.childCount > 0) {
-                for(var i = 0; i < transform.childCount; i++) {
-                    var ret = transform.GetChild(i).FindRecursive(name, depthFirst);
-                    if(ret) return ret;
-                }
-            }
-            if(depthFirst && transform.GetName().Equals(name)) {
-                return transform;
+            if(transform.GetName().Equals(name)) return transform;
+            for(var i = 0; i < transform.childCount; i++) {
+                var ret = transform.GetChild(i).FindRecursive(name);
+                if(ret) return ret;
             }
             return null;
         }
 
-        public static IEnumerable<Transform> FindMultipleRecursive(this Transform transform, string name, bool depthFirst = false)
+        public static IEnumerable<Transform> FindMultipleRecursive(this Transform transform, string name)
         {
-            if(!depthFirst && transform.GetName().Equals(name)) {
-                yield return transform;
+            if(transform.GetName().Equals(name)) yield return transform;
+            for(var i = 0; i < transform.childCount; i++) {
+                foreach(var j in transform.GetChild(i).FindMultipleRecursive(name)) yield return j;
             }
-            if(transform.childCount > 0) {
-                for(var i = 0; i < transform.childCount; i++) {
-                    foreach(var j in transform.GetChild(i).FindMultipleRecursive(name, depthFirst)) yield return j;
-                }
-            }
-            if(depthFirst && transform.GetName().Equals(name)) {
-                yield return transform;
+        }
+
+        public static IEnumerable<Transform> EnumChildrenRecursive(this Transform transform)
+        {
+            for(var i = 0; i < transform.childCount; i++) {
+                var child = transform.GetChild(i);
+                yield return child;
+                foreach(var j in child.EnumChildrenRecursive()) yield return j;
             }
         }
 
@@ -60,6 +56,29 @@ namespace CustomUnity
                 return ret;
             }
             return null;
+        }
+
+        public static Vector3 GetDragAmount(this Transform transform, PointerEventData eventData)
+        {
+            var z = eventData.pressEventCamera.WorldToScreenPoint(transform.position).z;
+            var prev = eventData.pressEventCamera.ScreenToWorldPoint((eventData.position - eventData.delta).ToVector3(z));
+            var now = eventData.pressEventCamera.ScreenToWorldPoint(eventData.position.ToVector3(z));
+            return now - prev;
+        }
+
+        public static Vector3 GetLocalDragAmount(this Transform transform, PointerEventData eventData)
+        {
+            return transform.InverseTransformDirection(transform.GetDragAmount(eventData));
+        }
+
+        /// <summary>
+        /// マウスのドラッグイベントにしたがって移動する
+        /// </summary>
+        /// <param name="transform">Transform.</param>
+        /// <param name="eventData">Event data.</param>
+        public static void ApplyDrag(this Transform transform, PointerEventData eventData)
+        {
+            transform.localPosition += transform.GetLocalDragAmount(eventData);
         }
     }
 }
