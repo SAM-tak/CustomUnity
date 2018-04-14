@@ -1,0 +1,10 @@
+{
+    "name": "CustomUnityEditor",
+    "references": [
+        "CustomUnity"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
