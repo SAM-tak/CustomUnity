@@ -4,12 +4,19 @@ namespace CustomUnity
 {
     public class CameraSwitchTest : MonoBehaviour
     {
-        public bool smoothDamp;
+        public enum SmoothMode
+        {
+            RubberStep,
+            SmoothDamp,
+            UnitySmoothDamp,
+        }
+        public SmoothMode smoothMode;
         public float halfLife = 0.3f;
         public Transform[] positions;
         public int index;
 
         Vector3 currentTarget;
+        Quaternion targetRotation;
         Vector3 currentVelocity;
 
         public void SetIndex(int index)
@@ -41,14 +48,25 @@ namespace CustomUnity
                 if(index < 0) index = 0;
                 if(index >= positions.Length) index = positions.Length - 1;
 
-                if(smoothDamp) {
+                switch(smoothMode) {
+                case SmoothMode.RubberStep: {
+                        var prevTarget = currentTarget;
+                        currentTarget = Math.RubberStep(currentTarget, positions[index].position, halfLife, Time.deltaTime);
+                        currentVelocity = currentTarget - prevTarget;
+                    }
+                    break;
+                case SmoothMode.SmoothDamp:
                     currentTarget = Math.SmoothDamp(ref currentVelocity, currentTarget, positions[index].position, halfLife, Time.deltaTime);
+                    break;
+                case SmoothMode.UnitySmoothDamp:
+                    currentTarget = Vector3.SmoothDamp(currentTarget, positions[index].position, ref currentVelocity, halfLife * 2, float.PositiveInfinity, Time.deltaTime);
+                    break;
                 }
-                else {
-                    currentVelocity = Vector3.zero;
-                    currentTarget = Math.RubberStep(currentTarget, positions[index].position, halfLife, Time.deltaTime);
-                }
+                var rotation = transform.rotation;
                 transform.LookAt(currentTarget);
+                targetRotation = transform.rotation;
+                transform.rotation = Math.RubberStep(rotation, targetRotation, halfLife, Time.deltaTime);
+                transform.localEulerAngles = transform.localEulerAngles.SetZ(0);
             }
         }
     }

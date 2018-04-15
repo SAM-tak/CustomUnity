@@ -270,77 +270,7 @@ namespace CustomUnity
         {
             return new Vector4(Mathf.Clamp01(a.x), Mathf.Clamp01(a.y), Mathf.Clamp01(a.z), Mathf.Clamp01(a.w));
         }
-
-        public static Vector2 Max(Vector2 a, Vector2 b)
-        {
-            return new Vector2(Mathf.Max(a.x, b.x), Mathf.Max(a.y, b.y));
-        }
-
-        public static Vector2 Min(Vector2 a, Vector2 b)
-        {
-            return new Vector2(Mathf.Min(a.x, b.x), Mathf.Min(a.y, b.y));
-        }
-
-        public static Vector3 Max(Vector3 a, Vector3 b)
-        {
-            return new Vector3(Mathf.Max(a.x, b.x), Mathf.Max(a.y, b.y), Mathf.Max(a.z, b.z));
-        }
-
-        public static Vector2 Min(Vector3 a, Vector3 b)
-        {
-            return new Vector3(Mathf.Min(a.x, b.x), Mathf.Min(a.y, b.y), Mathf.Min(a.z, b.z));
-        }
-
-        public static Vector4 Max(Vector4 a, Vector4 b)
-        {
-            return new Vector4(Mathf.Max(a.x, b.x), Mathf.Max(a.y, b.y), Mathf.Max(a.z, b.z), Mathf.Max(a.w, b.w));
-        }
-
-        public static Vector4 Min(Vector4 a, Vector4 b)
-        {
-            return new Vector4(Mathf.Min(a.x, b.x), Mathf.Min(a.y, b.y), Mathf.Min(a.z, b.z), Mathf.Min(a.w, b.w));
-        }
-
-        public static float AbsMin(float a, float b)
-        {
-            return Mathf.Abs(a) <= Mathf.Abs(b) ? a : b;
-        }
-
-        public static float AbsMax(float a, float b)
-        {
-            return Mathf.Abs(a) >= Mathf.Abs(b) ? a : b;
-        }
-
-        public static Vector2 AbsMin(Vector2 a, Vector2 b)
-        {
-            return new Vector2(AbsMin(a.x, b.x), AbsMin(a.y, b.y));
-        }
-
-        public static Vector2 AbsMax(Vector2 a, Vector2 b)
-        {
-            return new Vector2(AbsMax(a.x, b.x), AbsMax(a.y, b.y));
-        }
-
-        public static Vector3 AbsMin(Vector3 a, Vector3 b)
-        {
-            return new Vector3(AbsMin(a.x, b.x), AbsMin(a.y, b.y), AbsMin(a.z, b.z));
-        }
-
-        public static Vector3 AbsMax(Vector3 a, Vector3 b)
-        {
-            return new Vector3(AbsMax(a.x, b.x), AbsMax(a.y, b.y), AbsMax(a.z, b.z));
-        }
-
-        public static Vector4 AbsMin(Vector4 a, Vector4 b)
-        {
-            return new Vector4(AbsMin(a.x, b.x), AbsMin(a.y, b.y), AbsMin(a.z, b.z), AbsMin(a.w, b.w));
-        }
-
-        public static Vector4 AbsMax(Vector4 a, Vector4 b)
-        {
-            return new Vector4(AbsMax(a.x, b.x), AbsMax(a.y, b.y), AbsMax(a.z, b.z), AbsMax(a.w, b.w));
-        }
-
+        
         //
         // Starting from dx/dt = wxt.
         // We treat dx and dt as infinitessimal factors of x and t, therefore fundemental mathematical operations still apply.
@@ -444,6 +374,26 @@ namespace CustomUnity
         }
 
         /// <summary>
+        /// ゴムひも補間
+        /// </summary>
+        /// <param name="current">現在値</param>
+        /// <param name="target">目標値</param>
+        /// <param name="halfLife">半減期</param>
+        /// <param name="deltaTime">経過時間</param>
+        /// <returns>次の値</returns>
+        public static Quaternion RubberStep(Quaternion current, Quaternion target, float halfLife, float deltaTime)
+        {
+            Quaternion delta = target * Quaternion.Inverse(current);
+            if(Quaternion.Angle(delta, Quaternion.identity) > float.Epsilon) {
+                float omega = 1.0f / Mathf.Max(halfLife, float.Epsilon);
+                float a = 0.5f * omega * deltaTime * deltaTime;
+                float a2 = a * a;
+                return current * Quaternion.Slerp(Quaternion.identity, delta, Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a)));
+            }
+            return target;
+        }
+
+        /// <summary>
         /// ゴムひも補間（異方性半減期バージョン）
         /// </summary>
         /// <param name="current">現在値</param>
@@ -455,7 +405,7 @@ namespace CustomUnity
         {
             Vector2 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                Vector2 omega = Reciprocal(Max(EpsilonVector2, halfLife));
+                Vector2 omega = Reciprocal(Vector4.Max(EpsilonVector2, halfLife));
                 Vector2 a = 0.5f * omega * deltaTime * deltaTime;
                 Vector2 a2 = a * a;
                 return current + delta * Clamp01(omega * deltaTime * (Vector2.one + a + 0.48f * a2 + 0.235f * a2 * a));
@@ -475,7 +425,7 @@ namespace CustomUnity
         {
             Vector3 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                Vector3 omega = Reciprocal(Max(EpsilonVector3, halfLife));
+                Vector3 omega = Reciprocal(Vector4.Max(EpsilonVector3, halfLife));
                 Vector3 a = 0.5f * omega * deltaTime * deltaTime;
                 Vector3 a2 = Times(a, a);
                 Vector3 k = Vector3.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
@@ -496,7 +446,7 @@ namespace CustomUnity
         {
             Vector4 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                Vector4 omega = Reciprocal(Max(EpsilonVector4, halfLife));
+                Vector4 omega = Reciprocal(Vector4.Max(EpsilonVector4, halfLife));
                 Vector4 a = 0.5f * omega * deltaTime * deltaTime;
                 Vector4 a2 = Times(a, a);
                 Vector4 k = Vector4.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
@@ -519,7 +469,7 @@ namespace CustomUnity
             Vector2 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
                 Vector2 halfLife = new Vector2(delta.x >= 0 ? increaseHalfLife.x : decreaseHalfLife.x, delta.y >= 0 ? increaseHalfLife.y : decreaseHalfLife.y);
-                Vector2 omega = Reciprocal(Max(EpsilonVector2, halfLife));
+                Vector2 omega = Reciprocal(Vector4.Max(EpsilonVector2, halfLife));
                 Vector2 a = 0.5f * omega * deltaTime * deltaTime;
                 Vector2 a2 = a * a;
                 return current + delta * Clamp01(omega * deltaTime * (Vector2.one + a + 0.48f * a2 + 0.235f * a2 * a));
@@ -544,7 +494,7 @@ namespace CustomUnity
                     delta.x >= 0 ? increaseHalfLife.x : decreaseHalfLife.x,
                     delta.y >= 0 ? increaseHalfLife.y : decreaseHalfLife.y,
                     delta.z >= 0 ? increaseHalfLife.z : decreaseHalfLife.z);
-                Vector3 omega = Reciprocal(Max(EpsilonVector3, halfLife));
+                Vector3 omega = Reciprocal(Vector4.Max(EpsilonVector3, halfLife));
                 Vector3 a = 0.5f * omega * deltaTime * deltaTime;
                 Vector3 a2 = Times(a, a);
                 Vector3 k = Vector3.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
@@ -571,7 +521,7 @@ namespace CustomUnity
                     delta.y >= 0 ? increaseHalfLife.y : decreaseHalfLife.y,
                     delta.z >= 0 ? increaseHalfLife.z : decreaseHalfLife.z,
                     delta.w >= 0 ? increaseHalfLife.w : decreaseHalfLife.w);
-                Vector4 omega = Reciprocal(Max(EpsilonVector4, halfLife));
+                Vector4 omega = Reciprocal(Vector4.Max(EpsilonVector4, halfLife));
                 Vector4 a = 0.5f * omega * deltaTime * deltaTime;
                 Vector4 a2 = Times(a, a);
                 Vector4 k = Vector4.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
@@ -580,116 +530,54 @@ namespace CustomUnity
             return target;
         }
 
-        public static float SmoothDamp(ref float currentVelocity, float current, float target, float halfLife, float deltaTime)
-        {
-            var delta = target - current;
-            if(Mathf.Abs(delta) > float.Epsilon) {
-                var omega = 1.0f / Mathf.Max(float.Epsilon, halfLife);
-                var a = 0.5f * omega * deltaTime * deltaTime;
-                var a2 = a * a;
-                var newVelocity = delta * Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a)) / deltaTime;
-                currentVelocity = AbsMin(newVelocity, newVelocity + currentVelocity * deltaTime / halfLife);
-                return current + currentVelocity * deltaTime;
-            }
-            currentVelocity = 0;
-            return target;
-        }
-
-        public static Vector2 SmoothDamp(ref Vector2 currentVelocity, Vector2 current, Vector2 target, float halfLife, float deltaTime)
-        {
-            var delta = target - current;
-            if(delta.sqrMagnitude > float.Epsilon) {
-                var omega = 1.0f / Mathf.Max(float.Epsilon, halfLife);
-                var a = 0.5f * omega * deltaTime * deltaTime;
-                var a2 = a * a;
-                var newVelocity = delta * Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a)) / deltaTime;
-                currentVelocity = AbsMin(newVelocity, newVelocity + currentVelocity * deltaTime / halfLife);
-                return current + currentVelocity * deltaTime;
-            }
-            currentVelocity = Vector2.zero;
-            return target;
-        }
+        const float DampCoeff = 80.0f;
 
         public static Vector3 SmoothDamp(ref Vector3 currentVelocity, Vector3 current, Vector3 target, float halfLife, float deltaTime)
         {
-            var delta = target - current;
-            if(delta.sqrMagnitude > float.Epsilon) {
-                var omega = 1.0f / Mathf.Max(float.Epsilon, halfLife);
-                var a = 0.5f * omega * deltaTime * deltaTime;
-                var a2 = a * a;
-                var newVelocity = delta * Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a)) / deltaTime;
-                currentVelocity = AbsMin(newVelocity, currentVelocity + newVelocity * deltaTime / halfLife);
-                return current + currentVelocity * deltaTime;
-            }
-            currentVelocity = Vector3.zero;
-            return target;
-        }
+            var newPosition = RubberStep(current, target, halfLife, deltaTime);
 
-        public static Vector2 SmoothDamp(ref Vector2 currentVelocity, Vector2 current, Vector2 target, Vector2 halfLife, float deltaTime)
-        {
-            var delta = target - current;
-            if(delta.sqrMagnitude > float.Epsilon) {
-                var omega = Reciprocal(Vector2.Max(EpsilonVector2, halfLife));
-                var a = 0.5f * omega * deltaTime * deltaTime;
-                var a2 = a * a;
-                var newVelocity = delta * Clamp01(omega * deltaTime * (Vector2.one + a + 0.48f * a2 + 0.235f * a2 * a)) / deltaTime;
-                currentVelocity = AbsMin(newVelocity, newVelocity + currentVelocity * deltaTime / halfLife);
-                return current + currentVelocity * deltaTime;
+            var newVelocity = newPosition - current;
+            var accel = (newVelocity - currentVelocity);
+            if(currentVelocity.sqrMagnitude > 0.0001f && accel.sqrMagnitude > 0.0001f) {
+                accel *= Mathf.Lerp(0.1f, 1.0f, (0.5f - 0.5f * Vector3.Dot(currentVelocity.normalized, accel.normalized)) * Mathf.Clamp01(accel.sqrMagnitude / DampCoeff));
+                newVelocity = currentVelocity + accel;
+                newPosition = current + newVelocity * deltaTime;
             }
-            currentVelocity = Vector2.zero;
-            return target;
+            else currentVelocity = Vector3.zero;
+
+            return newPosition;
         }
 
         public static Vector3 SmoothDamp(ref Vector3 currentVelocity, Vector3 current, Vector3 target, Vector3 halfLife, float deltaTime)
         {
-            var delta = target - current;
-            if(delta.sqrMagnitude > float.Epsilon) {
-                var omega = Reciprocal(Vector3.Max(EpsilonVector3, halfLife));
-                var a = 0.5f * omega * deltaTime * deltaTime;
-                var a2 = Times(a, a);
-                var k = Vector3.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
-                var newVelocity = Times(delta, Clamp01(Times(omega, k) * deltaTime)) / deltaTime;
-                currentVelocity = AbsMin(newVelocity, currentVelocity + Times(newVelocity * deltaTime, Reciprocal(halfLife)));
-                return current + currentVelocity * deltaTime;
-            }
-            currentVelocity = Vector3.zero;
-            return target;
-        }
+            var newPosition = RubberStep(current, target, halfLife, deltaTime);
 
-        public static Vector2 SmoothDamp(ref Vector2 currentVelocity, Vector2 current, Vector2 target, Vector2 increaseHalfLife, Vector2 decreaseHalfLife, float deltaTime)
-        {
-            var delta = target - current;
-            if(delta.sqrMagnitude > float.Epsilon) {
-                Vector2 halfLife = new Vector2(delta.x >= 0 ? increaseHalfLife.x : decreaseHalfLife.x, delta.y >= 0 ? increaseHalfLife.y : decreaseHalfLife.y);
-                var omega = Reciprocal(Vector2.Max(EpsilonVector2, halfLife));
-                var a = 0.5f * omega * deltaTime * deltaTime;
-                var a2 = a * a;
-                var newVelocity = delta * Clamp01(omega * deltaTime * (Vector2.one + a + 0.48f * a2 + 0.235f * a2 * a)) / deltaTime;
-                currentVelocity = AbsMin(newVelocity, newVelocity + currentVelocity * deltaTime / halfLife);
-                return current + currentVelocity * deltaTime;
+            var newVelocity = newPosition - current;
+            var accel = (newVelocity - currentVelocity);
+            if(currentVelocity.sqrMagnitude > 0.0001f && accel.sqrMagnitude > 0.0001f) {
+                accel *= Mathf.Lerp(0.1f, 1.0f, (0.5f - 0.5f * Vector3.Dot(currentVelocity.normalized, accel.normalized)) * Mathf.Clamp01(accel.sqrMagnitude / DampCoeff));
+                newVelocity = currentVelocity + accel;
+                newPosition = current + newVelocity * deltaTime;
             }
-            currentVelocity = Vector2.zero;
-            return target;
+            else currentVelocity = Vector3.zero;
+
+            return newPosition;
         }
 
         public static Vector3 SmoothDamp(ref Vector3 currentVelocity, Vector3 current, Vector3 target, Vector3 increaseHalfLife, Vector3 decreaseHalfLife, float deltaTime)
         {
-            var delta = target - current;
-            if(delta.sqrMagnitude > float.Epsilon) {
-                Vector3 halfLife = new Vector3(
-                    delta.x >= 0 ? increaseHalfLife.x : decreaseHalfLife.x,
-                    delta.y >= 0 ? increaseHalfLife.y : decreaseHalfLife.y,
-                    delta.z >= 0 ? increaseHalfLife.z : decreaseHalfLife.z);
-                var omega = Reciprocal(Vector3.Max(EpsilonVector3, halfLife));
-                var a = 0.5f * omega * deltaTime * deltaTime;
-                var a2 = Times(a, a);
-                var k = Vector3.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
-                var newVelocity = Times(delta, Clamp01(Times(omega, k) * deltaTime)) / deltaTime;
-                currentVelocity = AbsMin(newVelocity, currentVelocity + Times(newVelocity * deltaTime, Reciprocal(halfLife)));
-                return current + currentVelocity * deltaTime;
+            var newPosition = RubberStep(current, target, increaseHalfLife, decreaseHalfLife, deltaTime);
+
+            var newVelocity = newPosition - current;
+            var accel = (newVelocity - currentVelocity);
+            if(currentVelocity.sqrMagnitude > 0.0001f && accel.sqrMagnitude > 0.0001f) {
+                accel *= Mathf.Lerp(0.1f, 1.0f, (0.5f - 0.5f * Vector3.Dot(currentVelocity.normalized, accel.normalized)) * Mathf.Clamp01(accel.sqrMagnitude / DampCoeff));
+                newVelocity = currentVelocity + accel;
+                newPosition = current + newVelocity * deltaTime;
             }
-            currentVelocity = Vector3.zero;
-            return target;
+            else currentVelocity = Vector3.zero;
+
+            return newPosition;
         }
     }
 }

@@ -20,26 +20,26 @@ namespace YourProjectNamespace
             gameObjectPools?.TrySpawn(transform, parameter);
         }
         
-        public UnityEvent @event1;
+        public UnityEvent event1;
         void FireEvent1()
         {
-            @event1.Invoke();
+            event1.Invoke();
         }
 
-        public UnityEvent<int> @event2;
+        public UnityEvent<int> event2;
         void FireEvent2(int i)
         {
             LogInfo("FireEvent2 {0}", i);
-            if(@event2 != null) @event2.Invoke(i);
+            if(event2 != null) event2.Invoke(i);
         }
         
-        public UnityEvent @animationExitEvent;
+        public UnityEvent animationExitEvent;
         public void OnAnimationExit(Animator animator, int stateMachinePathHash)
         {
             LogInfo("OnAnimationExit".Aqua());
-            @animationExitEvent?.Invoke();
+            animationExitEvent?.Invoke();
         }
-
+        
         void Awake()
         {
             gameObjectPools?.SetUp();
