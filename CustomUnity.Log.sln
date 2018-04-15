@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomUnity.Log", "CustomUnityLog\CustomUnity.Log.csproj", "{4E845C21-358C-4562-9BFB-E9C3053E1FE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomUnity.Log", "CustomUnity.Log\CustomUnity.Log.csproj", "{4E845C21-358C-4562-9BFB-E9C3053E1FE6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomUnity.Editor.Log", "CustomUnity.Editor.Log\CustomUnity.Editor.Log.csproj", "{E1F71B61-3D18-47CB-8719-DF0170E4CFEB}"
 EndProject

@@ -259,11 +259,17 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# Unity Project
 Library/
-CustomUnity.csproj
-CustomUnity.Editor.csproj
-CustomUnity.sln
 Temp/
-!Packages/manifest.json
 Assembly-CSharp.csproj
 Assembly-CSharp-Editor.csproj
+CustomUnity.sln
+CustomUnity.csproj
+CustomUnity.Editor.csproj
+!Packages/manifest.json
+Tests.csproj
+CustomUnityEditor.csproj
+!CustomUnity.Log/
+!CustomUnity.Editor.Log/
