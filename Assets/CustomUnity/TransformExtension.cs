@@ -65,12 +65,7 @@ namespace CustomUnity
             var now = eventData.pressEventCamera.ScreenToWorldPoint(eventData.position.ToVector3(z));
             return now - prev;
         }
-
-        public static Vector3 GetLocalDragAmount(this Transform transform, PointerEventData eventData)
-        {
-            return transform.InverseTransformDirection(transform.GetDragAmount(eventData));
-        }
-
+        
         /// <summary>
         /// マウスのドラッグイベントにしたがって移動する
         /// </summary>
@@ -78,7 +73,7 @@ namespace CustomUnity
         /// <param name="eventData">Event data.</param>
         public static void ApplyDrag(this Transform transform, PointerEventData eventData)
         {
-            transform.localPosition += transform.GetLocalDragAmount(eventData);
+            transform.position += transform.GetDragAmount(eventData);
         }
     }
 }
