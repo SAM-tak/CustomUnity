@@ -8,9 +8,16 @@ namespace CustomUnity
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            var previousEnabled = GUI.enabled;
             GUI.enabled = false;
+            Log.Info(property.propertyPath);
             EditorGUI.PropertyField(position, property, label, true);
-            GUI.enabled = true;
+            GUI.enabled = previousEnabled;
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label, property.isExpanded);
         }
     }
 
