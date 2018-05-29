@@ -24,6 +24,12 @@ namespace CustomUnity
         
         void Reset()
         {
+            CollectAnimators();
+        }
+
+        [ContextMenu("Collect Animators")]
+        void CollectAnimators()
+        {
             animators = GetComponentsInChildren<Animator>();
         }
 
@@ -53,7 +59,7 @@ namespace CustomUnity
 
         public void ClearSignals()
         {
-            foreach(var k in signals.Keys.ToArray()) signals[k] = false;
+            foreach(var k in signals.Keys) signals[k] = false;
         }
     }
 }
