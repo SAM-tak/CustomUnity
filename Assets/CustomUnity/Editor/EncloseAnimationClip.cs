@@ -12,7 +12,7 @@ namespace CustomUnity
 
 		string clipName;
 
-		[MenuItem("Assets/Enclosure AnimationClip")]
+		[MenuItem("Assets/Enclose AnimationClip")]
 		static void Create()
 		{
 			var window = EncloseAnimationClip.GetWindow(typeof(EncloseAnimationClip)) as EncloseAnimationClip;
@@ -23,10 +23,10 @@ namespace CustomUnity
 
 		void OnGUI()
 		{
-			EditorGUILayout.LabelField("target clip");
+			EditorGUILayout.LabelField("Target Animator Controller");
 			controller = EditorGUILayout.ObjectField(controller, typeof(AnimatorController), false) as AnimatorController;
 
-			if(controller == null ) return;
+			if(controller == null) return;
 
 			var clipList = new List<AnimationClip>();
 			var allAssets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(controller));
@@ -49,7 +49,7 @@ namespace CustomUnity
 				EditorGUILayout.LabelField("can't create duplicate names or empty");
 			}
 			else{
-				if(GUILayout.Button("create")) {
+				if(GUILayout.Button("Create")) {
 					var animationClip = UnityEditor.Animations.AnimatorController.AllocateAnimatorClip(clipName);
 					AssetDatabase.AddObjectToAsset(animationClip, controller);
 					AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
@@ -62,14 +62,14 @@ namespace CustomUnity
 
 			EditorGUILayout.Space();
 
-			EditorGUILayout.LabelField("remove clip");
+			EditorGUILayout.LabelField("Enclosed Clips");
 			EditorGUILayout.BeginVertical("box");
 
 			foreach(var removeClip in clipList) {
 				EditorGUILayout.BeginHorizontal();
 				
 				EditorGUILayout.LabelField(removeClip.name);
-				if(GUILayout.Button("remove" , GUILayout.Width(100))) {
+				if(GUILayout.Button("Remove" , GUILayout.Width(100))) {
 					Object.DestroyImmediate(removeClip, true);
 					AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
 				}
