@@ -13,9 +13,13 @@ namespace CustomUnity
 
         public readonly Dictionary<Object, bool> signals = new Dictionary<Object, bool>();
 
+        List<Object> keyCache = new List<Object>(10);
+
         void OnEnable()
         {
-            foreach(var i in signals.Keys.Where(x => x is SignalOnEnterState).ToArray()) signals.Remove(i);
+            keyCache.Clear();
+            foreach(var i in signals.Keys.Where(x => x is SignalOnEnterState)) keyCache.Add(i);
+            for(int i = 0; i < keyCache.Count; ++i) signals.Remove(keyCache[i]);
             foreach(var i in animators) {
                 var behaviours = i.GetBehaviours<SignalOnEnterState>();
                 foreach(var j in behaviours) DefineSignal(j);
@@ -59,7 +63,9 @@ namespace CustomUnity
 
         public void ClearSignals()
         {
-            foreach(var k in signals.Keys) signals[k] = false;
+            keyCache.Clear();
+            foreach(var k in signals.Keys) keyCache.Add(k);
+            for(int i = 0; i < keyCache.Count; ++i) signals[keyCache[i]] = false;
         }
     }
 }
