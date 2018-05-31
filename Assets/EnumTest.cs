@@ -6,7 +6,6 @@ namespace CustomUnity
 {
     public class EnumTest : MonoBehaviour
     {
-
         // Use this for initialization
         void Start()
         {
