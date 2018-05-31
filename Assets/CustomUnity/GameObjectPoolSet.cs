@@ -19,6 +19,16 @@ namespace CustomUnity
             }
         }
 
+        public void SetUp(System.Action<GameObjectPool, GameObject> setUpProcPerObject)
+        {
+            index.Clear();
+            foreach(var i in pools) {
+                i.SetUp();
+                i.ForEachObjects(x => setUpProcPerObject(i, x));
+                index.Add(i.Name, i);
+            }
+        }
+
         public void InactivateAll()
         {
             foreach(var i in pools) i.InactivateAll();
