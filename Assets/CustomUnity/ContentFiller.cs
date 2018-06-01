@@ -1,18 +1,18 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace CustomUnity
 {
     [RequireComponent(typeof(RectTransform))]
-    public class ContentsFiller : MonoBehaviour
+    public class ContentFiller : MonoBehaviour
     {
         public interface IDataSource
         {
             int TotalCount { get; }
-            void OnPreUpdate(ContentsFiller contentsFiller);
-            float CellSize(int index, ContentsFiller contentsFiller);
-            void SetUpCell(int index, ContentsFiller contentsFiller, GameObject cell);
-            void UpdateCell(int index, ContentsFiller contentsFiller, GameObject cell);
+            Vector2 CellSize(int index, ContentFiller contentsFiller);
+            void SetUpCell(int index, ContentFiller contentsFiller, GameObject cell);
+            void UpdateCell(int index, ContentFiller contentsFiller, GameObject cell);
         }
 
         public enum Orientaion
@@ -23,9 +23,19 @@ namespace CustomUnity
 
         public Orientaion orientaion;
         
-        public IDataSource dataSource;
+        public IDataSource DataSource { get; set; }
+        
+        public Action<ContentFiller> OnPreUpdate { get; set; }
 
         public ScrollRect ScrollRect { get; protected set; }
+
+        public int MaxCells {
+            get {
+                return cellPool != null ? cellPool.Length : 0;
+            }
+        }
+
+        public int MaxCellsRequired { get; protected set; }
 
         RectTransform contentRectTransform;
         RectTransform scrollRectTransform;
@@ -37,7 +47,7 @@ namespace CustomUnity
         }
 
         Cell[] cellPool;
-        float[] cellPositions;
+        Vector2[] cellPositions;
         
         void Start()
         {
@@ -46,7 +56,7 @@ namespace CustomUnity
             contentRectTransform = GetComponent<RectTransform>();
             scrollRectTransform = GetComponentInParent<ScrollRect>().GetComponent<RectTransform>();
             cellPool = new Cell[transform.childCount];
-            cellPositions = new float[transform.childCount];
+            cellPositions = new Vector2[transform.childCount];
             for(int i = 0; i < transform.childCount; i++) {
                 var go = transform.GetChild(i).gameObject;
                 go.SetActive(false);
@@ -64,6 +74,7 @@ namespace CustomUnity
             int endIndex = -1;
             var viewSize = scrollRectTransform.sizeDelta;
             float viewLower = 0;
+            var contentRectLocalPosition = contentRectTransform.localPosition;
             switch(orientaion) {
             case Orientaion.Vertical:
                 viewLower = viewSize.y;
@@ -73,29 +84,34 @@ namespace CustomUnity
                 break;
             }
 
-            dataSource?.OnPreUpdate(this);
+            OnPreUpdate?.Invoke(this);
 
-            for(int i = 0; i < (dataSource != null ? dataSource.TotalCount : 0); ++i) {
-                var size = dataSource.CellSize(i, this);
+            for(int i = 0; i < (DataSource != null ? DataSource.TotalCount : 0); ++i) {
+                float size = 0;
                 float cellUpper = 0;
+                Vector2 position = Vector2.zero;
                 switch(orientaion) {
                 case Orientaion.Vertical:
-                    cellUpper = contentSize - contentRectTransform.localPosition.y;
+                    cellUpper = contentSize - contentRectLocalPosition.y;
+                    size = DataSource.CellSize(i, this).y;
+                    position = new Vector2(0, contentSize);
                     break;
                 case Orientaion.Horizontal:
-                    cellUpper = contentSize + contentRectTransform.localPosition.x;
+                    cellUpper = contentSize + contentRectLocalPosition.x;
+                    size = DataSource.CellSize(i, this).x;
+                    position = new Vector2(contentSize, 0);
                     break;
                 }
                 if(startIndex < 0) {
                     if(cellUpper >= -size && cellUpper <= viewLower) {
                         startIndex = endIndex = i;
-                        cellPositions[0] = contentSize;
+                        cellPositions[0] = position;
                     }
                 }
                 else {
                     if(cellUpper >= -size && cellUpper <= viewLower) {
                         endIndex = i;
-                        if(i - startIndex < cellPositions.Length) cellPositions[i - startIndex] = contentSize;
+                        if(i - startIndex < cellPositions.Length) cellPositions[i - startIndex] = position;
                     }
                 }
                 contentSize += size;
@@ -122,13 +138,14 @@ namespace CustomUnity
             }
 
             if(startIndex >= 0) {
-                if(endIndex - startIndex + 1 > cellPool.Length) LogWarning("Short of Cell Object : current active count is {0}", endIndex - startIndex + 1);
+                //if(endIndex - startIndex + 1 > cellPool.Length) LogWarning("Short of Cell Object : current active count is {0}", endIndex - startIndex + 1);
+                if(endIndex - startIndex + 1 > MaxCellsRequired) MaxCellsRequired = endIndex - startIndex + 1;
                 for(int i = startIndex; i <= endIndex; ++i) {
                     int celli = -1;
                     for(int j = 0; j < cellPool.Length; ++j) {
                         if(cellPool[j].index == i) {
                             celli = j;
-                            dataSource.UpdateCell(i, this, cellPool[j].cell);
+                            DataSource.UpdateCell(i, this, cellPool[j].cell);
                             break;
                         }
                     }
@@ -136,16 +153,16 @@ namespace CustomUnity
                         for(int j = 0; j < cellPool.Length; ++j) {
                             if(cellPool[j].index < 0 && endIndex - startIndex < cellPositions.Length) {
                                 var x = cellPool[j];
-                                dataSource.SetUpCell(i, this, x.cell);
+                                DataSource.SetUpCell(i, this, x.cell);
                                 var rectTrans = x.cell.GetComponent<RectTransform>();
                                 var localPosition = rectTrans.localPosition;
                                 var size = rectTrans.sizeDelta;
                                 switch(orientaion) {
                                 case Orientaion.Vertical:
-                                    localPosition.y = -cellPositions[i - startIndex] - size.y * rectTrans.pivot.y;
+                                    localPosition.y = -cellPositions[i - startIndex].y - size.y * rectTrans.pivot.y;
                                     break;
                                 case Orientaion.Horizontal:
-                                    localPosition.x = cellPositions[i - startIndex] + size.x * rectTrans.pivot.x;
+                                    localPosition.x = cellPositions[i - startIndex].x + size.x * rectTrans.pivot.x;
                                     break;
                                 }
                                 rectTrans.localPosition = localPosition;

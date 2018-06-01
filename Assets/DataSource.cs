@@ -5,8 +5,8 @@ using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    [RequireComponent(typeof(ContentsFiller))]
-    public class DataSource : MonoBehaviour, ContentsFiller.IDataSource
+    [RequireComponent(typeof(ContentFiller))]
+    public class DataSource : MonoBehaviour, ContentFiller.IDataSource
     {
         [System.Serializable]
         public struct CellData
@@ -42,27 +42,27 @@ namespace YourProjectNamespace
 
         bool prevAppendToFront;
 
-        public void OnPreUpdate(ContentsFiller contentsFiller)
+        public void OnPreUpdate(ContentFiller contentsFiller)
         {
             if(prevAppendToFront != appendToFront) {
                 var moveSize = dataSource2.Sum(x => x.height);
                 var pos = contentsFiller.transform.localPosition;
                 if(appendToFront) {
                     switch(contentsFiller.orientaion) {
-                    case ContentsFiller.Orientaion.Vertical:
+                    case ContentFiller.Orientaion.Vertical:
                         pos.y += moveSize;
                         break;
-                    case ContentsFiller.Orientaion.Horizontal:
+                    case ContentFiller.Orientaion.Horizontal:
                         pos.x -= moveSize;
                         break;
                     }
                 }
                 else {
                     switch(contentsFiller.orientaion) {
-                    case ContentsFiller.Orientaion.Vertical:
+                    case ContentFiller.Orientaion.Vertical:
                         pos.y -= moveSize;
                         break;
-                    case ContentsFiller.Orientaion.Horizontal:
+                    case ContentFiller.Orientaion.Horizontal:
                         pos.x += moveSize;
                         break;
                     }
@@ -71,12 +71,13 @@ namespace YourProjectNamespace
             }
         }
         
-        public float CellSize(int index, ContentsFiller contentsFiller)
+        public Vector2 CellSize(int index, ContentFiller contentsFiller)
         {
-            return GetCellData(index).height;
+            var s = GetCellData(index).height;
+            return new Vector2(s, s);
         }
 
-        public void SetUpCell(int index, ContentsFiller contentsFiller, GameObject cell)
+        public void SetUpCell(int index, ContentFiller contentsFiller, GameObject cell)
         {
             var data = GetCellData(index);
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
@@ -84,24 +85,26 @@ namespace YourProjectNamespace
             var rectTransform = cell.GetComponent<RectTransform>();
             var sizeDelta = rectTransform.sizeDelta;
             switch(contentsFiller.orientaion) {
-            case ContentsFiller.Orientaion.Vertical:
+            case ContentFiller.Orientaion.Vertical:
                 sizeDelta.y = data.height;
                 break;
-            case ContentsFiller.Orientaion.Horizontal:
+            case ContentFiller.Orientaion.Horizontal:
                 sizeDelta.x = data.height;
                 break;
             }
             rectTransform.sizeDelta = sizeDelta;
         }
 
-        public void UpdateCell(int index, ContentsFiller contentsFiller, GameObject cell)
+        public void UpdateCell(int index, ContentFiller contentsFiller, GameObject cell)
         {
             if(prevAppendToFront != appendToFront) SetUpCell(index, contentsFiller, cell);
         }
 
         void Awake()
         {
-            GetComponent<ContentsFiller>().dataSource = this;
+            var contentFilter = GetComponent<ContentFiller>();
+            contentFilter.DataSource = this;
+            contentFilter.OnPreUpdate += OnPreUpdate;
         }
 
         void Start()
