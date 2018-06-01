@@ -41,14 +41,15 @@ namespace YourProjectNamespace
         }
 
         bool prevAppendToFront;
+        ContentFiller contentFiller;
 
-        public void OnPreUpdate(ContentFiller contentsFiller)
+        public void OnPreUpdate()
         {
             if(prevAppendToFront != appendToFront) {
                 var moveSize = dataSource2.Sum(x => x.height);
-                var pos = contentsFiller.transform.localPosition;
+                var pos = contentFiller.transform.localPosition;
                 if(appendToFront) {
-                    switch(contentsFiller.orientaion) {
+                    switch(contentFiller.orientaion) {
                     case ContentFiller.Orientaion.Vertical:
                         pos.y += moveSize;
                         break;
@@ -58,7 +59,7 @@ namespace YourProjectNamespace
                     }
                 }
                 else {
-                    switch(contentsFiller.orientaion) {
+                    switch(contentFiller.orientaion) {
                     case ContentFiller.Orientaion.Vertical:
                         pos.y -= moveSize;
                         break;
@@ -67,24 +68,24 @@ namespace YourProjectNamespace
                         break;
                     }
                 }
-                contentsFiller.transform.localPosition = pos;
+                contentFiller.transform.localPosition = pos;
             }
         }
         
-        public Vector2 CellSize(int index, ContentFiller contentsFiller)
+        public Vector2 CellSize(int index)
         {
             var s = GetCellData(index).height;
             return new Vector2(s, s);
         }
 
-        public void SetUpCell(int index, ContentFiller contentsFiller, GameObject cell)
+        public void SetUpCell(int index, GameObject cell)
         {
             var data = GetCellData(index);
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
             cell.transform.Find("Button/Text").GetComponent<Text>().text = data.buttonTitle;
             var rectTransform = cell.GetComponent<RectTransform>();
             var sizeDelta = rectTransform.sizeDelta;
-            switch(contentsFiller.orientaion) {
+            switch(contentFiller.orientaion) {
             case ContentFiller.Orientaion.Vertical:
                 sizeDelta.y = data.height;
                 break;
@@ -95,16 +96,16 @@ namespace YourProjectNamespace
             rectTransform.sizeDelta = sizeDelta;
         }
 
-        public void UpdateCell(int index, ContentFiller contentsFiller, GameObject cell)
+        public void UpdateCell(int index, GameObject cell)
         {
-            if(prevAppendToFront != appendToFront) SetUpCell(index, contentsFiller, cell);
+            if(prevAppendToFront != appendToFront) SetUpCell(index, cell);
         }
 
         void Awake()
         {
-            var contentFilter = GetComponent<ContentFiller>();
-            contentFilter.DataSource = this;
-            contentFilter.OnPreUpdate += OnPreUpdate;
+            contentFiller = GetComponent<ContentFiller>();
+            contentFiller.DataSource = this;
+            contentFiller.OnPreUpdate += OnPreUpdate;
         }
 
         void Start()

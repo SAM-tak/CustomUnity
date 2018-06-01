@@ -10,9 +10,9 @@ namespace CustomUnity
         public interface IDataSource
         {
             int TotalCount { get; }
-            Vector2 CellSize(int index, ContentFiller contentsFiller);
-            void SetUpCell(int index, ContentFiller contentsFiller, GameObject cell);
-            void UpdateCell(int index, ContentFiller contentsFiller, GameObject cell);
+            Vector2 CellSize(int index);
+            void SetUpCell(int index, GameObject cell);
+            void UpdateCell(int index, GameObject cell);
         }
 
         public enum Orientaion
@@ -25,7 +25,7 @@ namespace CustomUnity
         
         public IDataSource DataSource { get; set; }
         
-        public Action<ContentFiller> OnPreUpdate { get; set; }
+        public Action OnPreUpdate { get; set; }
 
         public ScrollRect ScrollRect { get; protected set; }
 
@@ -84,7 +84,7 @@ namespace CustomUnity
                 break;
             }
 
-            OnPreUpdate?.Invoke(this);
+            OnPreUpdate?.Invoke();
 
             for(int i = 0; i < (DataSource != null ? DataSource.TotalCount : 0); ++i) {
                 float size = 0;
@@ -93,12 +93,12 @@ namespace CustomUnity
                 switch(orientaion) {
                 case Orientaion.Vertical:
                     cellUpper = contentSize - contentRectLocalPosition.y;
-                    size = DataSource.CellSize(i, this).y;
+                    size = DataSource.CellSize(i).y;
                     position = new Vector2(0, contentSize);
                     break;
                 case Orientaion.Horizontal:
                     cellUpper = contentSize + contentRectLocalPosition.x;
-                    size = DataSource.CellSize(i, this).x;
+                    size = DataSource.CellSize(i).x;
                     position = new Vector2(contentSize, 0);
                     break;
                 }
@@ -145,7 +145,7 @@ namespace CustomUnity
                     for(int j = 0; j < cellPool.Length; ++j) {
                         if(cellPool[j].index == i) {
                             celli = j;
-                            DataSource.UpdateCell(i, this, cellPool[j].cell);
+                            DataSource.UpdateCell(i, cellPool[j].cell);
                             break;
                         }
                     }
@@ -153,7 +153,7 @@ namespace CustomUnity
                         for(int j = 0; j < cellPool.Length; ++j) {
                             if(cellPool[j].index < 0 && endIndex - startIndex < cellPositions.Length) {
                                 var x = cellPool[j];
-                                DataSource.SetUpCell(i, this, x.cell);
+                                DataSource.SetUpCell(i, x.cell);
                                 var rectTrans = x.cell.GetComponent<RectTransform>();
                                 var localPosition = rectTrans.localPosition;
                                 var size = rectTrans.sizeDelta;
@@ -162,7 +162,7 @@ namespace CustomUnity
                                     localPosition.y = -cellPositions[i - startIndex].y - size.y * rectTrans.pivot.y;
                                     break;
                                 case Orientaion.Horizontal:
-                                    localPosition.x = cellPositions[i - startIndex].x + size.x * rectTrans.pivot.x;
+                                    localPosition.x =  cellPositions[i - startIndex].x + size.x * rectTrans.pivot.x;
                                     break;
                                 }
                                 rectTrans.localPosition = localPosition;
