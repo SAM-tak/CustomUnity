@@ -3,9 +3,9 @@ using UnityEditor;
 
 namespace CustomUnity
 {
-    [CustomEditor(typeof(ContentFiller))]
+    [CustomEditor(typeof(ListViewContent))]
     //[CanEditMultipleObjects]
-    public class ContentFillerInspector : Editor
+    public class ListViewContentInspector : Editor
     {
         void OnEnable()
         {
@@ -22,7 +22,7 @@ namespace CustomUnity
             DrawDefaultInspector();
 
             if(Application.isPlaying) {
-                var contentFilter = target as ContentFiller;
+                var contentFilter = target as ListViewContent;
                 if(contentFilter.DataSource == null) EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
                 else EditorGUILayout.HelpBox($"DataSource ({contentFilter.DataSource.GetType()})\nLength : {contentFilter.DataSource.TotalCount}", MessageType.Info);
                 if(contentFilter.MaxCellsRequired > contentFilter.MaxCells) {

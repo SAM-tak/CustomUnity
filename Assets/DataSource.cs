@@ -5,8 +5,8 @@ using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    [RequireComponent(typeof(ContentFiller))]
-    public class DataSource : MonoBehaviour, ContentFiller.IDataSource
+    [RequireComponent(typeof(ListViewContent))]
+    public class DataSource : MonoBehaviour, ListViewContent.IDataSource
     {
         [System.Serializable]
         public struct CellData
@@ -41,7 +41,7 @@ namespace YourProjectNamespace
         }
 
         bool prevAppendToFront;
-        ContentFiller contentFiller;
+        ListViewContent contentFiller;
 
         public void OnPreUpdate()
         {
@@ -50,20 +50,20 @@ namespace YourProjectNamespace
                 var pos = contentFiller.transform.localPosition;
                 if(appendToFront) {
                     switch(contentFiller.orientaion) {
-                    case ContentFiller.Orientaion.Vertical:
+                    case Orientaion.Vertical:
                         pos.y += moveSize;
                         break;
-                    case ContentFiller.Orientaion.Horizontal:
+                    case Orientaion.Horizontal:
                         pos.x -= moveSize;
                         break;
                     }
                 }
                 else {
                     switch(contentFiller.orientaion) {
-                    case ContentFiller.Orientaion.Vertical:
+                    case Orientaion.Vertical:
                         pos.y -= moveSize;
                         break;
-                    case ContentFiller.Orientaion.Horizontal:
+                    case Orientaion.Horizontal:
                         pos.x += moveSize;
                         break;
                     }
@@ -86,10 +86,10 @@ namespace YourProjectNamespace
             var rectTransform = cell.GetComponent<RectTransform>();
             var sizeDelta = rectTransform.sizeDelta;
             switch(contentFiller.orientaion) {
-            case ContentFiller.Orientaion.Vertical:
+            case Orientaion.Vertical:
                 sizeDelta.y = data.height;
                 break;
-            case ContentFiller.Orientaion.Horizontal:
+            case Orientaion.Horizontal:
                 sizeDelta.x = data.height;
                 break;
             }
@@ -103,7 +103,7 @@ namespace YourProjectNamespace
 
         void Awake()
         {
-            contentFiller = GetComponent<ContentFiller>();
+            contentFiller = GetComponent<ListViewContent>();
             contentFiller.DataSource = this;
             contentFiller.OnPreUpdate += OnPreUpdate;
         }

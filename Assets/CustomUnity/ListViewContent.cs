@@ -4,8 +4,14 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
+    public enum Orientaion
+    {
+        Vertical,
+        Horizontal
+    }
+
     [RequireComponent(typeof(RectTransform))]
-    public class ContentFiller : MonoBehaviour
+    public class ListViewContent : MonoBehaviour
     {
         public interface IDataSource
         {
@@ -13,12 +19,6 @@ namespace CustomUnity
             Vector2 CellSize(int index);
             void SetUpCell(int index, GameObject cell);
             void UpdateCell(int index, GameObject cell);
-        }
-
-        public enum Orientaion
-        {
-            Vertical,
-            Horizontal
         }
 
         public Orientaion orientaion;
@@ -86,7 +86,9 @@ namespace CustomUnity
 
             OnPreUpdate?.Invoke();
 
-            for(int i = 0; i < (DataSource != null ? DataSource.TotalCount : 0); ++i) {
+            var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
+
+            for(int i = 0; i < totalCount; ++i) {
                 float size = 0;
                 float cellUpper = 0;
                 Vector2 position = Vector2.zero;
@@ -128,50 +130,43 @@ namespace CustomUnity
             }
             contentRectTransform.sizeDelta = sizeDelta;
 
-            for(int i = 0; i < cellPool.Length; ++i) {
-                if(cellPool[i].index >= 0 && (cellPool[i].index < startIndex || cellPool[i].index > endIndex)) {
-                    var x = cellPool[i];
-                    x.cell.SetActive(false);
-                    x.index = -1;
-                    cellPool[i] = x;
-                }
+            foreach(var i in cellPool) {
+                if(i.cell.activeSelf && (i.index < startIndex || i.index > endIndex)) i.cell.SetActive(false);
             }
 
-            if(startIndex >= 0) {
-                //if(endIndex - startIndex + 1 > cellPool.Length) LogWarning("Short of Cell Object : current active count is {0}", endIndex - startIndex + 1);
+            if(endIndex - startIndex + 1 > 0) {
                 if(endIndex - startIndex + 1 > MaxCellsRequired) MaxCellsRequired = endIndex - startIndex + 1;
                 for(int i = startIndex; i <= endIndex; ++i) {
-                    int celli = -1;
+                    bool found = false;
+                    int firstinactive = -1;
                     for(int j = 0; j < cellPool.Length; ++j) {
-                        if(cellPool[j].index == i) {
-                            celli = j;
-                            DataSource.UpdateCell(i, cellPool[j].cell);
-                            break;
-                        }
-                    }
-                    if(celli < 0) {
-                        for(int j = 0; j < cellPool.Length; ++j) {
-                            if(cellPool[j].index < 0 && endIndex - startIndex < cellPositions.Length) {
-                                var x = cellPool[j];
-                                DataSource.SetUpCell(i, x.cell);
-                                var rectTrans = x.cell.GetComponent<RectTransform>();
-                                var localPosition = rectTrans.localPosition;
-                                var size = rectTrans.sizeDelta;
-                                switch(orientaion) {
-                                case Orientaion.Vertical:
-                                    localPosition.y = -cellPositions[i - startIndex].y - size.y * rectTrans.pivot.y;
-                                    break;
-                                case Orientaion.Horizontal:
-                                    localPosition.x =  cellPositions[i - startIndex].x + size.x * rectTrans.pivot.x;
-                                    break;
-                                }
-                                rectTrans.localPosition = localPosition;
-                                x.cell.SetActive(true);
-                                x.index = i;
-                                cellPool[j] = x;
+                        if(cellPool[j].cell.activeSelf) {
+                            if(cellPool[j].index == i) {
+                                found = true;
+                                DataSource.UpdateCell(Math.Wrap(i, totalCount), cellPool[j].cell);
                                 break;
                             }
                         }
+                        else if(firstinactive < 0) firstinactive = j;
+                    }
+                    if(!found && firstinactive >= 0) {
+                        var x = cellPool[firstinactive];
+                        DataSource.SetUpCell(Math.Wrap(i, totalCount), x.cell);
+                        var rectTrans = x.cell.GetComponent<RectTransform>();
+                        var localPosition = rectTrans.localPosition;
+                        var size = rectTrans.sizeDelta;
+                        switch(orientaion) {
+                        case Orientaion.Vertical:
+                            localPosition.y = -cellPositions[i - startIndex].y - size.y * rectTrans.pivot.y;
+                            break;
+                        case Orientaion.Horizontal:
+                            localPosition.x =  cellPositions[i - startIndex].x + size.x * rectTrans.pivot.x;
+                            break;
+                        }
+                        rectTrans.localPosition = localPosition;
+                        x.cell.SetActive(true);
+                        x.index = i;
+                        cellPool[firstinactive] = x;
                     }
                 }
             }

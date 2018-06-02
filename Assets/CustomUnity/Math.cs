@@ -5,6 +5,32 @@ namespace CustomUnity
     public static class Math
     {
         /// <summary>
+        /// Wrap value for 0 to max.
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <param name="max">Positive Maximum Value</param>
+        /// <returns>Wraped Value</returns>
+        public static int Wrap(int value, int max)
+        {
+            Debug.Assert(max > 0);
+            var m = value % max;
+            return m < 0 ? m + max : m;
+        }
+
+        /// <summary>
+        /// Wrap value for 0 to max.
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <param name="max">Positive Maximum Value</param>
+        /// <returns>Wraped Value</returns>
+        public static float Wrap(float value, float max)
+        {
+            Debug.Assert(max > 0);
+            var m = value % max;
+            return m < 0 ? m + max : m;
+        }
+
+        /// <summary>
         /// Hermite interpolation
         /// </summary>
         /// <param name="prev"></param>
