@@ -5,15 +5,14 @@ using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    [RequireComponent(typeof(ListViewContent))]
-    public class DataSource : MonoBehaviour, ListViewContent.IDataSource
+    [RequireComponent(typeof(FixedSizeListViewContent))]
+    public class FixedSizeDataSource : MonoBehaviour, FixedSizeListViewContent.IDataSource
     {
         [System.Serializable]
         public struct CellData
         {
             public Color color;
             public string buttonTitle;
-            public int height;
         }
 
         public CellData[] dataSource;
@@ -41,12 +40,12 @@ namespace YourProjectNamespace
         }
 
         bool prevAppendToFront;
-        ListViewContent listViewContent;
+        FixedSizeListViewContent listViewContent;
 
         public void OnPreUpdate()
         {
             if(prevAppendToFront != appendToFront) {
-                var moveSize = dataSource2.Sum(x => x.height);
+                var moveSize = dataSource2.Length * listViewContent.cellSize.y;
                 var pos = listViewContent.transform.localPosition;
                 if(appendToFront) {
                     switch(listViewContent.orientaion) {
@@ -72,12 +71,6 @@ namespace YourProjectNamespace
             }
         }
         
-        public Vector2 CellSize(int index)
-        {
-            var s = GetCellData(index).height;
-            return new Vector2(s, s);
-        }
-
         public void SetUpCell(int index, GameObject cell)
         {
             var data = GetCellData(index);
@@ -92,7 +85,7 @@ namespace YourProjectNamespace
 
         void Awake()
         {
-            listViewContent = GetComponent<ListViewContent>();
+            listViewContent = GetComponent<FixedSizeListViewContent>();
             listViewContent.DataSource = this;
             listViewContent.OnPreUpdate += OnPreUpdate;
         }
