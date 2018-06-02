@@ -106,7 +106,7 @@ namespace CustomUnity
                     }
                     break;
                 case Orientaion.Horizontal:
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
+                    contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
                     if(contentRectLocalPosition.x < contentMargin) {
                         contentRectLocalPosition.x = contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
