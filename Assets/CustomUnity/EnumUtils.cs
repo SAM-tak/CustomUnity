@@ -41,4 +41,8 @@ namespace CustomUnity
     public class ReadOnlyEnumFlagsAttribute : PropertyAttribute
     {
     }
+    
+    public class ReadOnlyEnumFlagsWhenPlayingAttribute : PropertyAttribute
+    {
+    }
 }
