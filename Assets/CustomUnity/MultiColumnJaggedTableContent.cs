@@ -70,6 +70,7 @@ namespace CustomUnity
                 rowWidth = scrollRectTransform.sizeDelta.y;
                 break;
             }
+
             float curRowWidth = 0f;
             float curRowHeight = 0f;
             for(int i = 0; i < totalCount; ++i) {
@@ -165,10 +166,9 @@ namespace CustomUnity
             float contentSize = 0;
             int startIndex = -1;
             int endIndex = -1;
-            var viewSize = scrollRectTransform.sizeDelta;
+            var viewSize = ScrollRect.viewport.rect.size;
             float rowWidth = 0f;
             float viewLower = 0f;
-            var contentRectLocalPosition = contentRectTransform.localPosition;
             switch(orientaion) {
             case Orientaion.Vertical:
                 viewLower = viewSize.y;
@@ -184,10 +184,12 @@ namespace CustomUnity
 
             var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
 
+            var contentRectLocalPosition = contentRectTransform.localPosition;
             LookAheadedCellSizes.Clear();
             for(int i = 0; i < totalCount;) {
                 int addCount = 0;
-                float columnOffset = 0;
+                float rowHeight = LookAheadedCellSizes.Count > 0 ? LookAheadedCellSizes[0].rect.height : 0;
+                float columnOffset = LookAheadedCellSizes.Count > 0 ? LookAheadedCellSizes[0].rect.width : 0;
                 for(int j = i; j < totalCount && columnOffset <= rowWidth; ++j) {
                     Rect rect = Rect.zero;
                     var cellSize = DataSource.CellSize(j);
@@ -195,21 +197,20 @@ namespace CustomUnity
                     case Orientaion.Vertical:
                         rect = new Rect(columnOffset, contentSize, cellSize.x, cellSize.y);
                         columnOffset += cellSize.x;
-                        if(columnOffset > rowWidth) rect.x = 0;
+                        if(columnOffset > rowWidth) rect.position = new Vector2(0, contentSize + rowHeight);
+                        else if(rowHeight < cellSize.y) rowHeight = cellSize.y;
                         break;
                     case Orientaion.Horizontal:
                         rect = new Rect(contentSize, columnOffset, cellSize.y, cellSize.x);
                         columnOffset += cellSize.y;
-                        if(columnOffset > rowWidth) rect.y = 0;
+                        if(columnOffset > rowWidth) rect.position = new Vector2(contentSize + rowHeight, 0);
+                        else if(rowHeight < cellSize.x) rowHeight = cellSize.x;
                         break;
                     }
                     LookAheadedCellSizes.Add(new LookAheadedCellSize { index = j, rect = rect });
                     addCount++;
                 }
 
-                float rowHeight = LookAheadedCellSizes.Count > 1 ?
-                    LookAheadedCellSizes.Take(LookAheadedCellSizes.Count - 1).Max(x => x.rect.height) :
-                    LookAheadedCellSizes.Last().rect.height;
                 for(int j = 0; j < LookAheadedCellSizes.Count; ++j) {
                     if(LookAheadedCellSizes.Count > 1 && j == LookAheadedCellSizes.Count - 1) {
                         i += addCount;
@@ -218,6 +219,7 @@ namespace CustomUnity
                             break;
                         }
                         else {
+                            contentSize += rowHeight;
                             rowHeight = LookAheadedCellSizes.Last().rect.height;
                         }
                     }
@@ -250,7 +252,7 @@ namespace CustomUnity
 
                     if(LookAheadedCellSizes.Count == 1) {
                         LookAheadedCellSizes.Clear();
-                        i++;
+                        i += addCount;
                     }
                 }
                 contentSize += rowHeight;

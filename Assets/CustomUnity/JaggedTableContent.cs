@@ -49,7 +49,6 @@ namespace CustomUnity
         {
             public float position;
             public float size;
-            public static CellPosition zero = new CellPosition { position = 0, size = 0 };
         }
         CellPosition[] cellPositions;
 
@@ -63,32 +62,6 @@ namespace CustomUnity
             foreach(var i in cellPool) i.cell.SetActive(false);
         }
         
-        public Vector2 GetContentSize(IDataSource dataSource)
-        {
-            var totalCount = dataSource.TotalCount;
-
-            var contentSize = 0f;
-            float rowWidth = 0f;
-            switch(orientaion) {
-            case Orientaion.Vertical:
-                rowWidth = scrollRectTransform.sizeDelta.x;
-                break;
-            case Orientaion.Horizontal:
-                rowWidth = scrollRectTransform.sizeDelta.y;
-                break;
-            }
-            for(int i = 0; i < totalCount; ++i) {
-                contentSize += dataSource.CellSize(i);
-            }
-            switch(orientaion) {
-            default:
-            case Orientaion.Vertical:
-                return new Vector2(rowWidth, contentSize);
-            case Orientaion.Horizontal:
-                return new Vector2(contentSize, rowWidth);
-            }
-        }
-
         const int merginScaler = 2;
         
         void Start()
@@ -136,21 +109,21 @@ namespace CustomUnity
             float contentSize = 0;
             int startIndex = -1;
             int endIndex = -1;
-            var viewSize = scrollRectTransform.sizeDelta;
             float viewLower = 0f;
-            var contentRectLocalPosition = contentRectTransform.localPosition;
             switch(orientaion) {
             case Orientaion.Vertical:
-                viewLower = viewSize.y;
+                viewLower = ScrollRect.viewport.rect.height;
                 break;
             case Orientaion.Horizontal:
-                viewLower = viewSize.x;
+                viewLower = ScrollRect.viewport.rect.width;
                 break;
             }
 
             OnPreUpdate?.Invoke();
 
             var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
+
+            var contentRectLocalPosition = contentRectTransform.localPosition;
 
             for(int i = 0; i < totalCount; ++i) {
                 var cellSize = DataSource.CellSize(i);
