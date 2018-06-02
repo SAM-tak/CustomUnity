@@ -49,6 +49,11 @@ namespace CustomUnity
 
         const int merginScaler = 2;
 
+        void OnValidate()
+        {
+            if(columnCount < 1) columnCount = 1;
+        }
+
         void Start()
         {
             ScrollRect = GetComponentInParent<ScrollRect>();
@@ -104,7 +109,7 @@ namespace CustomUnity
             var sizeDelta = contentRectTransform.sizeDelta;
             switch(orientaion) {
             case Orientaion.Vertical:
-                contentSize = totalCount * cellSize.y;
+                contentSize = totalCount * cellSize.y / columnCount;
                 if(repeat) {
                     contentMargin = viewSize.y * merginScaler;
                     if(contentRectLocalPosition.y < contentMargin || contentRectLocalPosition.y > (contentMargin + contentSize)) {
@@ -112,12 +117,12 @@ namespace CustomUnity
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }
-                startIndex = Mathf.FloorToInt((contentRectLocalPosition.y - contentMargin) / cellSize.y);
-                endIndex = Mathf.FloorToInt(((contentRectLocalPosition.y - contentMargin) + viewSize.y) / cellSize.y);
+                startIndex = Mathf.FloorToInt((contentRectLocalPosition.y - contentMargin) / cellSize.y) * columnCount;
+                endIndex = Mathf.FloorToInt(((contentRectLocalPosition.y - contentMargin) + viewSize.y) / cellSize.y) * columnCount + (columnCount - 1);
                 sizeDelta.y = contentSize + contentMargin * merginScaler;
                 break;
             case Orientaion.Horizontal:
-                contentSize = totalCount * cellSize.x;
+                contentSize = totalCount * cellSize.x / columnCount;
                 if(repeat) {
                     contentMargin = viewSize.x * merginScaler;
                     if(contentRectLocalPosition.x < contentMargin || contentRectLocalPosition.x > (contentMargin + contentSize)) {
@@ -125,8 +130,8 @@ namespace CustomUnity
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }
-                startIndex = Mathf.FloorToInt((contentRectLocalPosition.x - contentMargin) / cellSize.x);
-                endIndex = Mathf.FloorToInt(((contentRectLocalPosition.x - contentMargin) + viewSize.x) / cellSize.x);
+                startIndex = Mathf.FloorToInt((contentRectLocalPosition.x - contentMargin) / cellSize.x) * columnCount;
+                endIndex = Mathf.FloorToInt(((contentRectLocalPosition.x - contentMargin) + viewSize.x) / cellSize.x) * columnCount + (columnCount - 1);
                 sizeDelta.x = contentSize + contentMargin * merginScaler;
                 break;
             }
@@ -162,10 +167,16 @@ namespace CustomUnity
                         var localPosition = rectTrans.localPosition;
                         switch(orientaion) {
                         case Orientaion.Vertical:
-                            localPosition.y = -contentMargin - (i * cellSize.y) - cellSize.y * rectTrans.pivot.y;
+                            localPosition.y = -contentMargin - (i / columnCount * cellSize.y) - cellSize.y * rectTrans.pivot.y;
+                            if(columnCount > 1) {
+                                localPosition.x = (i % columnCount * cellSize.x) + cellSize.x * rectTrans.pivot.x;
+                            }
                             break;
                         case Orientaion.Horizontal:
-                            localPosition.x =  contentMargin + (i * cellSize.x) + cellSize.x * rectTrans.pivot.x;
+                            localPosition.x =  contentMargin + (i / columnCount * cellSize.x) + cellSize.x * rectTrans.pivot.x;
+                            if(columnCount > 1) {
+                                localPosition.y = -(i % columnCount * cellSize.y) - cellSize.y * rectTrans.pivot.y;
+                            }
                             break;
                         }
                         rectTrans.sizeDelta = cellSize;
