@@ -108,9 +108,7 @@ namespace CustomUnity
                 return new Vector2(contentSize, rowWidth);
             }
         }
-
-        const int merginScaler = 2;
-
+        
         struct LookAheadedCellSize
         {
             public int index;

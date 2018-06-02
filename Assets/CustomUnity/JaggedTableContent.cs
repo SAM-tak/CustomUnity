@@ -75,8 +75,6 @@ namespace CustomUnity
                 return new Vector2(contentSize, ScrollRect.viewport.rect.height);
             }
         }
-
-        const int merginScaler = 2;
         
         void Start()
         {
