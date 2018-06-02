@@ -5,14 +5,16 @@ using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    [RequireComponent(typeof(LargeTableContent))]
-    public class FixedSizeDataSource : MonoBehaviour, LargeTableContent.IDataSource
+    [RequireComponent(typeof(LargeJaggedTableContent))]
+    public class MultiColumnDataSource : MonoBehaviour, LargeJaggedTableContent.IDataSource
     {
         [System.Serializable]
         public struct CellData
         {
             public Color color;
             public string buttonTitle;
+            public int width;
+            public int height;
         }
 
         public CellData[] dataSource;
@@ -41,31 +43,61 @@ namespace YourProjectNamespace
 
         bool prevAppendToFront;
         bool prevAppendToBack;
-        LargeTableContent tableContent;
+        LargeJaggedTableContent tableContent;
 
         public void OnPreUpdate()
         {
             if(prevAppendToFront != appendToFront || prevAppendToBack != appendToBack) tableContent.InactivateAllCells();
 
             if(prevAppendToFront != appendToFront) {
+                var viewSize = tableContent.GetComponent<RectTransform>().sizeDelta;
                 var pos = tableContent.transform.localPosition;
+                var moveSize = 0f;
+                var curWidth = 0f;
+                var curHeight = 0f;
+                switch(tableContent.orientaion) {
+                case Orientaion.Vertical:
+                    foreach(var i in dataSource2) {
+                        if(curWidth + i.width > viewSize.x) {
+                            moveSize += curHeight;
+                            curHeight = curWidth = 0;
+                        }
+                        else {
+                            if(curHeight < i.height) curHeight = i.height;
+                            curWidth += i.width;
+                        }
+                    }
+                    break;
+                case Orientaion.Horizontal:
+                    foreach(var i in dataSource2) {
+                        if(curWidth + i.height > viewSize.y) {
+                            moveSize += curHeight;
+                            curHeight = curWidth = 0;
+                        }
+                        else {
+                            if(curHeight < i.width) curHeight = i.width;
+                            curWidth += i.height;
+                        }
+                    }
+                    break;
+                }
                 if(appendToFront) {
                     switch(tableContent.orientaion) {
                     case Orientaion.Vertical:
-                        pos.y += dataSource2.Length * tableContent.cellSize.y;
+                        pos.y += moveSize;
                         break;
                     case Orientaion.Horizontal:
-                        pos.x -= dataSource2.Length * tableContent.cellSize.x;
+                        pos.x -= moveSize;
                         break;
                     }
                 }
                 else {
                     switch(tableContent.orientaion) {
                     case Orientaion.Vertical:
-                        pos.y -= dataSource2.Length * tableContent.cellSize.y;
+                        pos.y -= moveSize;
                         break;
                     case Orientaion.Horizontal:
-                        pos.x += dataSource2.Length * tableContent.cellSize.x;
+                        pos.x += moveSize;
                         break;
                     }
                 }
@@ -73,6 +105,12 @@ namespace YourProjectNamespace
             }
         }
         
+        public Vector2 CellSize(int index)
+        {
+            var c = GetCellData(index);
+            return new Vector2(c.width, c.height);
+        }
+
         public void SetUpCell(int index, GameObject cell)
         {
             var data = GetCellData(index);
@@ -85,22 +123,48 @@ namespace YourProjectNamespace
         void MakeTestData()
         {
             UnityEditor.Undo.RecordObject(this, "Make Test Data");
-            dataSource = new CellData[50];
-            for(int i = 0; i < 50; ++i) {
-                dataSource[i].color = Color.Lerp(Color.magenta, Color.green, i / 50.0f);
+            dataSource = new CellData[100];
+            for(int i = 0; i < 100; ++i) {
+                dataSource[i].color = Color.Lerp(Color.magenta, Color.green, i / 100.0f);
                 dataSource[i].buttonTitle = $"Button {i}";
+                dataSource[i].width = Mathf.FloorToInt(Random.Range(100, 120));
+                dataSource[i].height = Mathf.FloorToInt(Random.Range(50, 80));
             }
             dataSource2 = new CellData[10];
             for(int i = 0; i < 10; ++i) {
                 dataSource2[i].color = Color.Lerp(Color.magenta, Color.green, i / 10.0f);
                 dataSource2[i].buttonTitle = $"Button2 {i}";
+                dataSource2[i].width = Mathf.FloorToInt(Random.Range(100, 120));
+                dataSource2[i].height = Mathf.FloorToInt(Random.Range(50, 80));
+            }
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        [ContextMenu("Make Test Data 2")]
+        void MakeTestData2()
+        {
+            UnityEditor.Undo.RecordObject(this, "Make Test Data 2");
+            dataSource = new CellData[100];
+            for(int i = 0; i < 100; ++i) {
+                dataSource[i].color = Color.Lerp(Color.magenta, Color.green, i / 100.0f);
+                dataSource[i].buttonTitle = $"Button {i}";
+                dataSource[i].width = 100;
+                dataSource[i].height = Mathf.FloorToInt(Random.Range(50, 80));
+            }
+            dataSource2 = new CellData[10];
+            for(int i = 0; i < 10; ++i) {
+                dataSource2[i].color = Color.Lerp(Color.magenta, Color.green, i / 10.0f);
+                dataSource2[i].buttonTitle = $"Button2 {i}";
+                dataSource2[i].width = 100;
+                dataSource2[i].height = Mathf.FloorToInt(Random.Range(50, 80));
             }
             UnityEditor.EditorUtility.SetDirty(this);
         }
 #endif
+
         void Awake()
         {
-            tableContent = GetComponent<LargeTableContent>();
+            tableContent = GetComponent<LargeJaggedTableContent>();
             tableContent.DataSource = this;
             tableContent.OnPreUpdate += OnPreUpdate;
         }

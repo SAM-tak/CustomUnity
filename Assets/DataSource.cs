@@ -13,7 +13,7 @@ namespace YourProjectNamespace
         {
             public Color color;
             public string buttonTitle;
-            public int height;
+            public int size;
         }
 
         public CellData[] dataSource;
@@ -41,15 +41,18 @@ namespace YourProjectNamespace
         }
 
         bool prevAppendToFront;
-        LargeJaggedTableContent listViewContent;
+        bool prevAppendToBack;
+        LargeJaggedTableContent tableContent;
 
         public void OnPreUpdate()
         {
+            if(prevAppendToFront != appendToFront || prevAppendToBack != appendToBack) tableContent.InactivateAllCells();
+
             if(prevAppendToFront != appendToFront) {
-                var moveSize = dataSource2.Sum(x => x.height);
-                var pos = listViewContent.transform.localPosition;
+                var moveSize = dataSource2.Sum(x => x.size);
+                var pos = tableContent.transform.localPosition;
                 if(appendToFront) {
-                    switch(listViewContent.orientaion) {
+                    switch(tableContent.orientaion) {
                     case Orientaion.Vertical:
                         pos.y += moveSize;
                         break;
@@ -59,7 +62,7 @@ namespace YourProjectNamespace
                     }
                 }
                 else {
-                    switch(listViewContent.orientaion) {
+                    switch(tableContent.orientaion) {
                     case Orientaion.Vertical:
                         pos.y -= moveSize;
                         break;
@@ -68,14 +71,20 @@ namespace YourProjectNamespace
                         break;
                     }
                 }
-                listViewContent.transform.localPosition = pos;
+                tableContent.transform.localPosition = pos;
             }
         }
         
         public Vector2 CellSize(int index)
         {
-            var s = GetCellData(index).height;
-            return new Vector2(s, s);
+            var s = GetCellData(index).size;
+            switch(tableContent.orientaion) {
+            default:
+            case Orientaion.Vertical:
+                return new Vector2(0, s);
+            case Orientaion.Horizontal:
+                return new Vector2(s, 0);
+            }
         }
 
         public void SetUpCell(int index, GameObject cell)
@@ -84,61 +93,64 @@ namespace YourProjectNamespace
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
             cell.transform.Find("Button/Text").GetComponent<Text>().text = data.buttonTitle;
         }
-
-        public void UpdateCell(int index, GameObject cell)
-        {
-            if(prevAppendToFront != appendToFront) SetUpCell(index, cell);
-        }
-
+        
+#if UNITY_EDITOR
         [ContextMenu("Make Test Data")]
         void MakeTestData()
         {
+            UnityEditor.Undo.RecordObject(this, "Make Test Data");
             dataSource = new CellData[100];
             for(int i = 0; i < 100; ++i) {
                 dataSource[i].color = Color.Lerp(Color.magenta, Color.green, i / 100.0f);
                 dataSource[i].buttonTitle = $"Button {i}";
-                dataSource[i].height = 10 <= i && i < 15 ? 30 : Mathf.FloorToInt(Random.Range(50, 80));
+                dataSource[i].size = 10 <= i && i < 15 ? 30 : Mathf.FloorToInt(Random.Range(50, 80));
             }
             dataSource2 = new CellData[10];
             for(int i = 0; i < 10; ++i) {
                 dataSource2[i].color = Color.Lerp(Color.magenta, Color.green, i / 10.0f);
                 dataSource2[i].buttonTitle = $"Button2 {i}";
-                dataSource2[i].height = Mathf.FloorToInt(Random.Range(50, 80));
+                dataSource2[i].size = Mathf.FloorToInt(Random.Range(50, 80));
             }
+            UnityEditor.EditorUtility.SetDirty(this);
         }
         
         [ContextMenu("Make Test Data 2")]
         void MakeTestData2()
         {
+            UnityEditor.Undo.RecordObject(this, "Make Test Data 2");
             dataSource = new CellData[100];
             for(int i = 0; i < 100; ++i) {
                 dataSource[i].color = Color.Lerp(Color.magenta, Color.green, i / 100.0f);
                 dataSource[i].buttonTitle = $"Button {i}";
-                dataSource[i].height = Mathf.FloorToInt(Random.Range(80, 150));
+                dataSource[i].size = Mathf.FloorToInt(Random.Range(80, 150));
             }
             dataSource2 = new CellData[10];
             for(int i = 0; i < 10; ++i) {
                 dataSource2[i].color = Color.Lerp(Color.magenta, Color.green, i / 10.0f);
                 dataSource2[i].buttonTitle = $"Button2 {i}";
-                dataSource2[i].height = Mathf.FloorToInt(Random.Range(80, 120));
+                dataSource2[i].size = Mathf.FloorToInt(Random.Range(80, 120));
             }
+            UnityEditor.EditorUtility.SetDirty(this);
         }
+#endif
 
         void Awake()
         {
-            listViewContent = GetComponent<LargeJaggedTableContent>();
-            listViewContent.DataSource = this;
-            listViewContent.OnPreUpdate += OnPreUpdate;
+            tableContent = GetComponent<LargeJaggedTableContent>();
+            tableContent.DataSource = this;
+            tableContent.OnPreUpdate += OnPreUpdate;
         }
 
         void Start()
         {
             prevAppendToFront = appendToFront;
+            prevAppendToBack = appendToBack;
         }
 
         void LateUpdate()
         {
             prevAppendToFront = appendToFront;
+            prevAppendToBack = appendToBack;
         }
     }
 }

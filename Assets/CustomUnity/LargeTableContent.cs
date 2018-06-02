@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,15 +11,15 @@ namespace CustomUnity
         {
             int TotalCount { get; }
             void SetUpCell(int index, GameObject cell);
-            void UpdateCell(int index, GameObject cell);
         }
 
         public Vector2 cellSize;
 
+        [ReadOnlyWhenPlaying]
         public bool repeat;
 
         public int columnCount = 1;
-        
+
         public Orientaion orientaion;
         
         public IDataSource DataSource { get; set; }
@@ -47,6 +47,16 @@ namespace CustomUnity
 
         Cell[] cellPool;
 
+        /// <summary>
+        /// Inactivate All Active Cells
+        /// 
+        /// To use for forcing to reset cells up.
+        /// </summary>
+        public void InactivateAllCells()
+        {
+            foreach(var i in cellPool) i.cell.SetActive(false);
+        }
+
         const int merginScaler = 2;
 
         void OnValidate()
@@ -69,11 +79,10 @@ namespace CustomUnity
 
             var contentRectLocalPosition = contentRectTransform.localPosition;
             var viewSize = scrollRectTransform.sizeDelta;
-            var contentMargin = 0f;
             switch(orientaion) {
             case Orientaion.Vertical:
                 if(repeat) {
-                    contentMargin = viewSize.y * merginScaler;
+                    var contentMargin = viewSize.y * merginScaler;
                     if(contentRectLocalPosition.y < contentMargin) {
                         contentRectLocalPosition.y = contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
@@ -82,7 +91,7 @@ namespace CustomUnity
                 break;
             case Orientaion.Horizontal:
                 if(repeat) {
-                    contentMargin = viewSize.x * merginScaler;
+                    var contentMargin = viewSize.x * merginScaler;
                     if(contentRectLocalPosition.x < contentMargin) {
                         contentRectLocalPosition.x = contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
@@ -149,19 +158,17 @@ namespace CustomUnity
                 if(endIndex - startIndex + 1 > MaxCellsRequired) MaxCellsRequired = endIndex - startIndex + 1;
                 for(int i = startIndex; i <= endIndex; ++i) {
                     int wrapedIndex = Math.Wrap(i, totalCount);
-                    bool found = false;
                     int firstinactive = -1;
                     for(int j = 0; j < cellPool.Length; j++) {
                         if(cellPool[j].cell.activeSelf) {
                             if(cellPool[j].index == i) {
-                                found = true;
-                                DataSource.UpdateCell(wrapedIndex, cellPool[j].cell);
+                                firstinactive = -1;
                                 break;
                             }
                         }
                         else if(firstinactive < 0) firstinactive = j;
                     }
-                    if(!found && firstinactive >= 0) {
+                    if(firstinactive >= 0) {
                         var x = cellPool[firstinactive];
                         var rectTrans = x.cell.GetComponent<RectTransform>();
                         var localPosition = rectTrans.localPosition;
