@@ -13,7 +13,7 @@ namespace CustomUnity
     }
 
     [RequireComponent(typeof(RectTransform))]
-    public class LargeJaggedTableContent : MonoBehaviour
+    public class JaggedTableContent : MonoBehaviour
     {
         public interface IDataSource
         {

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace CustomUnity
 {
     [RequireComponent(typeof(RectTransform))]
-    public class LargeTableContent : MonoBehaviour
+    public class TableContent : MonoBehaviour
     {
         public interface IDataSource
         {

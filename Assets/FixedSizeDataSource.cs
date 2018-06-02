@@ -1,12 +1,12 @@
-﻿using System.Linq;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    [RequireComponent(typeof(LargeTableContent))]
-    public class FixedSizeDataSource : MonoBehaviour, LargeTableContent.IDataSource
+    [RequireComponent(typeof(TableContent))]
+    public class FixedSizeDataSource : MonoBehaviour, TableContent.IDataSource
     {
         [System.Serializable]
         public struct CellData
@@ -41,7 +41,7 @@ namespace YourProjectNamespace
 
         bool prevAppendToFront;
         bool prevAppendToBack;
-        LargeTableContent tableContent;
+        TableContent tableContent;
 
         public void OnPreUpdate()
         {
@@ -100,7 +100,7 @@ namespace YourProjectNamespace
 #endif
         void Awake()
         {
-            tableContent = GetComponent<LargeTableContent>();
+            tableContent = GetComponent<TableContent>();
             tableContent.DataSource = this;
             tableContent.OnPreUpdate += OnPreUpdate;
         }

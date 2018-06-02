@@ -3,9 +3,9 @@ using UnityEditor;
 
 namespace CustomUnity
 {
-    [CustomEditor(typeof(LargeTableContent))]
+    [CustomEditor(typeof(JaggedTableContent))]
     //[CanEditMultipleObjects]
-    public class VirtualTableContentInspector : Editor
+    public class JaggedTableContentInspector : Editor
     {
         void OnEnable()
         {
@@ -22,7 +22,7 @@ namespace CustomUnity
             DrawDefaultInspector();
 
             if(Application.isPlaying) {
-                var tableContent = target as LargeTableContent;
+                var tableContent = target as JaggedTableContent;
                 if(tableContent.DataSource == null) EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
                 else EditorGUILayout.HelpBox($"DataSource ({tableContent.DataSource.GetType()})\nLength : {tableContent.DataSource.TotalCount}", MessageType.Info);
                 if(tableContent.MaxCellsRequired > tableContent.MaxCells) {

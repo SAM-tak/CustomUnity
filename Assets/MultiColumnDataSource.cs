@@ -1,12 +1,12 @@
-﻿using System.Linq;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    [RequireComponent(typeof(LargeJaggedTableContent))]
-    public class MultiColumnDataSource : MonoBehaviour, LargeJaggedTableContent.IDataSource
+    [RequireComponent(typeof(JaggedTableContent))]
+    public class MultiColumnDataSource : MonoBehaviour, JaggedTableContent.IDataSource
     {
         [System.Serializable]
         public struct CellData
@@ -43,7 +43,7 @@ namespace YourProjectNamespace
 
         bool prevAppendToFront;
         bool prevAppendToBack;
-        LargeJaggedTableContent tableContent;
+        JaggedTableContent tableContent;
 
         public void OnPreUpdate()
         {
@@ -164,7 +164,7 @@ namespace YourProjectNamespace
 
         void Awake()
         {
-            tableContent = GetComponent<LargeJaggedTableContent>();
+            tableContent = GetComponent<JaggedTableContent>();
             tableContent.DataSource = this;
             tableContent.OnPreUpdate += OnPreUpdate;
         }
