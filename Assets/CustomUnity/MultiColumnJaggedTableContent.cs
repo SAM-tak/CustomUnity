@@ -17,8 +17,6 @@ namespace CustomUnity
         }
 
         public Orientaion orientaion;
-
-        public bool repeat;
         
         public IDataSource DataSource { get; set; }
         
@@ -35,7 +33,6 @@ namespace CustomUnity
         public int MaxCellsRequired { get; protected set; }
 
         RectTransform contentRectTransform;
-        RectTransform scrollRectTransform;
         
         struct Cell
         {
@@ -60,17 +57,17 @@ namespace CustomUnity
         {
             var totalCount = dataSource.TotalCount;
 
-            var contentSize = 0f;
             float rowWidth = 0f;
             switch(orientaion) {
             case Orientaion.Vertical:
-                rowWidth = scrollRectTransform.sizeDelta.x;
+                rowWidth = ScrollRect.viewport.rect.height;
                 break;
             case Orientaion.Horizontal:
-                rowWidth = scrollRectTransform.sizeDelta.y;
+                rowWidth = ScrollRect.viewport.rect.width;
                 break;
             }
 
+            var contentSize = 0f;
             float curRowWidth = 0f;
             float curRowHeight = 0f;
             for(int i = 0; i < totalCount; ++i) {
@@ -126,7 +123,6 @@ namespace CustomUnity
             ScrollRect = GetComponentInParent<ScrollRect>();
             Debug.Assert(ScrollRect);
             contentRectTransform = GetComponent<RectTransform>();
-            scrollRectTransform = GetComponentInParent<ScrollRect>().GetComponent<RectTransform>();
             cellPool = new Cell[transform.childCount];
             cellRects = new Rect[transform.childCount];
             for(int i = 0; i < transform.childCount; i++) {
@@ -134,38 +130,12 @@ namespace CustomUnity
                 go.SetActive(false);
                 cellPool[i].cell = go;
             }
-
-            var contentRectLocalPosition = contentRectTransform.localPosition;
-            var viewSize = scrollRectTransform.sizeDelta;
-            switch(orientaion) {
-            case Orientaion.Vertical:
-                if(repeat) {
-                    var contentMargin = viewSize.y * merginScaler;
-                    if(contentRectLocalPosition.y < contentMargin) {
-                        contentRectLocalPosition.y = contentMargin;
-                        contentRectTransform.localPosition = contentRectLocalPosition;
-                    }
-                }
-                break;
-            case Orientaion.Horizontal:
-                if(repeat) {
-                    var contentMargin = viewSize.x * merginScaler;
-                    if(contentRectLocalPosition.x < contentMargin) {
-                        contentRectLocalPosition.x = contentMargin;
-                        contentRectTransform.localPosition = contentRectLocalPosition;
-                    }
-                }
-                break;
-            }
         }
 
         void Update()
         {
             if(!ScrollRect) return;
 
-            float contentSize = 0;
-            int startIndex = -1;
-            int endIndex = -1;
             var viewSize = ScrollRect.viewport.rect.size;
             float rowWidth = 0f;
             float viewLower = 0f;
@@ -184,6 +154,9 @@ namespace CustomUnity
 
             var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
 
+            float contentSize = 0;
+            int startIndex = 0;
+            int endIndex = -1;
             var contentRectLocalPosition = contentRectTransform.localPosition;
             LookAheadedCellSizes.Clear();
             for(int i = 0; i < totalCount;) {
@@ -237,7 +210,7 @@ namespace CustomUnity
                         break;
                     }
 
-                    if(startIndex < 0) {
+                    if(startIndex > endIndex) {
                         if(cellUpper >= -rowHeight && cellUpper <= viewLower) {
                             startIndex = endIndex = index;
                             cellRects[0] = rect;

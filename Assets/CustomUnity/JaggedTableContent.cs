@@ -17,8 +17,6 @@ namespace CustomUnity
         }
 
         public Orientaion orientaion;
-
-        public bool repeat;
         
         public IDataSource DataSource { get; set; }
         
@@ -35,7 +33,6 @@ namespace CustomUnity
         public int MaxCellsRequired { get; protected set; }
 
         RectTransform contentRectTransform;
-        RectTransform scrollRectTransform;
         
         struct Cell
         {
@@ -62,6 +59,23 @@ namespace CustomUnity
             foreach(var i in cellPool) i.cell.SetActive(false);
         }
         
+        public Vector2 GetContentSize(IDataSource dataSource)
+        {
+            var totalCount = dataSource.TotalCount;
+
+            var contentSize = 0f;
+            for(int i = 0; i < totalCount; ++i) {
+                contentSize += dataSource.CellSize(i);
+            }
+            switch(orientaion) {
+            default:
+            case Orientaion.Vertical:
+                return new Vector2(ScrollRect.viewport.rect.width, contentSize);
+            case Orientaion.Horizontal:
+                return new Vector2(contentSize, ScrollRect.viewport.rect.height);
+            }
+        }
+
         const int merginScaler = 2;
         
         void Start()
@@ -69,7 +83,6 @@ namespace CustomUnity
             ScrollRect = GetComponentInParent<ScrollRect>();
             Debug.Assert(ScrollRect);
             contentRectTransform = GetComponent<RectTransform>();
-            scrollRectTransform = GetComponentInParent<ScrollRect>().GetComponent<RectTransform>();
             cellPool = new Cell[transform.childCount];
             cellPositions = new CellPosition[transform.childCount];
             for(int i = 0; i < transform.childCount; i++) {
@@ -77,39 +90,15 @@ namespace CustomUnity
                 go.SetActive(false);
                 cellPool[i].cell = go;
             }
-
-            var contentRectLocalPosition = contentRectTransform.localPosition;
-            var viewSize = scrollRectTransform.sizeDelta;
-            switch(orientaion) {
-            case Orientaion.Vertical:
-                if(repeat) {
-                    var contentMargin = viewSize.y * merginScaler;
-                    if(contentRectLocalPosition.y < contentMargin) {
-                        contentRectLocalPosition.y = contentMargin;
-                        contentRectTransform.localPosition = contentRectLocalPosition;
-                    }
-                }
-                break;
-            case Orientaion.Horizontal:
-                if(repeat) {
-                    var contentMargin = viewSize.x * merginScaler;
-                    if(contentRectLocalPosition.x < contentMargin) {
-                        contentRectLocalPosition.x = contentMargin;
-                        contentRectTransform.localPosition = contentRectLocalPosition;
-                    }
-                }
-                break;
-            }
         }
 
         void Update()
         {
             if(!ScrollRect) return;
 
-            float contentSize = 0;
-            int startIndex = -1;
-            int endIndex = -1;
+            var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
             float viewLower = 0f;
+            var contentRectLocalPosition = contentRectTransform.localPosition;
             switch(orientaion) {
             case Orientaion.Vertical:
                 viewLower = ScrollRect.viewport.rect.height;
@@ -121,9 +110,9 @@ namespace CustomUnity
 
             OnPreUpdate?.Invoke();
 
-            var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
-
-            var contentRectLocalPosition = contentRectTransform.localPosition;
+            float contentSize = 0;
+            int startIndex = 0;
+            int endIndex = -1;
 
             for(int i = 0; i < totalCount; ++i) {
                 var cellSize = DataSource.CellSize(i);
@@ -140,7 +129,7 @@ namespace CustomUnity
 
                 contentSize += cellSize;
 
-                if(startIndex < 0) {
+                if(startIndex > endIndex) {
                     if(cellUpper >= -cellSize && cellUpper <= viewLower) {
                         startIndex = endIndex = i;
                         cellPositions[0] = cellPosition;
