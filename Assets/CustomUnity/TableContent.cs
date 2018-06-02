@@ -74,7 +74,7 @@ namespace CustomUnity
         }
 
         const int merginScaler = 2;
-        const int minimumMergin = 200;
+        const int minimumMergin = 400;
 
         void OnValidate()
         {
@@ -99,14 +99,14 @@ namespace CustomUnity
                 var contentMargin = 0f;
                 switch(orientaion) {
                 case Orientaion.Vertical:
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.y) * merginScaler;
+                    contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
                     if(contentRectLocalPosition.y < contentMargin) {
                         contentRectLocalPosition.y = contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                     break;
                 case Orientaion.Horizontal:
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.y) * merginScaler;
+                    contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
                     if(contentRectLocalPosition.x < contentMargin) {
                         contentRectLocalPosition.x = contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
@@ -135,28 +135,28 @@ namespace CustomUnity
             case Orientaion.Vertical:
                 contentSize = totalCount * cellSize.y / columnCount;
                 if(repeat) {
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.y) * merginScaler;
-                    if(contentRectLocalPosition.y < minimumMergin || contentRectLocalPosition.y > (contentMargin + minimumMergin)) {
+                    contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
+                    if(contentRectLocalPosition.y < contentMargin / 2 || contentRectLocalPosition.y + viewSize.y > (contentMargin + contentSize + contentMargin / 2)) {
                         contentRectLocalPosition.y = contentMargin + Math.Wrap(contentRectLocalPosition.y - contentMargin, contentSize);
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }
                 startIndex = Mathf.FloorToInt((contentRectLocalPosition.y - contentMargin) / cellSize.y) * columnCount;
                 endIndex = Mathf.FloorToInt(((contentRectLocalPosition.y - contentMargin) + viewSize.y) / cellSize.y) * columnCount + (columnCount - 1);
-                sizeDelta.y = contentSize + contentMargin * merginScaler;
+                sizeDelta.y = contentSize + contentMargin * 2;
                 break;
             case Orientaion.Horizontal:
                 contentSize = totalCount * cellSize.x / columnCount;
                 if(repeat) {
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.x) * merginScaler;
-                    if(contentRectLocalPosition.x < minimumMergin || contentRectLocalPosition.x > (contentMargin + minimumMergin)) {
+                    contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
+                    if(contentRectLocalPosition.x < contentMargin / 2 || contentRectLocalPosition.x + viewSize.x > (contentMargin + contentSize + contentMargin / 2)) {
                         contentRectLocalPosition.x = contentMargin + Math.Wrap(contentRectLocalPosition.x - contentMargin, contentSize);
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }
                 startIndex = Mathf.FloorToInt((contentRectLocalPosition.x - contentMargin) / cellSize.x) * columnCount;
                 endIndex = Mathf.FloorToInt(((contentRectLocalPosition.x - contentMargin) + viewSize.x) / cellSize.x) * columnCount + (columnCount - 1);
-                sizeDelta.x = contentSize + contentMargin * merginScaler;
+                sizeDelta.x = contentSize + contentMargin * 2;
                 break;
             }
             contentRectTransform.sizeDelta = sizeDelta;
