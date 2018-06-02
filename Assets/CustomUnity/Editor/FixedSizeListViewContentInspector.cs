@@ -22,11 +22,11 @@ namespace CustomUnity
             DrawDefaultInspector();
 
             if(Application.isPlaying) {
-                var contentFilter = target as FixedSizeListViewContent;
-                if(contentFilter.DataSource == null) EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
-                else EditorGUILayout.HelpBox($"DataSource ({contentFilter.DataSource.GetType()})\nLength : {contentFilter.DataSource.TotalCount}", MessageType.Info);
-                if(contentFilter.MaxCellsRequired > contentFilter.MaxCells) {
-                    EditorGUILayout.HelpBox($"Short of Cell Object : Required {contentFilter.MaxCellsRequired} / Pooled {contentFilter.MaxCells}", MessageType.Warning);
+                var listViewContent = target as FixedSizeListViewContent;
+                if(listViewContent.DataSource == null) EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
+                else EditorGUILayout.HelpBox($"DataSource ({listViewContent.DataSource.GetType()})\nLength : {listViewContent.DataSource.TotalCount}\n{listViewContent.StartIndex} to {listViewContent.EndIndex}", MessageType.Info);
+                if(listViewContent.MaxCellsRequired > listViewContent.MaxCells) {
+                    EditorGUILayout.HelpBox($"Short of Cell Object : Required {listViewContent.MaxCellsRequired} / Pooled {listViewContent.MaxCells}", MessageType.Warning);
                 }
             }
 

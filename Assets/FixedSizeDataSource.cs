@@ -83,6 +83,21 @@ namespace YourProjectNamespace
             if(prevAppendToFront != appendToFront) SetUpCell(index, cell);
         }
 
+        [ContextMenu("Make Test Data")]
+        void MakeTestData()
+        {
+            dataSource = new CellData[50];
+            for(int i = 0; i < 50; ++i) {
+                dataSource[i].color = Color.Lerp(Color.magenta, Color.green, i / 50.0f);
+                dataSource[i].buttonTitle = $"Button {i}";
+            }
+            dataSource2 = new CellData[10];
+            for(int i = 0; i < 10; ++i) {
+                dataSource2[i].color = Color.Lerp(Color.magenta, Color.green, i / 10.0f);
+                dataSource2[i].buttonTitle = $"Button2 {i}";
+            }
+        }
+
         void Awake()
         {
             listViewContent = GetComponent<FixedSizeListViewContent>();

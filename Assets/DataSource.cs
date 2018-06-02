@@ -90,6 +90,40 @@ namespace YourProjectNamespace
             if(prevAppendToFront != appendToFront) SetUpCell(index, cell);
         }
 
+        [ContextMenu("Make Test Data")]
+        void MakeTestData()
+        {
+            dataSource = new CellData[100];
+            for(int i = 0; i < 100; ++i) {
+                dataSource[i].color = Color.Lerp(Color.magenta, Color.green, i / 100.0f);
+                dataSource[i].buttonTitle = $"Button {i}";
+                dataSource[i].height = 10 <= i && i < 15 ? 30 : Mathf.FloorToInt(Random.Range(50, 80));
+            }
+            dataSource2 = new CellData[10];
+            for(int i = 0; i < 10; ++i) {
+                dataSource2[i].color = Color.Lerp(Color.magenta, Color.green, i / 10.0f);
+                dataSource2[i].buttonTitle = $"Button2 {i}";
+                dataSource2[i].height = Mathf.FloorToInt(Random.Range(50, 80));
+            }
+        }
+        
+        [ContextMenu("Make Test Data 2")]
+        void MakeTestData2()
+        {
+            dataSource = new CellData[100];
+            for(int i = 0; i < 100; ++i) {
+                dataSource[i].color = Color.Lerp(Color.magenta, Color.green, i / 100.0f);
+                dataSource[i].buttonTitle = $"Button {i}";
+                dataSource[i].height = Mathf.FloorToInt(Random.Range(80, 150));
+            }
+            dataSource2 = new CellData[10];
+            for(int i = 0; i < 10; ++i) {
+                dataSource2[i].color = Color.Lerp(Color.magenta, Color.green, i / 10.0f);
+                dataSource2[i].buttonTitle = $"Button2 {i}";
+                dataSource2[i].height = Mathf.FloorToInt(Random.Range(80, 120));
+            }
+        }
+
         void Awake()
         {
             listViewContent = GetComponent<ListViewContent>();
