@@ -57,6 +57,18 @@ namespace CustomUnity
             foreach(var i in cellPool) i.cell.SetActive(false);
         }
 
+        public Vector2 GetContentSize(IDataSource dataSource)
+        {
+            var n = dataSource.TotalCount;
+            switch(orientaion) {
+            default:
+            case Orientaion.Vertical:
+                return new Vector2(n < columnCount ? n * cellSize.x : cellSize.x * columnCount, n * cellSize.y / columnCount);
+            case Orientaion.Horizontal:
+                return new Vector2(n * cellSize.x / columnCount, n < columnCount ? n * cellSize.y : cellSize.y * columnCount);
+            }
+        }
+
         const int merginScaler = 2;
 
         void OnValidate()
