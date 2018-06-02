@@ -5,8 +5,8 @@ using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    [RequireComponent(typeof(JaggedTableContent))]
-    public class MultiColumnDataSource : MonoBehaviour, JaggedTableContent.IDataSource
+    [RequireComponent(typeof(MultiColumnJaggedTableContent))]
+    public class MultiColumnDataSource : MonoBehaviour, MultiColumnJaggedTableContent.IDataSource
     {
         [System.Serializable]
         public struct CellData
@@ -43,7 +43,7 @@ namespace YourProjectNamespace
 
         bool prevAppendToFront;
         bool prevAppendToBack;
-        JaggedTableContent tableContent;
+        MultiColumnJaggedTableContent tableContent;
 
         public void OnPreUpdate()
         {
@@ -164,7 +164,7 @@ namespace YourProjectNamespace
 
         void Awake()
         {
-            tableContent = GetComponent<JaggedTableContent>();
+            tableContent = GetComponent<MultiColumnJaggedTableContent>();
             tableContent.DataSource = this;
             tableContent.OnPreUpdate += OnPreUpdate;
         }

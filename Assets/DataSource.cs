@@ -75,16 +75,9 @@ namespace YourProjectNamespace
             }
         }
         
-        public Vector2 CellSize(int index)
+        public float CellSize(int index)
         {
-            var s = GetCellData(index).size;
-            switch(tableContent.orientaion) {
-            default:
-            case Orientaion.Vertical:
-                return new Vector2(0, s);
-            case Orientaion.Horizontal:
-                return new Vector2(s, 0);
-            }
+            return GetCellData(index).size;
         }
 
         public void SetUpCell(int index, GameObject cell)

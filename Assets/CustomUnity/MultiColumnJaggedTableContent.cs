@@ -7,12 +7,12 @@ using UnityEngine.UI;
 namespace CustomUnity
 {
     [RequireComponent(typeof(RectTransform))]
-    public class JaggedTableContent : MonoBehaviour
+    public class MultiColumnJaggedTableContent : MonoBehaviour
     {
         public interface IDataSource
         {
             int TotalCount { get; }
-            float CellSize(int index);
+            Vector2 CellSize(int index);
             void SetUpCell(int index, GameObject cell);
         }
 
@@ -44,14 +44,7 @@ namespace CustomUnity
         }
 
         Cell[] cellPool;
-
-        struct CellPosition
-        {
-            public float position;
-            public float size;
-            public static CellPosition zero = new CellPosition { position = 0, size = 0 };
-        }
-        CellPosition[] cellPositions;
+        Rect[] cellRects;
 
         /// <summary>
         /// Inactivate All Active Cells
@@ -77,8 +70,37 @@ namespace CustomUnity
                 rowWidth = scrollRectTransform.sizeDelta.y;
                 break;
             }
+            float curRowWidth = 0f;
+            float curRowHeight = 0f;
             for(int i = 0; i < totalCount; ++i) {
-                contentSize += dataSource.CellSize(i);
+                var cellSize = dataSource.CellSize(i);
+                float rowHeight = 0;
+                float columnWidth = 0;
+
+                switch(orientaion) {
+                case Orientaion.Vertical:
+                    rowHeight = cellSize.y;
+                    columnWidth = cellSize.x;
+                    break;
+                case Orientaion.Horizontal:
+                    rowHeight = cellSize.x;
+                    columnWidth = cellSize.y;
+                    break;
+                }
+
+                if(curRowWidth + columnWidth > rowWidth || i + 1 == totalCount) {
+                    if(i > 0) {
+                        contentSize += curRowHeight;
+                        curRowHeight = rowHeight;
+                        curRowWidth = 0;
+                    }
+                }
+                else {
+                    if(curRowHeight < rowHeight) curRowHeight = rowHeight;
+                }
+
+                curRowWidth += columnWidth;
+                if(i + 1 == totalCount) contentSize += curRowHeight;
             }
             switch(orientaion) {
             default:
@@ -90,7 +112,14 @@ namespace CustomUnity
         }
 
         const int merginScaler = 2;
-        
+
+        struct LookAheadedCellSize
+        {
+            public int index;
+            public Rect rect;
+        }
+        List<LookAheadedCellSize> LookAheadedCellSizes { get; } = new List<LookAheadedCellSize>(10);
+
         void Start()
         {
             ScrollRect = GetComponentInParent<ScrollRect>();
@@ -98,7 +127,7 @@ namespace CustomUnity
             contentRectTransform = GetComponent<RectTransform>();
             scrollRectTransform = GetComponentInParent<ScrollRect>().GetComponent<RectTransform>();
             cellPool = new Cell[transform.childCount];
-            cellPositions = new CellPosition[transform.childCount];
+            cellRects = new Rect[transform.childCount];
             for(int i = 0; i < transform.childCount; i++) {
                 var go = transform.GetChild(i).gameObject;
                 go.SetActive(false);
@@ -137,14 +166,17 @@ namespace CustomUnity
             int startIndex = -1;
             int endIndex = -1;
             var viewSize = scrollRectTransform.sizeDelta;
+            float rowWidth = 0f;
             float viewLower = 0f;
             var contentRectLocalPosition = contentRectTransform.localPosition;
             switch(orientaion) {
             case Orientaion.Vertical:
                 viewLower = viewSize.y;
+                rowWidth = viewSize.x;
                 break;
             case Orientaion.Horizontal:
                 viewLower = viewSize.x;
+                rowWidth = viewSize.y;
                 break;
             }
 
@@ -152,33 +184,76 @@ namespace CustomUnity
 
             var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
 
-            for(int i = 0; i < totalCount; ++i) {
-                var cellSize = DataSource.CellSize(i);
-                float cellUpper = 0;
-                switch(orientaion) {
-                case Orientaion.Vertical:
-                    cellUpper = contentSize - contentRectLocalPosition.y;
-                    break;
-                case Orientaion.Horizontal:
-                    cellUpper = contentSize + contentRectLocalPosition.x;
-                    break;
+            LookAheadedCellSizes.Clear();
+            for(int i = 0; i < totalCount;) {
+                int addCount = 0;
+                float columnOffset = 0;
+                for(int j = i; j < totalCount && columnOffset <= rowWidth; ++j) {
+                    Rect rect = Rect.zero;
+                    var cellSize = DataSource.CellSize(j);
+                    switch(orientaion) {
+                    case Orientaion.Vertical:
+                        rect = new Rect(columnOffset, contentSize, cellSize.x, cellSize.y);
+                        columnOffset += cellSize.x;
+                        if(columnOffset > rowWidth) rect.x = 0;
+                        break;
+                    case Orientaion.Horizontal:
+                        rect = new Rect(contentSize, columnOffset, cellSize.y, cellSize.x);
+                        columnOffset += cellSize.y;
+                        if(columnOffset > rowWidth) rect.y = 0;
+                        break;
+                    }
+                    LookAheadedCellSizes.Add(new LookAheadedCellSize { index = j, rect = rect });
+                    addCount++;
                 }
-                var cellPosition = new CellPosition { position = contentSize, size = cellSize };
 
-                contentSize += cellSize;
+                float rowHeight = LookAheadedCellSizes.Count > 1 ?
+                    LookAheadedCellSizes.Take(LookAheadedCellSizes.Count - 1).Max(x => x.rect.height) :
+                    LookAheadedCellSizes.Last().rect.height;
+                for(int j = 0; j < LookAheadedCellSizes.Count; ++j) {
+                    if(LookAheadedCellSizes.Count > 1 && j == LookAheadedCellSizes.Count - 1) {
+                        i += addCount;
+                        if(i < totalCount) {
+                            LookAheadedCellSizes.RemoveRange(0, LookAheadedCellSizes.Count - 1);
+                            break;
+                        }
+                        else {
+                            rowHeight = LookAheadedCellSizes.Last().rect.height;
+                        }
+                    }
+                    float cellUpper = 0;
+                    int index = LookAheadedCellSizes[j].index;
+                    var rect = LookAheadedCellSizes[j].rect;
+                    switch(orientaion) {
+                    case Orientaion.Vertical:
+                        cellUpper = contentSize - contentRectLocalPosition.y;
+                        rect.height = rowHeight;
+                        break;
+                    case Orientaion.Horizontal:
+                        cellUpper = contentSize + contentRectLocalPosition.x;
+                        rect.width = rowHeight;
+                        break;
+                    }
 
-                if(startIndex < 0) {
-                    if(cellUpper >= -cellSize && cellUpper <= viewLower) {
-                        startIndex = endIndex = i;
-                        cellPositions[0] = cellPosition;
+                    if(startIndex < 0) {
+                        if(cellUpper >= -rowHeight && cellUpper <= viewLower) {
+                            startIndex = endIndex = index;
+                            cellRects[0] = rect;
+                        }
+                    }
+                    else {
+                        if(cellUpper >= -rowHeight && cellUpper <= viewLower) {
+                            endIndex = index;
+                            if(index - startIndex < cellRects.Length) cellRects[index - startIndex] = rect;
+                        }
+                    }
+
+                    if(LookAheadedCellSizes.Count == 1) {
+                        LookAheadedCellSizes.Clear();
+                        i++;
                     }
                 }
-                else {
-                    if(cellUpper >= -cellSize && cellUpper <= viewLower) {
-                        endIndex = i;
-                        if(i - startIndex < cellPositions.Length) cellPositions[i - startIndex] = cellPosition;
-                    }
-                }
+                contentSize += rowHeight;
             }
 
             var sizeDelta = contentRectTransform.sizeDelta;
@@ -215,15 +290,19 @@ namespace CustomUnity
                         var rectTrans = x.cell.GetComponent<RectTransform>();
                         var localPosition = rectTrans.localPosition;
                         var size = rectTrans.sizeDelta;
-                        var cellPosition = cellPositions[i - startIndex];
+                        var cellRect = cellRects[i - startIndex];
                         switch(orientaion) {
                         case Orientaion.Vertical:
-                            size.y = cellPosition.size;
-                            localPosition.y = -cellPosition.position - size.y * rectTrans.pivot.y;
+                            size.y = cellRect.height;
+                            localPosition.y = -cellRect.y - size.y * rectTrans.pivot.y;
+                            size.x = cellRect.width;
+                            localPosition.x = cellRect.x + size.x * rectTrans.pivot.x;
                             break;
                         case Orientaion.Horizontal:
-                            size.x = cellPosition.size;
-                            localPosition.x = cellPosition.position + size.x * rectTrans.pivot.x;
+                            size.x = cellRect.width;
+                            localPosition.x = cellRect.x + size.x * rectTrans.pivot.x;
+                            size.y = cellRect.height;
+                            localPosition.y = -cellRect.y - size.y * rectTrans.pivot.y;
                             break;
                         }
                         rectTrans.sizeDelta = size;

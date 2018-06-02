@@ -2224,12 +2224,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 195836493}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af25ea3128ff35a4ea3acbe870b2e312, type: 3}
+  m_Script: {fileID: 11500000, guid: 8bc8c09410597514d896e182f269ffb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   orientaion: 0
   repeat: 0
-  multiColumn: 1
 --- !u!114 &195836497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6147,7 +6146,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orientaion: 1
   repeat: 0
-  multiColumn: 0
 --- !u!1 &581014129
 GameObject:
   m_ObjectHideFlags: 0
@@ -14417,7 +14415,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orientaion: 0
   repeat: 0
-  multiColumn: 0
 --- !u!114 &1435340125
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20332,7 +20329,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orientaion: 1
   repeat: 0
-  multiColumn: 0
 --- !u!1 &2021059523
 GameObject:
   m_ObjectHideFlags: 0

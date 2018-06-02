@@ -4,6 +4,12 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
+    public enum Orientaion
+    {
+        Vertical,
+        Horizontal
+    }
+
     [RequireComponent(typeof(RectTransform))]
     public class TableContent : MonoBehaviour
     {
