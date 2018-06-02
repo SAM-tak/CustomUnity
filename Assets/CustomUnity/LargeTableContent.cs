@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace CustomUnity
 {
     [RequireComponent(typeof(RectTransform))]
-    public class FixedSizeListViewContent : MonoBehaviour
+    public class LargeTableContent : MonoBehaviour
     {
         public interface IDataSource
         {
@@ -86,10 +86,7 @@ namespace CustomUnity
                 break;
             }
         }
-
-        public int StartIndex { get; protected set; }
-        public int EndIndex { get; protected set; }
-
+        
         void Update()
         {
             if(!ScrollRect) return;
@@ -138,10 +135,7 @@ namespace CustomUnity
                 if(startIndex < 0) startIndex = 0;
                 if(endIndex >= totalCount) endIndex = totalCount - 1;
             }
-
-            StartIndex = startIndex;
-            EndIndex = endIndex;
-
+            
             foreach(var i in cellPool) {
                 if(i.cell.activeSelf && (i.index < startIndex || i.index > endIndex)) i.cell.SetActive(false);
             }

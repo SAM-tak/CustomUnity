@@ -3,9 +3,9 @@ using UnityEditor;
 
 namespace CustomUnity
 {
-    [CustomEditor(typeof(ListViewContent))]
+    [CustomEditor(typeof(LargeJaggedTableContent))]
     //[CanEditMultipleObjects]
-    public class ListViewContentInspector : Editor
+    public class LargeJaggedTableContentInspector : Editor
     {
         void OnEnable()
         {
@@ -22,11 +22,11 @@ namespace CustomUnity
             DrawDefaultInspector();
 
             if(Application.isPlaying) {
-                var contentFilter = target as ListViewContent;
-                if(contentFilter.DataSource == null) EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
-                else EditorGUILayout.HelpBox($"DataSource ({contentFilter.DataSource.GetType()})\nLength : {contentFilter.DataSource.TotalCount}", MessageType.Info);
-                if(contentFilter.MaxCellsRequired > contentFilter.MaxCells) {
-                    EditorGUILayout.HelpBox($"Short of Cell Object : Required {contentFilter.MaxCellsRequired} / Pooled {contentFilter.MaxCells}", MessageType.Warning);
+                var tableContent = target as LargeJaggedTableContent;
+                if(tableContent.DataSource == null) EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
+                else EditorGUILayout.HelpBox($"DataSource ({tableContent.DataSource.GetType()})\nLength : {tableContent.DataSource.TotalCount}", MessageType.Info);
+                if(tableContent.MaxCellsRequired > tableContent.MaxCells) {
+                    EditorGUILayout.HelpBox($"Short of Cell Object : Required {tableContent.MaxCellsRequired} / Pooled {tableContent.MaxCells}", MessageType.Warning);
                 }
             }
 

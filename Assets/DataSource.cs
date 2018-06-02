@@ -5,8 +5,8 @@ using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    [RequireComponent(typeof(ListViewContent))]
-    public class DataSource : MonoBehaviour, ListViewContent.IDataSource
+    [RequireComponent(typeof(LargeJaggedTableContent))]
+    public class DataSource : MonoBehaviour, LargeJaggedTableContent.IDataSource
     {
         [System.Serializable]
         public struct CellData
@@ -41,7 +41,7 @@ namespace YourProjectNamespace
         }
 
         bool prevAppendToFront;
-        ListViewContent listViewContent;
+        LargeJaggedTableContent listViewContent;
 
         public void OnPreUpdate()
         {
@@ -126,7 +126,7 @@ namespace YourProjectNamespace
 
         void Awake()
         {
-            listViewContent = GetComponent<ListViewContent>();
+            listViewContent = GetComponent<LargeJaggedTableContent>();
             listViewContent.DataSource = this;
             listViewContent.OnPreUpdate += OnPreUpdate;
         }

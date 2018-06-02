@@ -3,9 +3,9 @@ using UnityEditor;
 
 namespace CustomUnity
 {
-    [CustomEditor(typeof(FixedSizeListViewContent))]
+    [CustomEditor(typeof(LargeTableContent))]
     //[CanEditMultipleObjects]
-    public class FixedSizeListViewContentInspector : Editor
+    public class VirtualTableContentInspector : Editor
     {
         void OnEnable()
         {
@@ -22,11 +22,11 @@ namespace CustomUnity
             DrawDefaultInspector();
 
             if(Application.isPlaying) {
-                var listViewContent = target as FixedSizeListViewContent;
-                if(listViewContent.DataSource == null) EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
-                else EditorGUILayout.HelpBox($"DataSource ({listViewContent.DataSource.GetType()})\nLength : {listViewContent.DataSource.TotalCount}\n{listViewContent.StartIndex} to {listViewContent.EndIndex}", MessageType.Info);
-                if(listViewContent.MaxCellsRequired > listViewContent.MaxCells) {
-                    EditorGUILayout.HelpBox($"Short of Cell Object : Required {listViewContent.MaxCellsRequired} / Pooled {listViewContent.MaxCells}", MessageType.Warning);
+                var tableContent = target as LargeTableContent;
+                if(tableContent.DataSource == null) EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
+                else EditorGUILayout.HelpBox($"DataSource ({tableContent.DataSource.GetType()})\nLength : {tableContent.DataSource.TotalCount}", MessageType.Info);
+                if(tableContent.MaxCellsRequired > tableContent.MaxCells) {
+                    EditorGUILayout.HelpBox($"Short of Cell Object : Required {tableContent.MaxCellsRequired} / Pooled {tableContent.MaxCells}", MessageType.Warning);
                 }
             }
 

@@ -5,8 +5,8 @@ using CustomUnity;
 
 namespace YourProjectNamespace
 {
-    [RequireComponent(typeof(FixedSizeListViewContent))]
-    public class FixedSizeDataSource : MonoBehaviour, FixedSizeListViewContent.IDataSource
+    [RequireComponent(typeof(LargeTableContent))]
+    public class FixedSizeDataSource : MonoBehaviour, LargeTableContent.IDataSource
     {
         [System.Serializable]
         public struct CellData
@@ -40,7 +40,7 @@ namespace YourProjectNamespace
         }
 
         bool prevAppendToFront;
-        FixedSizeListViewContent listViewContent;
+        LargeTableContent listViewContent;
 
         public void OnPreUpdate()
         {
@@ -100,7 +100,7 @@ namespace YourProjectNamespace
 
         void Awake()
         {
-            listViewContent = GetComponent<FixedSizeListViewContent>();
+            listViewContent = GetComponent<LargeTableContent>();
             listViewContent.DataSource = this;
             listViewContent.OnPreUpdate += OnPreUpdate;
         }
