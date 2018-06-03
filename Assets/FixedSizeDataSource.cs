@@ -45,7 +45,7 @@ namespace YourProjectNamespace
 
         public void OnPreUpdate()
         {
-            if(prevAppendToFront != appendToFront || prevAppendToBack != appendToBack) tableContent.InactivateAllCells();
+            if(prevAppendToFront != appendToFront || prevAppendToBack != appendToBack) tableContent.Refresh();
 
             if(prevAppendToFront != appendToFront) {
                 var pos = tableContent.transform.localPosition;

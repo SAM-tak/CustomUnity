@@ -4,14 +4,8 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
-    public enum Orientaion
-    {
-        Vertical,
-        Horizontal
-    }
-
     [RequireComponent(typeof(RectTransform))]
-    public class TableContent : MonoBehaviour
+    public class TableContent : TableContentBase
     {
         public interface IDataSource
         {
@@ -24,43 +18,9 @@ namespace CustomUnity
         public bool repeat;
 
         public int columnCount = 1;
-
-        public Orientaion orientaion;
         
         public IDataSource DataSource { get; set; }
         
-        public Action OnPreUpdate { get; set; }
-
-        public ScrollRect ScrollRect { get; protected set; }
-
-        public int MaxCells {
-            get {
-                return cellPool != null ? cellPool.Length : 0;
-            }
-        }
-
-        public int MaxCellsRequired { get; protected set; }
-
-        RectTransform contentRectTransform;
-        
-        struct Cell
-        {
-            public GameObject cell;
-            public int index;
-        }
-
-        Cell[] cellPool;
-
-        /// <summary>
-        /// Inactivate All Active Cells
-        /// 
-        /// To use for forcing to reset cells up.
-        /// </summary>
-        public void InactivateAllCells()
-        {
-            foreach(var i in cellPool) i.cell.SetActive(false);
-        }
-
         public Vector2 GetContentSize(IDataSource dataSource)
         {
             var n = dataSource.TotalCount;
@@ -80,53 +40,18 @@ namespace CustomUnity
         {
             if(columnCount < 1) columnCount = 1;
         }
-
-        void Start()
-        {
-            ScrollRect = GetComponentInParent<ScrollRect>();
-            Debug.Assert(ScrollRect);
-            contentRectTransform = GetComponent<RectTransform>();
-            cellPool = new Cell[transform.childCount];
-            for(int i = 0; i < transform.childCount; i++) {
-                var go = transform.GetChild(i).gameObject;
-                go.SetActive(false);
-                cellPool[i].cell = go;
-            }
-
-            if(repeat) {
-                var contentRectLocalPosition = contentRectTransform.localPosition;
-                var viewSize = ScrollRect.viewport.rect.size;
-                var contentMargin = 0f;
-                switch(orientaion) {
-                case Orientaion.Vertical:
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
-                    if(contentRectLocalPosition.y < contentMargin) {
-                        contentRectLocalPosition.y = contentMargin;
-                        contentRectTransform.localPosition = contentRectLocalPosition;
-                    }
-                    break;
-                case Orientaion.Horizontal:
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
-                    if(contentRectLocalPosition.x < contentMargin) {
-                        contentRectLocalPosition.x = contentMargin;
-                        contentRectTransform.localPosition = contentRectLocalPosition;
-                    }
-                    break;
-                }
-            }
-        }
         
-        void Update()
+        protected override void UpdateContent()
         {
             if(!ScrollRect) return;
-
-            OnPreUpdate?.Invoke();
-
+            
             var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
 
             float contentSize = 0;
             int startIndex = 0;
             int endIndex = 0;
+            int leftRadix = 0;
+            int rightRadix = columnCount;
             var viewSize = ScrollRect.viewport.rect.size;
             var contentMargin = 0f;
             var contentRectLocalPosition = contentRectTransform.localPosition;
@@ -142,7 +67,12 @@ namespace CustomUnity
                     }
                 }
                 startIndex = Mathf.FloorToInt((contentRectLocalPosition.y - contentMargin) / cellSize.y) * columnCount;
-                endIndex = Mathf.FloorToInt(((contentRectLocalPosition.y - contentMargin) + viewSize.y) / cellSize.y) * columnCount + (columnCount - 1);
+                endIndex = Mathf.FloorToInt((contentRectLocalPosition.y - contentMargin + viewSize.y) / cellSize.y) * columnCount + (columnCount - 1);
+                if(columnCount > 1 && cellSize.x > 0) {
+                    leftRadix = Mathf.FloorToInt(-contentRectLocalPosition.x / cellSize.x);
+                    rightRadix = Mathf.FloorToInt((viewSize.x - contentRectLocalPosition.x) / cellSize.x);
+                }
+                sizeDelta.x = cellSize.x * columnCount;
                 sizeDelta.y = contentSize + contentMargin * 2;
                 break;
             case Orientaion.Horizontal:
@@ -154,9 +84,14 @@ namespace CustomUnity
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }
-                startIndex = Mathf.FloorToInt((contentRectLocalPosition.x - contentMargin) / cellSize.x) * columnCount;
-                endIndex = Mathf.FloorToInt(((contentRectLocalPosition.x - contentMargin) + viewSize.x) / cellSize.x) * columnCount + (columnCount - 1);
+                startIndex = Mathf.FloorToInt((-contentRectLocalPosition.x + contentMargin) / cellSize.x) * columnCount;
+                endIndex = Mathf.FloorToInt((-contentRectLocalPosition.x + contentMargin + viewSize.x) / cellSize.x) * columnCount + (columnCount - 1);
+                if(columnCount > 1 && cellSize.y > 0) {
+                    leftRadix = Mathf.FloorToInt(contentRectLocalPosition.y / cellSize.y);
+                    rightRadix = Mathf.FloorToInt((contentRectLocalPosition.y + viewSize.y) / cellSize.y);
+                }
                 sizeDelta.x = contentSize + contentMargin * 2;
+                sizeDelta.y = cellSize.y * columnCount;
                 break;
             }
             contentRectTransform.sizeDelta = sizeDelta;
@@ -166,12 +101,16 @@ namespace CustomUnity
             }
             
             foreach(var i in cellPool) {
-                if(i.cell.activeSelf && (i.index < startIndex || i.index > endIndex)) i.cell.SetActive(false);
+                if(i.cell.activeSelf && (i.index < startIndex || i.index > endIndex
+                    || (i.index % columnCount < leftRadix)
+                    || (i.index % columnCount > rightRadix))) i.cell.SetActive(false);
             }
 
             if(endIndex - startIndex + 1 > 0) {
                 if(endIndex - startIndex + 1 > MaxCellsRequired) MaxCellsRequired = endIndex - startIndex + 1;
                 for(int i = startIndex; i <= endIndex; ++i) {
+                    if((i % columnCount < leftRadix) || (i % columnCount > rightRadix)) continue;
+
                     int wrapedIndex = Math.Wrap(i, totalCount);
                     int firstinactive = -1;
                     for(int j = 0; j < cellPool.Length; j++) {

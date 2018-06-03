@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace CustomUnity
 {
     [RequireComponent(typeof(RectTransform))]
-    public class MultiColumnJaggedTableContent : MonoBehaviour
+    public class MultiColumnJaggedTableContent : TableContentBase
     {
         public interface IDataSource
         {
@@ -15,43 +15,10 @@ namespace CustomUnity
             Vector2 CellSize(int index);
             void SetUpCell(int index, GameObject cell);
         }
-
-        public Orientaion orientaion;
         
         public IDataSource DataSource { get; set; }
-        
-        public Action OnPreUpdate { get; set; }
 
-        public ScrollRect ScrollRect { get; protected set; }
-
-        public int MaxCells {
-            get {
-                return cellPool != null ? cellPool.Length : 0;
-            }
-        }
-
-        public int MaxCellsRequired { get; protected set; }
-
-        RectTransform contentRectTransform;
-        
-        struct Cell
-        {
-            public GameObject cell;
-            public int index;
-        }
-
-        Cell[] cellPool;
         Rect[] cellRects;
-
-        /// <summary>
-        /// Inactivate All Active Cells
-        /// 
-        /// To use for forcing to reset cells up.
-        /// </summary>
-        public void InactivateAllCells()
-        {
-            foreach(var i in cellPool) i.cell.SetActive(false);
-        }
         
         public Vector2 GetContentSize(IDataSource dataSource)
         {
@@ -116,21 +83,13 @@ namespace CustomUnity
         }
         List<LookAheadedCellSize> LookAheadedCellSizes { get; } = new List<LookAheadedCellSize>(10);
 
-        void Start()
+        protected override void Start()
         {
-            ScrollRect = GetComponentInParent<ScrollRect>();
-            Debug.Assert(ScrollRect);
-            contentRectTransform = GetComponent<RectTransform>();
-            cellPool = new Cell[transform.childCount];
+            base.Start();
             cellRects = new Rect[transform.childCount];
-            for(int i = 0; i < transform.childCount; i++) {
-                var go = transform.GetChild(i).gameObject;
-                go.SetActive(false);
-                cellPool[i].cell = go;
-            }
         }
 
-        void Update()
+        protected override void UpdateContent()
         {
             if(!ScrollRect) return;
 
