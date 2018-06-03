@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -207,19 +206,9 @@ namespace CustomUnity
                 if(endIndex - startIndex + 1 > MaxCellsRequired) MaxCellsRequired = endIndex - startIndex + 1;
                 for(int i = startIndex; i <= endIndex; ++i) {
                     int wrapedIndex = Math.Wrap(i, totalCount);
-                    int firstinactive = -1;
-                    for(int j = 0; j < cellPool.Length; ++j) {
-                        if(cellPool[j].cell.activeSelf) {
-                            if(cellPool[j].index == i) {
-                                firstinactive = -1;
-                                break;
-                            }
-                        }
-                        else if(firstinactive < 0) firstinactive = j;
-                    }
-                    if(firstinactive >= 0) {
-                        var x = cellPool[firstinactive];
-                        var rectTrans = x.cell.GetComponent<RectTransform>();
+                    var newCell = NewCell(i);
+                    if(newCell) {
+                        var rectTrans = newCell.GetComponent<RectTransform>();
                         var localPosition = rectTrans.localPosition;
                         var size = rectTrans.sizeDelta;
                         var cellRect = cellRects[i - startIndex];
@@ -239,10 +228,8 @@ namespace CustomUnity
                         }
                         rectTrans.sizeDelta = size;
                         rectTrans.localPosition = localPosition;
-                        DataSource.SetUpCell(wrapedIndex, x.cell);
-                        x.cell.SetActive(true);
-                        x.index = i;
-                        cellPool[firstinactive] = x;
+                        DataSource.SetUpCell(wrapedIndex, newCell);
+                        newCell.SetActive(true);
                     }
                 }
             }

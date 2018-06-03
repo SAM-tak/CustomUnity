@@ -841,10 +841,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8276eeab3e3a14d8b16641cd19bebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orientaion: 1
   cellSize: {x: 90, y: 50}
   repeat: 0
   columnCount: 3
-  orientaion: 1
 --- !u!1 &58217029
 GameObject:
   m_ObjectHideFlags: 0
@@ -5199,10 +5199,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8276eeab3e3a14d8b16641cd19bebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orientaion: 0
   cellSize: {x: 90, y: 50}
   repeat: 0
   columnCount: 3
-  orientaion: 0
 --- !u!1 &383736525
 GameObject:
   m_ObjectHideFlags: 0
@@ -5369,7 +5369,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 226255258}
   m_HorizontalScrollbar: {fileID: 1240613497}
   m_VerticalScrollbar: {fileID: 819602359}
@@ -9702,7 +9702,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 536523466}
   m_HorizontalScrollbar: {fileID: 1927603405}
   m_VerticalScrollbar: {fileID: 962153481}
@@ -11684,7 +11684,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 1974655686}
   m_HorizontalScrollbar: {fileID: 160429168}
   m_VerticalScrollbar: {fileID: 806050862}
@@ -13932,7 +13932,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 840745861}
   m_HorizontalScrollbar: {fileID: 112245066}
   m_VerticalScrollbar: {fileID: 913267226}
@@ -15434,7 +15434,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 0
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 1837306294}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
@@ -16582,10 +16582,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8276eeab3e3a14d8b16641cd19bebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orientaion: 0
   cellSize: {x: 0, y: 50}
   repeat: 1
   columnCount: 1
-  orientaion: 0
 --- !u!1 &1235034169
 GameObject:
   m_ObjectHideFlags: 0
@@ -22571,7 +22571,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 1417653440}
   m_HorizontalScrollbar: {fileID: 248585054}
   m_VerticalScrollbar: {fileID: 360276922}
@@ -24643,7 +24643,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 196121021}
   m_HorizontalScrollbar: {fileID: 1912045239}
   m_VerticalScrollbar: {fileID: 1721066771}

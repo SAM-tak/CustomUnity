@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,13 +12,13 @@ namespace CustomUnity
             void SetUpCell(int index, GameObject cell);
         }
 
+        public IDataSource DataSource { get; set; }
+
         public Vector2 cellSize;
 
         public bool repeat;
 
         public int columnCount = 1;
-        
-        public IDataSource DataSource { get; set; }
         
         public Vector2 GetContentSize(IDataSource dataSource)
         {
@@ -40,7 +39,33 @@ namespace CustomUnity
         {
             if(columnCount < 1) columnCount = 1;
         }
-        
+
+        protected override void Start()
+        {
+            base.Start();
+            if(repeat) {
+                var contentRectLocalPosition = contentRectTransform.localPosition;
+                var viewSize = ScrollRect.viewport.rect.size;
+                var contentMargin = 0f;
+                switch(orientaion) {
+                case Orientaion.Vertical:
+                    contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
+                    if(contentRectLocalPosition.y < contentMargin) {
+                        contentRectLocalPosition.y = contentMargin;
+                        contentRectTransform.localPosition = contentRectLocalPosition;
+                    }
+                    break;
+                case Orientaion.Horizontal:
+                    contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
+                    if(contentRectLocalPosition.x < contentMargin) {
+                        contentRectLocalPosition.x = contentMargin;
+                        contentRectTransform.localPosition = contentRectLocalPosition;
+                    }
+                    break;
+                }
+            }
+        }
+
         protected override void UpdateContent()
         {
             if(!ScrollRect) return;
@@ -79,7 +104,7 @@ namespace CustomUnity
                 contentSize = totalCount * cellSize.x / columnCount;
                 if(repeat) {
                     contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
-                    if(contentRectLocalPosition.x < contentMargin / 2 || contentRectLocalPosition.x + viewSize.x > (contentMargin + contentSize + contentMargin / 2)) {
+                    if(contentRectLocalPosition.x > contentMargin / 2 || viewSize.x - contentRectLocalPosition.x < (contentMargin + contentSize + contentMargin / 2)) {
                         contentRectLocalPosition.x = contentMargin + Math.Wrap(contentRectLocalPosition.x - contentMargin, contentSize);
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
@@ -112,19 +137,9 @@ namespace CustomUnity
                     if((i % columnCount < leftRadix) || (i % columnCount > rightRadix)) continue;
 
                     int wrapedIndex = Math.Wrap(i, totalCount);
-                    int firstinactive = -1;
-                    for(int j = 0; j < cellPool.Length; j++) {
-                        if(cellPool[j].cell.activeSelf) {
-                            if(cellPool[j].index == i) {
-                                firstinactive = -1;
-                                break;
-                            }
-                        }
-                        else if(firstinactive < 0) firstinactive = j;
-                    }
-                    if(firstinactive >= 0) {
-                        var x = cellPool[firstinactive];
-                        var rectTrans = x.cell.GetComponent<RectTransform>();
+                    var newCell = NewCell(i);
+                    if(newCell) {
+                        var rectTrans = newCell.GetComponent<RectTransform>();
                         var localPosition = rectTrans.localPosition;
                         switch(orientaion) {
                         case Orientaion.Vertical:
@@ -142,10 +157,8 @@ namespace CustomUnity
                         }
                         rectTrans.sizeDelta = cellSize;
                         rectTrans.localPosition = localPosition;
-                        DataSource.SetUpCell(wrapedIndex, x.cell);
-                        x.cell.SetActive(true);
-                        x.index = i;
-                        cellPool[firstinactive] = x;
+                        DataSource.SetUpCell(wrapedIndex, newCell);
+                        newCell.SetActive(true);
                     }
                 }
             }

@@ -38,11 +38,25 @@ namespace CustomUnity
 
         protected Cell[] cellPool;
 
+        protected GameObject NewCell(int index)
+        {
+            int candidate = -1;
+            for(int j = 0; j < cellPool.Length; ++j) {
+                if(cellPool[j].cell.activeSelf) {
+                    if(cellPool[j].index == index) return null;
+                }
+                else if(candidate < 0) candidate = j;
+            }
+            if(candidate >= 0) {
+                cellPool[candidate].index = index;
+                return cellPool[candidate].cell;
+            }
+            return null;
+        }
+        
         protected bool needsUpdateContent = true;
 
         /// <summary>
-        /// Inactivate All Active Cells
-        /// 
         /// To use for forcing to reset cells up.
         /// </summary>
         public void Refresh()
