@@ -9,8 +9,7 @@ namespace CustomUnity
         Vertical,
         Horizontal
     }
-
-    [RequireComponent(typeof(RectTransform))]
+    
     public abstract class TableContentBase : MonoBehaviour
     {
         [ReadOnlyWhenPlaying]
