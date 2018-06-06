@@ -6,21 +6,21 @@ using System.IO;
 
 namespace CustomUnity
 {
-	public class EncloseAnimationClip : EditorWindow
-	{
-		AnimatorController controller;
+    public class EncloseAnimationClip : EditorWindow
+    {
+        AnimatorController controller;
 
-		string clipName;
+        string clipName;
 
         const string menuString = "Assets/Enclose AnimationClip";
         const int priority = 51;
 
         [MenuItem(menuString, priority = priority)]
-		static void Create()
-		{
-			var window = GetWindow<EncloseAnimationClip>(true, "Enclose AnimationClip", true);
-			window.controller = Selection.activeObject as AnimatorController;
-		}
+        static void Open()
+        {
+            var window = GetWindow<EncloseAnimationClip>(true, "Enclose AnimationClip", true);
+            window.controller = Selection.activeObject as AnimatorController;
+        }
 
         [MenuItem(menuString, priority = priority, validate = true)]
         static bool Validate()
@@ -29,24 +29,24 @@ namespace CustomUnity
         }
 
         void OnGUI()
-		{
-			EditorGUILayout.LabelField("Animator Controller");
-			controller = EditorGUILayout.ObjectField(controller, typeof(AnimatorController), false) as AnimatorController;
+        {
+            EditorGUILayout.LabelField("Animator Controller");
+            controller = EditorGUILayout.ObjectField(controller, typeof(AnimatorController), false) as AnimatorController;
 
-			if(controller == null) return;
+            if (controller == null) return;
 
-			var clipList = new List<AnimationClip>();
-			var allAssets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(controller));
-			foreach(var asset in allAssets ) {
-				if(asset is AnimationClip) {
-					var removeClip = asset as AnimationClip;
-					if(! clipList.Contains(removeClip ) ){
-						clipList.Add(removeClip);
-					}
-				}
-			}
+            var clipList = new List<AnimationClip>();
+            var allAssets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(controller));
+            foreach(var asset in allAssets) {
+                if(asset is AnimationClip) {
+                    var removeClip = asset as AnimationClip;
+                    if(!clipList.Contains(removeClip)) {
+                        clipList.Add(removeClip);
+                    }
+                }
+            }
 
-			var dropArea = EditorGUILayout.BeginVertical("box");
+            var dropArea = EditorGUILayout.BeginVertical("box");
 
             EditorGUILayout.HelpBox("Drop AnimationClip to add here.", MessageType.Info, true);
 
@@ -74,53 +74,57 @@ namespace CustomUnity
                 }
                 break;
             }
+            EditorGUILayout.EndVertical();
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Add new AnimationClip");
 
+            EditorGUILayout.BeginHorizontal();
             clipName = EditorGUILayout.TextField(clipName);
-			
-			if(clipList.Exists(item=> item.name == clipName ) || string.IsNullOrEmpty(clipName)) {
-                EditorGUILayout.HelpBox("can't create duplicate names or empty", MessageType.Warning);
+
+            var invalid = clipList.Exists(item => item.name == clipName) || string.IsNullOrEmpty(clipName);
+            EditorGUI.BeginDisabledGroup(invalid);
+            if(GUILayout.Button("Add", GUILayout.Width(60))) {
+                var animationClip = AnimatorController.AllocateAnimatorClip(clipName);
+                AssetDatabase.AddObjectToAsset(animationClip, controller);
+                AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
+                AssetDatabase.Refresh();
+                clipName = null;
             }
-            else {
-				if(GUILayout.Button("Create")) {
-					var animationClip = AnimatorController.AllocateAnimatorClip(clipName);
-					AssetDatabase.AddObjectToAsset(animationClip, controller);
-					AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
-					AssetDatabase.Refresh();
-				}
-			}
-			EditorGUILayout.EndVertical();
+            EditorGUI.EndDisabledGroup();
+            EditorGUILayout.EndHorizontal();
+            if(invalid) EditorGUILayout.HelpBox("can't create duplicate names or empty", MessageType.Warning);
 
-			if(clipList.Count == 0) return;
+            if(clipList.Count > 0) {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Enclosed Clips");
+                foreach(var enclosedClip in clipList) {
+                    EditorGUILayout.BeginHorizontal();
 
-			EditorGUILayout.Space();
+                    var newName = EditorGUILayout.TextField(enclosedClip.name);
 
-			EditorGUILayout.LabelField("Enclosed Clips");
-
-			foreach(var enclosedClip in clipList) {
-				EditorGUILayout.BeginHorizontal();
-				
-				EditorGUILayout.LabelField(enclosedClip.name);
-				if(GUILayout.Button("Remove" , GUILayout.Width(80))) {
-					DestroyImmediate(enclosedClip, true);
-					AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
-				}
-                if(GUILayout.Button("Extract", GUILayout.Width(80))) {
-                    var cloned = Instantiate(enclosedClip) as AnimationClip;
-                    cloned.name = enclosedClip.name;
-                    var destinationPath = Path.Combine(Path.GetDirectoryName(AssetDatabase.GetAssetPath(controller)), cloned.name + ".anim");
-                    if(File.Exists(destinationPath)) {
-                        EditorUtility.DisplayDialog("Error", "\"" + destinationPath + "\" is already exists.", "OK");
+                    if(newName != enclosedClip.name && !clipList.Exists(item => item.name == newName) && !string.IsNullOrEmpty(newName)) {
+                        enclosedClip.name = newName;
                     }
-                    else {
-                        Debug.Log("extract to " + destinationPath);
-                        AssetDatabase.CreateAsset(cloned, destinationPath);
+
+                    if(GUILayout.Button(EditorGUIUtility.IconContent("Toolbar Minus"), GUILayout.Width(20))) {
+                        DestroyImmediate(enclosedClip, true);
+                        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
                     }
+                    if(GUILayout.Button(EditorGUIUtility.IconContent("BuildSettings.Standalone.Small"), GUILayout.Width(20))) {
+                        var cloned = Instantiate(enclosedClip) as AnimationClip;
+                        cloned.name = enclosedClip.name;
+                        var destinationPath = Path.Combine(Path.GetDirectoryName(AssetDatabase.GetAssetPath(controller)), cloned.name + ".anim");
+                        if(File.Exists(destinationPath)) {
+                            EditorUtility.DisplayDialog("Error", "\"" + destinationPath + "\" is already exists.", "OK");
+                        }
+                        else {
+                            Debug.Log("extract to " + destinationPath);
+                            AssetDatabase.CreateAsset(cloned, destinationPath);
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
                 }
-                EditorGUILayout.EndHorizontal();
-			}
-		}
-	}
+            }
+        }
+    }
 }
