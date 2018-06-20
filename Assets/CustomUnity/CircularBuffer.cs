@@ -19,6 +19,11 @@ namespace CustomUnity
 
         public int Count { get; private set; }
 
+        public T First {
+            get { return buffer[tail]; }
+            set { buffer[tail] = value; }
+        }
+
         public T Last {
             get { return buffer[head]; }
             set { buffer[head] = value; }
