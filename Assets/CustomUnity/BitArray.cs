@@ -62,14 +62,14 @@ namespace CustomUnity
 
     public struct BitArray32
     {
-        public int store;
+        public uint store;
 
         public bool this[int i] {
             get {
                 return (store & (1 << i)) > 0;
             }
             set {
-                store = (store & ~(1 << i)) | (value ? (1 << i) : 0);
+                store = (store & (uint)~(1 << i)) | (value ? (uint)(1 << i) : 0);
             }
         }
 
@@ -92,6 +92,11 @@ namespace CustomUnity
         {
             return new BitArray32 { store = ~src.store };
         }
+
+        public bool Any()
+        {
+            return store != 0;
+        }
     }
 
     public struct BitArray64
@@ -106,7 +111,7 @@ namespace CustomUnity
             }
             set {
                 if(i < 32) store1[i] = value;
-                store2[i - 32] = value;
+                else store2[i - 32] = value;
             }
         }
 
@@ -129,6 +134,11 @@ namespace CustomUnity
         {
             return new BitArray64 { store1 = ~src.store1, store2 = ~src.store2 };
         }
+
+        public bool Any()
+        {
+            return store1.Any() || store2.Any();
+        }
     }
 
     public struct BitArray96
@@ -146,7 +156,7 @@ namespace CustomUnity
             set {
                 if(i < 32) store1[i] = value;
                 else if(i < 64) store2[i - 32] = value;
-                store3[i - 64] = value;
+                else store3[i - 64] = value;
             }
         }
 
@@ -169,6 +179,11 @@ namespace CustomUnity
         {
             return new BitArray96 { store1 = ~src.store1, store2 = ~src.store2, store3 = ~src.store3 };
         }
+
+        public bool Any()
+        {
+            return store1.Any() || store2.Any() || store3.Any();
+        }
     }
 
     public struct BitArray128
@@ -189,7 +204,7 @@ namespace CustomUnity
                 if(i < 32) store1[i] = value;
                 else if(i < 64) store2[i - 32] = value;
                 else if(i < 96) store3[i - 64] = value;
-                store4[i - 96] = value;
+                else store4[i - 96] = value;
             }
         }
 
@@ -211,6 +226,11 @@ namespace CustomUnity
         public static BitArray128 operator ~(BitArray128 src)
         {
             return new BitArray128 { store1 = ~src.store1, store2 = ~src.store2, store3 = ~src.store3, store4 = ~src.store4 };
+        }
+
+        public bool Any()
+        {
+            return store1.Any() || store2.Any() || store3.Any() || store4.Any();
         }
     }
 }
