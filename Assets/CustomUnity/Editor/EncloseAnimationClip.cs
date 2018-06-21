@@ -1,8 +1,9 @@
+using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
-using System.IO;
 
 namespace CustomUnity
 {
@@ -35,16 +36,7 @@ namespace CustomUnity
 
             if (controller == null) return;
 
-            var clipList = new List<AnimationClip>();
-            var allAssets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(controller));
-            foreach(var asset in allAssets) {
-                if(asset is AnimationClip) {
-                    var removeClip = asset as AnimationClip;
-                    if(!clipList.Contains(removeClip)) {
-                        clipList.Add(removeClip);
-                    }
-                }
-            }
+            var clipList = AssetDatabase.LoadAllAssetRepresentationsAtPath(AssetDatabase.GetAssetPath(controller)).Where(x => x is AnimationClip).Select(x => x as AnimationClip).ToList();
 
             var dropArea = EditorGUILayout.BeginVertical("box");
 
@@ -64,7 +56,7 @@ namespace CustomUnity
                             EditorUtility.DisplayDialog("Error", "can't add an AnimationClip has duplicate or empty name", "OK");
                         }
                         else {
-                            var cloned = Instantiate(animationClip) as AnimationClip;
+                            var cloned = Instantiate(animationClip);
                             cloned.name = animationClip.name;
                             AssetDatabase.AddObjectToAsset(cloned, controller);
                             AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
