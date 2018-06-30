@@ -16,9 +16,10 @@ namespace CustomUnity
 
         public Vector2 cellSize;
 
-        public bool repeat;
-
         public int columnCount = 1;
+
+        [ReadOnlyIf("columnCount", 1, ReadOnlyIfAttribute.Comparison.GreaterThan)]
+        public bool repeat;
         
         public Vector2 GetContentSize(IDataSource dataSource)
         {
@@ -38,6 +39,7 @@ namespace CustomUnity
         void OnValidate()
         {
             if(columnCount < 1) columnCount = 1;
+            if(repeat && columnCount > 1) repeat = false;
         }
 
         protected override void Start()
