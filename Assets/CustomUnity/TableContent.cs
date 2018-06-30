@@ -83,7 +83,7 @@ namespace CustomUnity
             var sizeDelta = contentRectTransform.sizeDelta;
             switch(orientaion) {
             case Orientaion.Vertical:
-                contentSize = totalCount * cellSize.y / columnCount;
+                contentSize = (totalCount + columnCount - 1) / columnCount * cellSize.y;
                 if(repeat) {
                     contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
                     if(contentRectLocalPosition.y < contentMargin / 2 || contentRectLocalPosition.y + viewSize.y > (contentMargin + contentSize + contentMargin / 2)) {
@@ -101,7 +101,7 @@ namespace CustomUnity
                 sizeDelta.y = contentSize + contentMargin * 2;
                 break;
             case Orientaion.Horizontal:
-                contentSize = totalCount * cellSize.x / columnCount;
+                contentSize = (totalCount + columnCount - 1) / columnCount * cellSize.x;
                 if(repeat) {
                     contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
                     if(contentRectLocalPosition.x > contentMargin / 2 || viewSize.x - contentRectLocalPosition.x < (contentMargin + contentSize + contentMargin / 2)) {

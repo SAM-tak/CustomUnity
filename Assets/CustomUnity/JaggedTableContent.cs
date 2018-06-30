@@ -105,6 +105,9 @@ namespace CustomUnity
             }
             contentRectTransform.sizeDelta = sizeDelta;
 
+            if(startIndex < 0) startIndex = 0;
+            if(endIndex >= totalCount) endIndex = totalCount - 1;
+
             foreach(var i in cellPool) {
                 if(i.cell.activeSelf && (i.index < startIndex || i.index > endIndex)) i.cell.SetActive(false);
             }
