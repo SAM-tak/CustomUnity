@@ -29,6 +29,9 @@ namespace CustomUnity
             return Selection.activeObject is AnimatorController;
         }
 
+        static readonly GUIContent removeIcon = new GUIContent(EditorGUIUtility.IconContent("Toolbar Minus").image, "Remove clip");
+        static readonly GUIContent extractIcon = new GUIContent(EditorGUIUtility.IconContent("BuildSettings.Standalone.Small").image, "Extract clip");
+
         void OnGUI()
         {
             EditorGUILayout.LabelField("Animator Controller");
@@ -41,6 +44,8 @@ namespace CustomUnity
             var dropArea = EditorGUILayout.BeginVertical("box");
 
             EditorGUILayout.HelpBox("Drop AnimationClip to add here.", MessageType.Info, true);
+
+            bool dirty = false;
 
             switch(UnityEngine.Event.current.type) {
             case EventType.DragUpdated:
@@ -59,8 +64,7 @@ namespace CustomUnity
                             var cloned = Instantiate(animationClip);
                             cloned.name = animationClip.name;
                             AssetDatabase.AddObjectToAsset(cloned, controller);
-                            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
-                            AssetDatabase.Refresh();
+                            dirty = true;
                         }
                     }
                 }
@@ -78,8 +82,7 @@ namespace CustomUnity
             if(GUILayout.Button("Add", GUILayout.Width(60))) {
                 var animationClip = AnimatorController.AllocateAnimatorClip(clipName);
                 AssetDatabase.AddObjectToAsset(animationClip, controller);
-                AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
-                AssetDatabase.Refresh();
+                dirty = true;
                 clipName = null;
             }
             EditorGUI.EndDisabledGroup();
@@ -92,17 +95,18 @@ namespace CustomUnity
                 foreach(var enclosedClip in clipList) {
                     EditorGUILayout.BeginHorizontal();
 
-                    var newName = EditorGUILayout.TextField(enclosedClip.name);
+                    var newName = EditorGUILayout.DelayedTextField(enclosedClip.name);
 
                     if(newName != enclosedClip.name && !clipList.Exists(item => item.name == newName) && !string.IsNullOrEmpty(newName)) {
                         enclosedClip.name = newName;
+                        dirty = true;
                     }
 
-                    if(GUILayout.Button(EditorGUIUtility.IconContent("Toolbar Minus"), GUILayout.Width(20))) {
+                    if(GUILayout.Button(removeIcon, GUILayout.Width(20))) {
                         DestroyImmediate(enclosedClip, true);
-                        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(controller));
+                        dirty = true;
                     }
-                    if(GUILayout.Button(EditorGUIUtility.IconContent("BuildSettings.Standalone.Small"), GUILayout.Width(20))) {
+                    if(GUILayout.Button(extractIcon, GUILayout.Width(20))) {
                         var cloned = Instantiate(enclosedClip) as AnimationClip;
                         cloned.name = enclosedClip.name;
                         var destinationPath = Path.Combine(Path.GetDirectoryName(AssetDatabase.GetAssetPath(controller)), cloned.name + ".anim");
@@ -112,10 +116,15 @@ namespace CustomUnity
                         else {
                             Debug.Log("extract to " + destinationPath);
                             AssetDatabase.CreateAsset(cloned, destinationPath);
+                            dirty = true;
                         }
                     }
                     EditorGUILayout.EndHorizontal();
                 }
+            }
+            if(dirty) {
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
             }
         }
     }
