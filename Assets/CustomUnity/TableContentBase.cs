@@ -53,6 +53,17 @@ namespace CustomUnity
             return null;
         }
         
+        protected bool IsCulled(GameObject cell)
+        {
+            var cellRectTransform = cell.GetComponent<RectTransform>();
+            var rect = cellRectTransform.rect;
+            rect.position = cellRectTransform.TransformPoint(rect.position);
+            rect.size = cellRectTransform.TransformVector(rect.size);
+            rect.position = ScrollRect.viewport.InverseTransformPoint(rect.position);
+            rect.size = cellRectTransform.InverseTransformVector(rect.size);
+            return !ScrollRect.viewport.rect.Overlaps(rect);
+        }
+
         protected bool needsUpdateContent = true;
 
         /// <summary>
