@@ -136,7 +136,6 @@ namespace CustomUnity
                 for(int i = startIndex; i <= endIndex; ++i) {
                     if((i % columnCount < leftRadix) || (i % columnCount > rightRadix)) continue;
 
-                    int wrapedIndex = Math.Wrap(i, totalCount);
                     var newCell = NewCell(i);
                     if(newCell) {
                         var rectTrans = newCell.GetComponent<RectTransform>();
@@ -157,7 +156,7 @@ namespace CustomUnity
                         }
                         rectTrans.sizeDelta = cellSize;
                         rectTrans.localPosition = localPosition;
-                        DataSource.SetUpCell(wrapedIndex, newCell);
+                        DataSource.SetUpCell(Math.Wrap(i, totalCount), newCell);
                         newCell.SetActive(true);
                     }
                 }
