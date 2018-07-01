@@ -87,7 +87,7 @@ namespace CustomUnity
                 if(repeat) {
                     contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
                     if(contentRectLocalPosition.y < contentMargin / 2 || contentRectLocalPosition.y + viewSize.y > (contentMargin + contentSize + contentMargin / 2)) {
-                        contentRectLocalPosition.y = contentMargin + Math.Wrap(contentRectLocalPosition.y - contentMargin, contentSize);
+                        contentRectLocalPosition.y = Math.Wrap(contentRectLocalPosition.y - contentMargin, contentSize) + contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }
@@ -104,8 +104,8 @@ namespace CustomUnity
                 contentSize = Math.CeilDiv(totalCount, columnCount) * cellSize.x;
                 if(repeat) {
                     contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
-                    if(contentRectLocalPosition.x > contentMargin / 2 || viewSize.x - contentRectLocalPosition.x < (contentMargin + contentSize + contentMargin / 2)) {
-                        contentRectLocalPosition.x = contentMargin + Math.Wrap(contentRectLocalPosition.x - contentMargin, contentSize);
+                    if(contentRectLocalPosition.x > -contentMargin / 2 || contentRectLocalPosition.x - viewSize.x < -(contentMargin + contentSize + contentMargin / 2)) {
+                        contentRectLocalPosition.x = -Math.Wrap(-contentRectLocalPosition.x - contentMargin, contentSize) - contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }
@@ -155,7 +155,7 @@ namespace CustomUnity
                             }
                             break;
                         case Orientaion.Horizontal:
-                            localPosition.x = contentMargin + Math.FloorDiv(i, columnCount) * cellSize.x + cellSize.x * rectTrans.pivot.x;
+                            localPosition.x = -contentMargin + Math.FloorDiv(i, columnCount) * cellSize.x + cellSize.x * rectTrans.pivot.x;
                             if(columnCount > 1) {
                                 localPosition.y = -Math.Wrap(i, columnCount) * cellSize.y - cellSize.y * rectTrans.pivot.y;
                             }
