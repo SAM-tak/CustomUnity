@@ -69,10 +69,8 @@ namespace CustomUnity
         static GUIStyle customStyle;
         static GUIStyle CustomStyle
         {
-            get
-            {
-                if (customStyle == null)
-                {
+            get {
+                if(customStyle == null) {
                     customStyle = new GUIStyle(EditorStyles.layerMaskField);
                     customStyle.normal.textColor = customStyle.hover.textColor = customStyle.focused.textColor = Color.gray;
                 }
@@ -82,7 +80,7 @@ namespace CustomUnity
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            if (Application.isPlaying) EditorGUI.MaskField(position, label, property.intValue, property.enumNames, CustomStyle);
+            if(Application.isPlaying) EditorGUI.MaskField(position, label, property.intValue, property.enumNames, CustomStyle);
             else EditorGUI.MaskField(position, label, property.intValue, property.enumNames);
         }
     }
@@ -92,9 +90,8 @@ namespace CustomUnity
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            // Set the global variables.
-            var readOnlyIf = attribute as ReadOnlyIfAttribute;
-            var comparedField = property.serializedObject.FindProperty(readOnlyIf.comparedPropertyName);
+            var attribute = base.attribute as ReadOnlyIfAttribute;
+            var comparedField = property.serializedObject.FindProperty(attribute.comparedPropertyName);
 
             // Compare the values to see if the condition is met.
             bool conditionMet = false;
@@ -105,35 +102,35 @@ namespace CustomUnity
                     // Get the value of the compared field.
                     object comparedFieldValue = field.GetValue(property.serializedObject.targetObject);
 
-                    if(readOnlyIf.comparisonType < ReadOnlyIfAttribute.Comparison.GreaterThan || comparedFieldValue is IComparable) {
-                        switch(readOnlyIf.comparisonType) {
+                    if(attribute.comparisonType < ReadOnlyIfAttribute.Comparison.GreaterThan || comparedFieldValue is IComparable) {
+                        switch(attribute.comparisonType) {
                         case ReadOnlyIfAttribute.Comparison.Equals:
-                            conditionMet = comparedFieldValue.Equals(readOnlyIf.comparedValue);
+                            conditionMet = comparedFieldValue.Equals(attribute.comparedValue);
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.NotEqual:
-                            conditionMet = !comparedFieldValue.Equals(readOnlyIf.comparedValue);
+                            conditionMet = !comparedFieldValue.Equals(attribute.comparedValue);
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.GreaterThan:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(readOnlyIf.comparedValue) > 0;
+                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.comparedValue) > 0;
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.GreaterOrEqual:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(readOnlyIf.comparedValue) >= 0;
+                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.comparedValue) >= 0;
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.LessThan:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(readOnlyIf.comparedValue) < 0;
+                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.comparedValue) < 0;
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.LessOrEqual:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(readOnlyIf.comparedValue) <= 0;
+                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.comparedValue) <= 0;
                             break;
                         }
                     }
                     else {
-                        Debug.LogError(comparedField.type + " is not supported of " + (property.propertyPath.Contains(".") ? System.IO.Path.ChangeExtension(property.propertyPath, readOnlyIf.comparedPropertyName) : readOnlyIf.comparedPropertyName));
+                        Debug.LogError(comparedField.type + " is not supported of " + (property.propertyPath.Contains(".") ? System.IO.Path.ChangeExtension(property.propertyPath, attribute.comparedPropertyName) : attribute.comparedPropertyName));
                     }
                 }
                 catch(Exception ex) {
@@ -141,12 +138,10 @@ namespace CustomUnity
                 }
             }
             else {
-                Debug.LogError(readOnlyIf.comparedPropertyName + " is not found.");
+                Debug.LogError(attribute.comparedPropertyName + " is not found.");
             }
 
-            // If the condition is met, simply draw the field. Else...
             if(conditionMet) {
-                //...check if the disabling type is read only. If it is, draw it disabled, else, set the height to zero.
                 var previousEnabled = GUI.enabled;
                 GUI.enabled = false;
                 EditorGUI.PropertyField(position, property);

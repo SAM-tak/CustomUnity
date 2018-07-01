@@ -86,7 +86,7 @@ namespace CustomUnity
                 go.SetActive(false);
                 cellPool[i].cell = go;
             }
-            ScrollRect.onValueChanged.AddListener((v) => UpdateContent());
+            ScrollRect.onValueChanged.AddListener(_ => UpdateContent());
         }
 
         protected virtual void Update()

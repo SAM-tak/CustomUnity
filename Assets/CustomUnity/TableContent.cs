@@ -18,7 +18,6 @@ namespace CustomUnity
 
         public int columnCount = 1;
 
-        [ReadOnlyIf("columnCount", 1, ReadOnlyIfAttribute.Comparison.GreaterThan)]
         public bool repeat;
         
         public Vector2 GetContentSize(IDataSource dataSource)
@@ -39,7 +38,6 @@ namespace CustomUnity
         void OnValidate()
         {
             if(columnCount < 1) columnCount = 1;
-            if(repeat && columnCount > 1) repeat = false;
         }
 
         protected override void Start()
@@ -85,7 +83,7 @@ namespace CustomUnity
             var sizeDelta = contentRectTransform.sizeDelta;
             switch(orientaion) {
             case Orientaion.Vertical:
-                contentSize = (totalCount + columnCount - 1) / columnCount * cellSize.y;
+                contentSize = Math.CeilDiv(totalCount, columnCount) * cellSize.y;
                 if(repeat) {
                     contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
                     if(contentRectLocalPosition.y < contentMargin / 2 || contentRectLocalPosition.y + viewSize.y > (contentMargin + contentSize + contentMargin / 2)) {
@@ -103,7 +101,7 @@ namespace CustomUnity
                 sizeDelta.y = contentSize + contentMargin * 2;
                 break;
             case Orientaion.Horizontal:
-                contentSize = (totalCount + columnCount - 1) / columnCount * cellSize.x;
+                contentSize = Math.CeilDiv(totalCount, columnCount) * cellSize.x;
                 if(repeat) {
                     contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
                     if(contentRectLocalPosition.x > contentMargin / 2 || viewSize.x - contentRectLocalPosition.x < (contentMargin + contentSize + contentMargin / 2)) {
@@ -127,23 +125,23 @@ namespace CustomUnity
                 if(endIndex >= totalCount) endIndex = totalCount - 1;
             }
             
-            int ceillingTotalCount = (totalCount + columnCount - 1) / columnCount * columnCount;
+            int ceillingTotalCount = Math.CeilDiv(totalCount, columnCount) * columnCount;
             foreach(var i in cellPool) {
                 if(i.cell.activeSelf && (
                     totalCount == 0 || i.index < startIndex || i.index > endIndex
                     || Math.Wrap(i.index, columnCount) < leftRadix
                     || Math.Wrap(i.index, columnCount) > rightRadix
                     || Math.Wrap(i.index, ceillingTotalCount) > totalCount
-                    || (repeat && IsCulled(i.cell))
+                    || (repeat && totalCount < columnCount * 3 && IsCulled(i.cell))
                 )) i.cell.SetActive(false);
             }
 
             if(totalCount > 0 && endIndex - startIndex + 1 > 0) {
                 if(endIndex - startIndex + 1 > MaxCellsRequired) MaxCellsRequired = endIndex - startIndex + 1;
                 for(int i = startIndex; i <= endIndex; ++i) {
-                    int wrapedIndex = Math.Wrap(i, ceillingTotalCount);
+                    int wrappedIndex = Math.Wrap(i, ceillingTotalCount);
 
-                    if(wrapedIndex >= totalCount || Math.Wrap(i, columnCount) < leftRadix || Math.Wrap(i, columnCount) > rightRadix) continue;
+                    if(wrappedIndex >= totalCount || Math.Wrap(i, columnCount) < leftRadix || Math.Wrap(i, columnCount) > rightRadix) continue;
 
                     var newCell = NewCell(i);
                     if(newCell) {
@@ -151,13 +149,13 @@ namespace CustomUnity
                         var localPosition = rectTrans.localPosition;
                         switch(orientaion) {
                         case Orientaion.Vertical:
-                            localPosition.y = -contentMargin - Mathf.Floor((float)i / columnCount) * cellSize.y - cellSize.y * rectTrans.pivot.y;
+                            localPosition.y = -contentMargin - Math.FloorDiv(i, columnCount) * cellSize.y - cellSize.y * rectTrans.pivot.y;
                             if(columnCount > 1) {
                                 localPosition.x = Math.Wrap(i, columnCount) * cellSize.x + cellSize.x * rectTrans.pivot.x;
                             }
                             break;
                         case Orientaion.Horizontal:
-                            localPosition.x = contentMargin + Mathf.Floor((float)i / columnCount) * cellSize.x + cellSize.x * rectTrans.pivot.x;
+                            localPosition.x = contentMargin + Math.FloorDiv(i, columnCount) * cellSize.x + cellSize.x * rectTrans.pivot.x;
                             if(columnCount > 1) {
                                 localPosition.y = -Math.Wrap(i, columnCount) * cellSize.y - cellSize.y * rectTrans.pivot.y;
                             }
@@ -165,7 +163,7 @@ namespace CustomUnity
                         }
                         rectTrans.sizeDelta = cellSize;
                         rectTrans.localPosition = localPosition;
-                        DataSource.SetUpCell(wrapedIndex, newCell);
+                        DataSource.SetUpCell(wrappedIndex, newCell);
                         newCell.SetActive(true);
                     }
                 }
