@@ -113,7 +113,7 @@ namespace CustomUnity
 
         public static Dictionary<string, LoadedAssetBundle> LoadedAssetBundles { get; private set; } = new Dictionary<string, LoadedAssetBundle>();
         public static Dictionary<string, string> DownloadingErrors { get; private set; } = new Dictionary<string, string>();
-        public static List<string> DownloadingBundles { get; private set; }  = new List<string>();
+        public static Dictionary<string, int> DownloadingBundles { get; private set; }  = new Dictionary<string, int>(); // downloading name & refcount (start from 0)
         public static List<AssetBundleLoadOperation> InProgressOperations { get; private set; } = new List<AssetBundleLoadOperation>();
         public static Dictionary<string, string[]> Dependencies { get; private set; } = new Dictionary<string, string[]>();
 
@@ -324,7 +324,7 @@ namespace CustomUnity
             }
 
             // Check if the assetBundle has already been processed.
-            bool isAlreadyProcessed = LoadAssetBundleInternal(assetBundleName, isLoadingAssetBundleManifest);
+            bool isAlreadyProcessed = LoadAssetBundleInternal(assetBundleName, false, isLoadingAssetBundleManifest);
 
             // Load dependencies.
             if(!isAlreadyProcessed && !isLoadingAssetBundleManifest) LoadDependencies(assetBundleName);
@@ -406,20 +406,20 @@ namespace CustomUnity
         }
 
         // Sets up download operation for the given asset bundle if it's not downloaded already.
-        static protected bool LoadAssetBundleInternal(string assetBundleName, bool isLoadingAssetBundleManifest)
+        static protected bool LoadAssetBundleInternal(string assetBundleName, bool isLoadingAsDependency, bool isLoadingAssetBundleManifest)
         {
             // Already loaded.
             LoadedAssetBundle bundle = null;
             LoadedAssetBundles.TryGetValue(assetBundleName, out bundle);
             if(bundle != null) {
-                bundle.m_ReferencedCount++;
+                if(isLoadingAsDependency) bundle.m_ReferencedCount++;
                 return true;
             }
 
-            // @TODO: Do we need to consider the referenced count of WWWs?
-            // In the demo, we never have duplicate WWWs as we wait LoadAssetAsync()/LoadLevelAsync() to be finished before calling another LoadAssetAsync()/LoadLevelAsync().
-            // But in the real case, users can call LoadAssetAsync()/LoadLevelAsync() several times then wait them to be finished which might have duplicate WWWs.
-            if(DownloadingBundles.Contains(assetBundleName)) return true;
+            if(DownloadingBundles.ContainsKey(assetBundleName)) {
+                if(isLoadingAsDependency) DownloadingBundles[assetBundleName]++;
+                return true;
+            }
 
             var bundleBaseDownloadingURL = GetAssetBundleBaseDownloadingURL(assetBundleName);
 
@@ -458,7 +458,7 @@ namespace CustomUnity
 
                 InProgressOperations.Add(new AssetBundleDownloadFromWebOperation(assetBundleName, download));
             }
-            DownloadingBundles.Add(assetBundleName);
+            DownloadingBundles[assetBundleName] = 0;
 
             return false;
         }
@@ -482,7 +482,7 @@ namespace CustomUnity
             // Record and load all dependencies.
             Dependencies.Add(assetBundleName, dependencies);
             for(int i = 0; i < dependencies.Length; i++) {
-                LoadAssetBundleInternal(dependencies[i], false);
+                LoadAssetBundleInternal(dependencies[i], true, false);
             }
         }
 
@@ -546,6 +546,9 @@ namespace CustomUnity
             if(download == null) return;
 
             if(string.IsNullOrEmpty(download.Error)) {
+                if(DownloadingBundles.ContainsKey(download.AssetBundleName)) {
+                    download.AssetBundle.m_ReferencedCount += DownloadingBundles[download.AssetBundleName];
+                }
                 LoadedAssetBundles.Add(download.AssetBundleName, download.AssetBundle);
             }
             else {
