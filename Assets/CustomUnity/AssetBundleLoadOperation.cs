@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.iOS;
 #endif
 using System.Collections;
+using System.Linq;
 
 namespace CustomUnity
 {
@@ -181,16 +182,42 @@ namespace CustomUnity
 
         public AssetBundleLoadLevelSimulationOperation(string assetBundleName, string levelName, bool isAdditive)
         {
-            var levelPaths = UnityEditor.AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, levelName);
+            string[] levelPaths = UnityEditor.AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, levelName);
             if(levelPaths.Length == 0) {
                 ///@TODO: The error needs to differentiate that an asset bundle name doesn't exist
                 //        from that there right scene does not exist in the asset bundle...
+
                 Debug.LogError("There is no scene with name \"" + levelName + "\" in " + assetBundleName);
                 return;
             }
 
-            if(isAdditive) m_Operation = UnityEditor.EditorApplication.LoadLevelAdditiveAsyncInPlayMode(levelPaths[0]);
-            else m_Operation = UnityEditor.EditorApplication.LoadLevelAsyncInPlayMode(levelPaths[0]);
+            string levelPath = null;
+            if(AssetBundleManager.ActiveVariants.Any()) {
+                foreach(var i in levelPaths) {
+                    var importer = UnityEditor.AssetImporter.GetAtPath(i);
+                    if(AssetBundleManager.ActiveVariants.Contains(importer.assetBundleVariant)) {
+                        levelPath = i;
+                        break;
+                    }
+                }
+            }
+            if(levelPath == null) {
+                foreach(var i in levelPaths) {
+                    var importer = UnityEditor.AssetImporter.GetAtPath(i);
+                    if(string.IsNullOrEmpty(importer.assetBundleVariant)) {
+                        levelPath = i;
+                        break;
+                    }
+                }
+            }
+
+            if(levelPath == null) {
+                Debug.LogError("There is no scene with name \"" + levelName + "\" in " + assetBundleName);
+                return;
+            }
+
+            if(isAdditive) m_Operation = UnityEditor.EditorApplication.LoadLevelAdditiveAsyncInPlayMode(levelPath);
+            else m_Operation = UnityEditor.EditorApplication.LoadLevelAsyncInPlayMode(levelPath);
         }
 
         public override bool Update()
@@ -210,6 +237,46 @@ namespace CustomUnity
     }
 #endif
 
+    public class AssetBundleLoadOperationFull : AssetBundleLoadOperation
+    {
+        protected string m_AssetBundleName;
+        protected string m_DownloadingError;
+        protected bool done;
+
+        public AssetBundleLoadOperationFull(string assetbundleName)
+        {
+            m_AssetBundleName = assetbundleName;
+        }
+
+        // Returns true if more Update calls are required.
+        public override bool Update()
+        {
+            var bundle = AssetBundleManager.GetLoadedAssetBundle(m_AssetBundleName, out m_DownloadingError);
+            if(bundle != null || !string.IsNullOrEmpty(m_DownloadingError)) {
+                done = true;
+                return false;
+            }
+            return true;
+        }
+
+        public override bool IsDone()
+        {
+            // Return if meeting downloading error.
+            // m_DownloadingError might come from the dependency downloading.
+            if(m_DownloadingError != null) {
+                Debug.LogError(m_DownloadingError);
+                return true;
+            }
+
+            return done;
+        }
+
+        public override float Progress()
+        {
+            return IsDone() ? 1.0f : 0.0f;
+        }
+    }
+
     public class AssetBundleLoadLevelOperation : AssetBundleLoadOperation
     {
         protected string m_AssetBundleName;
@@ -225,6 +292,7 @@ namespace CustomUnity
             m_IsAdditive = isAdditive;
         }
 
+        // Returns true if more Update calls are required.
         public override bool Update()
         {
             if(m_Request != null) return false;
@@ -314,8 +382,7 @@ namespace CustomUnity
 
             var bundle = AssetBundleManager.GetLoadedAssetBundle(m_AssetBundleName, out m_DownloadingError);
             if(bundle != null) {
-                ///@TODO: When asset bundle download fails this throws an exception...
-                m_Request = bundle.m_AssetBundle.LoadAssetAsync(m_AssetName, m_Type);
+                m_Request = bundle.AssetBundle.LoadAssetAsync(m_AssetName, m_Type);
                 return false;
             }
             return true;

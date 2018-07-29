@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -34,26 +36,24 @@ namespace CustomUnity
     /// </summary>
     public class LoadedAssetBundle
     {
-        public AssetBundle AssetBundle { get; }
-        public int ReferencedCount { get; }
-
-        internal AssetBundle m_AssetBundle;
-        internal int m_ReferencedCount;
+        public AssetBundle AssetBundle { get; internal set; }
+        public int ReferencedCount { get; internal set; }
+        internal bool isExplicit;
 
         internal event Action OnUnload;
 
         internal void Unload()
         {
-            m_AssetBundle?.Unload(false);
-            m_AssetBundle = null;
+            AssetBundle?.Unload(false);
+            AssetBundle = null;
             OnUnload?.Invoke();
             OnUnload = null;
         }
 
         public LoadedAssetBundle(AssetBundle assetBundle)
         {
-            m_AssetBundle = assetBundle;
-            m_ReferencedCount = 1;
+            AssetBundle = assetBundle;
+            ReferencedCount = 1;
         }
     }
 
@@ -111,9 +111,20 @@ namespace CustomUnity
         }
 #endif
 
-        public static Dictionary<string, LoadedAssetBundle> LoadedAssetBundles { get; private set; } = new Dictionary<string, LoadedAssetBundle>();
+        class DownloadingBundle {
+            public int refcount;
+            public bool isExplicit;
+            public DownloadingBundle(bool isExplicit)
+            {
+                refcount = 0;
+                this.isExplicit = isExplicit;
+            }
+        }
+
+        static readonly Dictionary<string, LoadedAssetBundle> m_LoadedAssetBundles = new Dictionary<string, LoadedAssetBundle>();
+        public static readonly ReadOnlyDictionary<string, LoadedAssetBundle> LoadedAssetBundles = new ReadOnlyDictionary<string, LoadedAssetBundle>(m_LoadedAssetBundles);
         public static Dictionary<string, string> DownloadingErrors { get; private set; } = new Dictionary<string, string>();
-        public static Dictionary<string, int> DownloadingBundles { get; private set; }  = new Dictionary<string, int>(); // downloading name & refcount (start from 0)
+        static Dictionary<string, DownloadingBundle> m_DownloadingBundles = new Dictionary<string, DownloadingBundle>(); // downloading name & refcount (start from 0)
         public static List<AssetBundleLoadOperation> InProgressOperations { get; private set; } = new List<AssetBundleLoadOperation>();
         public static Dictionary<string, string[]> Dependencies { get; private set; } = new Dictionary<string, string[]>();
 
@@ -293,21 +304,21 @@ namespace CustomUnity
             if(SimulateAssetBundleInEditor) return null;
 #endif
 
-            LoadAssetBundle(manifestAssetBundleName, true);
+            LoadAssetBundle(manifestAssetBundleName, true, true);
             var operation = new AssetBundleLoadManifestOperation(manifestAssetBundleName, "AssetBundleManifest", typeof(AssetBundleManifest));
             InProgressOperations.Add(operation);
             return operation;
         }
 
         // Temporarily work around a il2cpp bug
-        static protected void LoadAssetBundle(string assetBundleName)
+        static protected void LoadAssetBundle(string assetBundleName, bool isExplicit)
         {
-            LoadAssetBundle(assetBundleName, false);
+            LoadAssetBundle(assetBundleName, isExplicit, false);
         }
 
         // Starts the download of the asset bundle identified by the given name, and asset bundles
         // that this asset bundle depends on.
-        static protected void LoadAssetBundle(string assetBundleName, bool isLoadingAssetBundleManifest)
+        static protected void LoadAssetBundle(string assetBundleName, bool isExplicit, bool isLoadingAssetBundleManifest)
         {
             Log(LogType.Info, "Loading Asset Bundle " + (isLoadingAssetBundleManifest ? "Manifest: " : ": ") + assetBundleName);
 
@@ -324,7 +335,7 @@ namespace CustomUnity
             }
 
             // Check if the assetBundle has already been processed.
-            bool isAlreadyProcessed = LoadAssetBundleInternal(assetBundleName, false, isLoadingAssetBundleManifest);
+            bool isAlreadyProcessed = LoadAssetBundleInternal(assetBundleName, isExplicit, false, isLoadingAssetBundleManifest);
 
             // Load dependencies.
             if(!isAlreadyProcessed && !isLoadingAssetBundleManifest) LoadDependencies(assetBundleName);
@@ -406,18 +417,18 @@ namespace CustomUnity
         }
 
         // Sets up download operation for the given asset bundle if it's not downloaded already.
-        static protected bool LoadAssetBundleInternal(string assetBundleName, bool isLoadingAsDependency, bool isLoadingAssetBundleManifest)
+        static protected bool LoadAssetBundleInternal(string assetBundleName, bool isExplicit, bool isLoadingAsDependency, bool isLoadingAssetBundleManifest)
         {
             // Already loaded.
             LoadedAssetBundle bundle = null;
             LoadedAssetBundles.TryGetValue(assetBundleName, out bundle);
             if(bundle != null) {
-                if(isLoadingAsDependency) bundle.m_ReferencedCount++;
+                if(isLoadingAsDependency) bundle.ReferencedCount++;
                 return true;
             }
 
-            if(DownloadingBundles.ContainsKey(assetBundleName)) {
-                if(isLoadingAsDependency) DownloadingBundles[assetBundleName]++;
+            if(m_DownloadingBundles.ContainsKey(assetBundleName)) {
+                if(isLoadingAsDependency) m_DownloadingBundles[assetBundleName].refcount++;
                 return true;
             }
 
@@ -458,7 +469,7 @@ namespace CustomUnity
 
                 InProgressOperations.Add(new AssetBundleDownloadFromWebOperation(assetBundleName, download));
             }
-            DownloadingBundles[assetBundleName] = 0;
+            m_DownloadingBundles[assetBundleName] = new DownloadingBundle(isExplicit);
 
             return false;
         }
@@ -482,7 +493,7 @@ namespace CustomUnity
             // Record and load all dependencies.
             Dependencies.Add(assetBundleName, dependencies);
             for(int i = 0; i < dependencies.Length; i++) {
-                LoadAssetBundleInternal(dependencies[i], true, false);
+                LoadAssetBundleInternal(dependencies[i], false, true, false);
             }
         }
 
@@ -519,9 +530,9 @@ namespace CustomUnity
             var bundle = GetLoadedAssetBundle(assetBundleName, out error);
             if(bundle == null) return;
 
-            if(--bundle.m_ReferencedCount == 0) {
+            if(--bundle.ReferencedCount == 0) {
                 bundle.Unload();
-                LoadedAssetBundles.Remove(assetBundleName);
+                m_LoadedAssetBundles.Remove(assetBundleName);
                 UnloadDependencies(assetBundleName);
                 Log(LogType.Info, assetBundleName + " has been unloaded successfully");
             }
@@ -546,17 +557,47 @@ namespace CustomUnity
             if(download == null) return;
 
             if(string.IsNullOrEmpty(download.Error)) {
-                if(DownloadingBundles.ContainsKey(download.AssetBundleName)) {
-                    download.AssetBundle.m_ReferencedCount += DownloadingBundles[download.AssetBundleName];
+                if(m_DownloadingBundles.ContainsKey(download.AssetBundleName)) {
+                    download.AssetBundle.ReferencedCount += m_DownloadingBundles[download.AssetBundleName].refcount;
+                    if(!download.AssetBundle.isExplicit) download.AssetBundle.isExplicit = m_DownloadingBundles[download.AssetBundleName].isExplicit;
                 }
-                LoadedAssetBundles.Add(download.AssetBundleName, download.AssetBundle);
+                m_LoadedAssetBundles.Add(download.AssetBundleName, download.AssetBundle);
             }
             else {
                 var msg = string.Format("Failed downloading bundle {0} from {1}: {2}", download.AssetBundleName, download.GetSourceURL(), download.Error);
                 DownloadingErrors.Add(download.AssetBundleName, msg);
             }
 
-            DownloadingBundles.Remove(download.AssetBundleName);
+            m_DownloadingBundles.Remove(download.AssetBundleName);
+        }
+
+        /// <summary>
+        /// Starts a load operation for asset bundle.
+        /// </summary>
+        static public AssetBundleLoadOperation LoadBundleAsync(string assetBundleName)
+        {
+            Log(LogType.Info, "Loading " + assetBundleName + " bundle");
+
+            AssetBundleLoadOperation operation = null;
+#if UNITY_EDITOR
+            if(SimulateAssetBundleInEditor) {
+                var assetPaths = AssetDatabase.GetAssetPathsFromAssetBundle(assetBundleName);
+                if(assetPaths.Length == 0) {
+                    Log(LogType.Error, "There is no asset bundle named " + assetBundleName);
+                }
+                return null;
+            }
+            else
+#endif
+            {
+                assetBundleName = RemapVariantName(assetBundleName);
+                LoadAssetBundle(assetBundleName, true);
+                operation = new AssetBundleLoadOperationFull(assetBundleName);
+
+                InProgressOperations.Add(operation);
+            }
+
+            return operation;
         }
 
         /// <summary>
@@ -569,21 +610,33 @@ namespace CustomUnity
             AssetBundleLoadAssetOperation operation = null;
 #if UNITY_EDITOR
             if(SimulateAssetBundleInEditor) {
-                var assetPaths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, assetName);
+                string[] assetPaths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, assetName);
                 if(assetPaths.Length == 0) {
                     Log(LogType.Error, "There is no asset with name \"" + assetName + "\" in " + assetBundleName);
                     return null;
                 }
-
-                // @TODO: Now we only get the main object from the first asset. Should consider type also.
-                var target = AssetDatabase.LoadMainAssetAtPath(assetPaths[0]);
-                operation = new AssetBundleLoadAssetOperationSimulation(target);
+                if(ActiveVariants.Any()) {
+                    foreach(var i in assetPaths) {
+                        var importer = AssetImporter.GetAtPath(i);
+                        if(ActiveVariants.Contains(importer.assetBundleVariant)) {
+                            var target = AssetDatabase.LoadAssetAtPath(i, type);
+                            if(target) return new AssetBundleLoadAssetOperationSimulation(target);
+                        }
+                    }
+                }
+                foreach(var i in assetPaths) {
+                    var importer = AssetImporter.GetAtPath(i);
+                    if(string.IsNullOrEmpty(importer.assetBundleVariant)) {
+                        var target = AssetDatabase.LoadAssetAtPath(i, type);
+                        if(target) return new AssetBundleLoadAssetOperationSimulation(target);
+                    }
+                }
             }
             else
 #endif
             {
                 assetBundleName = RemapVariantName(assetBundleName);
-                LoadAssetBundle(assetBundleName);
+                LoadAssetBundle(assetBundleName, false);
                 operation = new AssetBundleLoadAssetOperationFull(assetBundleName, assetName, type);
 
                 InProgressOperations.Add(operation);
@@ -599,22 +652,19 @@ namespace CustomUnity
         {
             Log(LogType.Info, "Loading " + levelName + " from " + assetBundleName + " bundle");
 
-            AssetBundleLoadOperation operation = null;
 #if UNITY_EDITOR
-            if(SimulateAssetBundleInEditor) {
-                operation = new AssetBundleLoadLevelSimulationOperation(assetBundleName, levelName, isAdditive);
-            }
+            if(SimulateAssetBundleInEditor) return new AssetBundleLoadLevelSimulationOperation(assetBundleName, levelName, isAdditive);
             else
 #endif
             {
                 assetBundleName = RemapVariantName(assetBundleName);
-                LoadAssetBundle(assetBundleName);
-                operation = new AssetBundleLoadLevelOperation(assetBundleName, levelName, isAdditive);
+                LoadAssetBundle(assetBundleName, false);
+                var operation = new AssetBundleLoadLevelOperation(assetBundleName, levelName, isAdditive);
 
                 InProgressOperations.Add(operation);
-            }
 
-            return operation;
+                return operation;
+            }
         }
 
         public static string GetPlatformName()
