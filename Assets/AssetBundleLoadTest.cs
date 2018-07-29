@@ -8,7 +8,7 @@ namespace YourProjectNamespace
     {
         IEnumerator Start()
         {
-            AssetBundleLoader.ActiveVariants = new string[] { "y" };
+            AssetBundleLoader.ActiveVariants = new string[] { "y", "x" };
 
             yield return AssetBundleLoader.Initialize();
 

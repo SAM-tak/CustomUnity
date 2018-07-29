@@ -71,7 +71,7 @@ namespace CustomUnity
 #endif
 #if UNITY_EDITOR
         static bool? simulatesAssetBundleInEditor;
-        const string kSimulateAssetBundles = "SimulateAssetBundles";
+        const string kSimulatesAssetBundles = "SimulatesAssetBundles";
         const string menuStringSimulationMode = "Assets/AssetBundles/Simulation Mode";
 
         [MenuItem(menuStringSimulationMode)]
@@ -93,13 +93,13 @@ namespace CustomUnity
         /// </summary>
         public static bool SimulatesAssetBundleInEditor {
             get {
-                if(!simulatesAssetBundleInEditor.HasValue) simulatesAssetBundleInEditor = EditorPrefs.GetBool(kSimulateAssetBundles, true);
+                if(!simulatesAssetBundleInEditor.HasValue) simulatesAssetBundleInEditor = EditorPrefs.GetBool(kSimulatesAssetBundles, true);
                 return simulatesAssetBundleInEditor.Value;
             }
             set {
                 if(!simulatesAssetBundleInEditor.HasValue || simulatesAssetBundleInEditor.Value != value) {
                     simulatesAssetBundleInEditor = value;
-                    EditorPrefs.SetBool(kSimulateAssetBundles, value);
+                    EditorPrefs.SetBool(kSimulatesAssetBundles, value);
                 }
             }
         }
@@ -141,7 +141,7 @@ namespace CustomUnity
         /// <summary>
         /// Variants which is used to define the active variants.
         /// </summary>
-        public static string[] ActiveVariants { get; set; } = { };
+        public static string[] ActiveVariants { get; set; }
 
         /// <summary>
         /// AssetBundleManifest object which can be used to load the dependecies
@@ -356,6 +356,14 @@ namespace CustomUnity
         // Remaps the asset bundle name to the best fitting asset bundle variant.
         static protected string RemapVariantName(string assetBundleName)
         {
+            var baseName = assetBundleName;
+            // Get base bundle name
+            if(assetBundleName.Contains('.')) baseName = assetBundleName.Split('.')[0];
+
+            if(UsesExternalBundleVariantResolutionMechanism(baseName)) return baseName;
+
+            if(assetBundleName.Contains('.') || ActiveVariants == null || ActiveVariants.Length == 0) return assetBundleName;
+
             string[] bundlesWithVariant;
 #if UNITY_EDITOR
             if(SimulatesAssetBundleInEditor) {
@@ -366,11 +374,6 @@ namespace CustomUnity
             {
                 bundlesWithVariant = Manifest.GetAllAssetBundlesWithVariant();
             }
-
-            // Get base bundle name
-            var baseName = assetBundleName.Split('.')[0];
-
-            if(UsesExternalBundleVariantResolutionMechanism(baseName)) return baseName;
 
             int bestFit = int.MaxValue;
             int bestFitIndex = -1;
@@ -383,20 +386,13 @@ namespace CustomUnity
                 if(curBaseName != baseName) continue;
 
                 int found = Array.IndexOf(ActiveVariants, curVariant);
-
-                // If there is no active variant found. We still want to use the first
-                if(found == -1) found = int.MaxValue - 1;
-
-                if(found < bestFit) {
+                
+                if(found != -1 && found < bestFit) {
                     bestFit = found;
                     bestFitIndex = i;
                 }
             }
-
-            if(bestFit == int.MaxValue - 1) {
-                if(CurrentLogMode == LogMode.All) Log.Warning($"[AssetBundelLoader] Ambigious asset bundle variant chosen because there was no matching active variant: {bundlesWithVariant[bestFitIndex]}");
-            }
-
+            
             if(bestFitIndex != -1) return bundlesWithVariant[bestFitIndex];
             else return assetBundleName;
         }
