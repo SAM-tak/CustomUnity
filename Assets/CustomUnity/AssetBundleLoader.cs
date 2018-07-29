@@ -64,7 +64,8 @@ namespace CustomUnity
     public class AssetBundleLoader : MonoBehaviour
     {
         public enum LogMode { All, JustErrors };
-        public enum LogType { Info, Warning, Error };
+
+        public static LogMode CurrentLogMode { get; set; } = LogMode.All;
 
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
         public const string DevelopmentAssetBundleServer = "http://127.0.0.1:7888";
@@ -122,8 +123,6 @@ namespace CustomUnity
         public static ReadOnlyDictionary<string, string> DownloadingErrors { get; } = new ReadOnlyDictionary<string, string>(downloadingErrors);
         public static ReadOnlyCollection<AssetBundleLoadOperation> InProgressOperations { get; } = new ReadOnlyCollection<AssetBundleLoadOperation>(inProgressOperations);
 
-        public static LogMode CurrentLogMode { get; set; } = LogMode.All;
-
         /// <summary>
         /// The base downloading url which is used to generate the full
         /// downloading url with the assetBundle names.
@@ -153,10 +152,12 @@ namespace CustomUnity
         [SerializeField] bool foldoutLoadedAssetBundles;
         [SerializeField] bool foldoutDownLoadings;
         
+        static bool LogsAll { get { return CurrentLogMode == LogMode.All; } }
+
         static string GetStreamingAssetsPath()
         {
             if(Application.isEditor) {
-                return "file://" + System.Environment.CurrentDirectory.Replace("\\", "/"); // Use the build output folder directly.
+                return "file://" + Environment.CurrentDirectory.Replace("\\", "/"); // Use the build output folder directly.
             }
             else if(Application.isMobilePlatform || Application.isConsolePlatform) {
                 return Application.streamingAssetsPath;
@@ -185,10 +186,7 @@ namespace CustomUnity
         /// <example>
         public static void SetSourceAssetBundleURL(string absolutePath)
         {
-            if(!absolutePath.EndsWith("/")) {
-                absolutePath += "/";
-            }
-
+            if(!absolutePath.EndsWith("/")) absolutePath += "/";
             BaseDownloadingURL = absolutePath + GetPlatformName() + "/";
         }
 
@@ -273,7 +271,7 @@ namespace CustomUnity
         static public AssetBundleLoadManifestOperation Initialize(string manifestAssetBundleName)
         {
 #if UNITY_EDITOR
-            if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundelLoader] Simulation Mode: {(SimulatesAssetBundleInEditor ? "Enabled" : "Disabled")}");
+            if(LogsAll) Log.Info($"[AssetBundelLoader] Simulation Mode: {(SimulatesAssetBundleInEditor ? "Enabled" : "Disabled")}");
 #endif
             SetDevelopmentAssetBundleServer();
 
@@ -304,7 +302,7 @@ namespace CustomUnity
         // that this asset bundle depends on.
         static protected void LoadAssetBundle(string assetBundleName, bool isLoadingAssetBundleManifest)
         {
-            if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundelLoader] Loading Asset Bundle {(isLoadingAssetBundleManifest ? "Manifest" : "")} : {assetBundleName}");
+            if(LogsAll) Log.Info($"[AssetBundelLoader] Loading Asset Bundle {(isLoadingAssetBundleManifest ? "Manifest" : "")} : {assetBundleName}");
 
 #if UNITY_EDITOR
             // If we're in Editor simulation mode, we don't have to really load the assetBundle and its dependencies.
@@ -401,7 +399,7 @@ namespace CustomUnity
             }
 
             if(bestFit == int.MaxValue - 1) {
-                if(CurrentLogMode == LogMode.All) Log.Warning($"[AssetBundelLoader] Ambigious asset bundle variant chosen because there was no matching active variant: {bundlesWithVariant[bestFitIndex]}");
+                if(LogsAll) Log.Warning($"[AssetBundelLoader] Ambigious asset bundle variant chosen because there was no matching active variant: {bundlesWithVariant[bestFitIndex]}");
             }
 
             if(bestFitIndex != -1) return bundlesWithVariant[bestFitIndex];
@@ -522,7 +520,7 @@ namespace CustomUnity
                 bundle.Unload();
                 loadedAssetBundles.Remove(assetBundleName);
                 UnloadDependencies(assetBundleName);
-                if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundelLoader] {assetBundleName} has been unloaded successfully");
+                if(LogsAll) Log.Info($"[AssetBundelLoader] {assetBundleName} has been unloaded successfully");
             }
         }
 
@@ -563,7 +561,7 @@ namespace CustomUnity
         /// </summary>
         static public AssetBundleLoadOperation LoadAsync(string assetBundleName)
         {
-            if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundelLoader] Loading {assetBundleName} bundle");
+            if(LogsAll) Log.Info($"[AssetBundelLoader] Loading {assetBundleName} bundle");
 
             AssetBundleLoadOperation operation = null;
 #if UNITY_EDITOR
@@ -593,7 +591,7 @@ namespace CustomUnity
         /// </summary>
         static public AssetBundleLoadAssetOperation<T> LoadAssetAsync<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
         {
-            if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundelLoader] Loading {assetName} from {assetBundleName} bundle");
+            if(LogsAll) Log.Info($"[AssetBundelLoader] Loading {assetName} from {assetBundleName} bundle");
 
 #if UNITY_EDITOR
             if(SimulatesAssetBundleInEditor) {
@@ -628,7 +626,7 @@ namespace CustomUnity
         /// </summary>
         static public AssetBundleLoadOperation LoadLevelAsync(string assetBundleName, string levelName, bool isAdditive)
         {
-            if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundelLoader] Loading {levelName} from {assetBundleName} bundle");
+            if(LogsAll) Log.Info($"[AssetBundelLoader] Loading {levelName} from {assetBundleName} bundle");
 
 #if UNITY_EDITOR
             if(SimulatesAssetBundleInEditor) {
