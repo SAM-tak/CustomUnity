@@ -6,9 +6,11 @@ namespace YourProjectNamespace
 {
     public class AssetBundleLoadTest : MonoBehaviour
     {
+        [SerializeField] string[] activeVariatns;
+
         IEnumerator Start()
         {
-            AssetBundleLoader.ActiveVariants = new string[] { "y", "x" };
+            AssetBundleLoader.ActiveVariants = activeVariatns;
 
             yield return AssetBundleLoader.Initialize();
 
