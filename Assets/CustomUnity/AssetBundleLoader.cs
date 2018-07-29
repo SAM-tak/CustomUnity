@@ -264,6 +264,8 @@ namespace CustomUnity
             return Initialize(GetPlatformName());
         }
 
+        static AssetBundleLoader instance;
+
         /// <summary>
         /// Initializes asset bundle namager and starts download of manifest asset bundle.
         /// Returns the manifest asset bundle downolad operation object.
@@ -273,16 +275,18 @@ namespace CustomUnity
 #if UNITY_EDITOR
             if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundelLoader] Simulation Mode: {(SimulatesAssetBundleInEditor ? "Enabled" : "Disabled")}");
 #endif
-
-            var go = new GameObject("AssetBundleManager", typeof(AssetBundleLoader));
-            DontDestroyOnLoad(go);
-
             SetDevelopmentAssetBundleServer();
 
 #if UNITY_EDITOR
             // If we're in Editor simulation mode, we don't need the manifest assetBundle.
             if(SimulatesAssetBundleInEditor) return null;
 #endif
+
+            if(!instance) {
+                var go = new GameObject("AssetBundleManager", typeof(AssetBundleLoader));
+                DontDestroyOnLoad(go);
+                instance = go.GetComponent<AssetBundleLoader>();
+            }
 
             LoadAssetBundle(manifestAssetBundleName, true);
             var operation = new AssetBundleLoadManifestOperation(manifestAssetBundleName, "AssetBundleManifest");
