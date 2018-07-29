@@ -2,7 +2,7 @@ using UnityEditor;
 
 namespace CustomUnity
 {
-    [CustomEditor(typeof(AssetBundleManager))]
+    [CustomEditor(typeof(AssetBundleLoader))]
     public class AssetBundleManagerInspector : Editor
     {
         SerializedProperty script;
@@ -26,23 +26,23 @@ namespace CustomUnity
             EditorGUILayout.PropertyField(script);
             EditorGUI.EndDisabledGroup();
 
-            if(AssetBundleManager.SimulatesAssetBundleInEditor) return;
+            if(AssetBundleLoader.SimulatesAssetBundleInEditor) return;
 
-            EditorGUILayout.LabelField("BaseDownloadingURL : " + AssetBundleManager.BaseDownloadingURL);
+            EditorGUILayout.LabelField("BaseDownloadingURL : " + AssetBundleLoader.BaseDownloadingURL);
 
-            if(AssetBundleManager.Manifest) {
+            if(AssetBundleLoader.Manifest) {
                 foldoutManifest.isExpanded = EditorGUILayout.Foldout(foldoutManifest.isExpanded, "Manifests");
                 if(foldoutManifest.isExpanded) {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.LabelField("Name", "Hash");
-                    foreach(var i in AssetBundleManager.Manifest.GetAllAssetBundles()) {
-                        EditorGUILayout.LabelField(i, AssetBundleManager.Manifest.GetAssetBundleHash(i).ToString());
+                    foreach(var i in AssetBundleLoader.Manifest.GetAllAssetBundles()) {
+                        EditorGUILayout.LabelField(i, AssetBundleLoader.Manifest.GetAssetBundleHash(i).ToString());
                     }
-                    var bundlesWithVariant = AssetBundleManager.Manifest.GetAllAssetBundlesWithVariant();
+                    var bundlesWithVariant = AssetBundleLoader.Manifest.GetAllAssetBundlesWithVariant();
                     if(bundlesWithVariant != null && bundlesWithVariant.Length > 0) {
                         EditorGUILayout.Space();
-                        foreach(var i in AssetBundleManager.Manifest.GetAllAssetBundlesWithVariant()) {
-                            EditorGUILayout.LabelField(i, AssetBundleManager.Manifest.GetAssetBundleHash(i).ToString());
+                        foreach(var i in AssetBundleLoader.Manifest.GetAllAssetBundlesWithVariant()) {
+                            EditorGUILayout.LabelField(i, AssetBundleLoader.Manifest.GetAssetBundleHash(i).ToString());
                         }
                     }
                     EditorGUI.indentLevel--;
@@ -53,7 +53,7 @@ namespace CustomUnity
             if(foldoutLoadedAssetBundles.isExpanded) {
                 EditorGUI.indentLevel++;
                 EditorGUILayout.LabelField("Name", "Reference Count");
-                foreach(var i in AssetBundleManager.LoadedAssetBundles) {
+                foreach(var i in AssetBundleLoader.LoadedAssetBundles) {
                     EditorGUILayout.LabelField(i.Key, i.Value.ReferencedCount.ToString());
                 }
                 EditorGUI.indentLevel--;
@@ -63,7 +63,7 @@ namespace CustomUnity
             if(foldoutDownLoadings.isExpanded) {
                 EditorGUI.indentLevel++;
                 EditorGUILayout.LabelField("Name", "Progress");
-                foreach(var i in AssetBundleManager.InProgressOperations) {
+                foreach(var i in AssetBundleLoader.InProgressOperations) {
                     var op = i as AssetBundleDownloadOperation;
                     if(op != null) EditorGUILayout.LabelField(op.AssetBundleName, op.Progress().ToString());
                 }

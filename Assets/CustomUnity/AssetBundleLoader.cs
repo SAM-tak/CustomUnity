@@ -61,7 +61,7 @@ namespace CustomUnity
     /// Class takes care of loading assetBundle and its dependencies
     /// automatically, loading variants automatically.
     /// </summary>
-    public class AssetBundleManager : MonoBehaviour
+    public class AssetBundleLoader : MonoBehaviour
     {
         public enum LogMode { All, JustErrors };
         public enum LogType { Info, Warning, Error };
@@ -274,7 +274,7 @@ namespace CustomUnity
             if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundelLoader] Simulation Mode: {(SimulatesAssetBundleInEditor ? "Enabled" : "Disabled")}");
 #endif
 
-            var go = new GameObject("AssetBundleManager", typeof(AssetBundleManager));
+            var go = new GameObject("AssetBundleManager", typeof(AssetBundleLoader));
             DontDestroyOnLoad(go);
 
             SetDevelopmentAssetBundleServer();

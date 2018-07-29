@@ -216,7 +216,7 @@ namespace CustomUnity
         // Returns true if more Update calls are required.
         public override bool Update()
         {
-            var bundle = AssetBundleManager.GetLoadedAssetBundle(assetBundleName, out downloadingError);
+            var bundle = AssetBundleLoader.GetLoadedAssetBundle(assetBundleName, out downloadingError);
             if(bundle != null || !string.IsNullOrEmpty(downloadingError)) {
                 done = true;
                 return false;
@@ -262,7 +262,7 @@ namespace CustomUnity
         {
             if(request != null) return false;
 
-            var bundle = AssetBundleManager.GetLoadedAssetBundle(assetBundleName, out downloadingError);
+            var bundle = AssetBundleLoader.GetLoadedAssetBundle(assetBundleName, out downloadingError);
             if(bundle != null) {
                 request = SceneManager.LoadSceneAsync(levelName, isAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single);
                 return false;
@@ -341,7 +341,7 @@ namespace CustomUnity
         {
             if(request != null) return false;
 
-            var bundle = AssetBundleManager.GetLoadedAssetBundle(assetBundleName, out downloadingError);
+            var bundle = AssetBundleLoader.GetLoadedAssetBundle(assetBundleName, out downloadingError);
             if(bundle != null) {
                 request = bundle.AssetBundle.LoadAssetAsync(assetName, typeof(T));
                 return false;
@@ -378,7 +378,7 @@ namespace CustomUnity
             base.Update();
 
             if(request != null && request.isDone) {
-                AssetBundleManager.Manifest = Asset;
+                AssetBundleLoader.Manifest = Asset;
                 return false;
             }
             return true;

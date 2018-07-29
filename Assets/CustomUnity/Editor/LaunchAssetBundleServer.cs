@@ -33,7 +33,7 @@ namespace CustomUnity
         static bool ToggleLocalAssetBundleServerValidate()
         {
             var isRunning = IsRunning();
-            if(!isRunning) EditorPrefs.SetString(AssetBundleManager.kLocalAssetBundleServerURL, null);
+            if(!isRunning) EditorPrefs.SetString(AssetBundleLoader.kLocalAssetBundleServerURL, null);
             Menu.SetChecked(kLocalAssetbundleServerMenu, isRunning);
             return true;
         }
@@ -58,7 +58,7 @@ namespace CustomUnity
             EditorApplication.quitting -= KillRunningAssetBundleServer;
 
             if(instance.m_ServerPID == 0) return;
-            EditorPrefs.SetString(AssetBundleManager.kLocalAssetBundleServerURL, null);
+            EditorPrefs.SetString(AssetBundleLoader.kLocalAssetBundleServerURL, null);
             // Kill the last time we ran
             try {
                 var lastProcess = Process.GetProcessById(instance.m_ServerPID);
@@ -111,7 +111,7 @@ namespace CustomUnity
                 catch {
                     localIP = "localhost";
                 }
-                EditorPrefs.SetString(AssetBundleManager.kLocalAssetBundleServerURL, "http://" + localIP + ":7888/");
+                EditorPrefs.SetString(AssetBundleLoader.kLocalAssetBundleServerURL, "http://" + localIP + ":7888/");
                 Log.Info("Started AssetBundleServer : http://{0}:7888/", localIP);
 
                 if(startInfo.RedirectStandardOutput) {

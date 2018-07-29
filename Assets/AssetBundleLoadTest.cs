@@ -8,12 +8,13 @@ namespace YourProjectNamespace
     {
         IEnumerator Start()
         {
-            AssetBundleManager.ActiveVariants = new string[] { "y" };
+            AssetBundleLoader.ActiveVariants = new string[] { "y" };
 
-            yield return AssetBundleManager.Initialize();
-            var obj1 = AssetBundleManager.LoadAssetAsync<GameObject>("a", "Sphere");
+            yield return AssetBundleLoader.Initialize();
+
+            var obj1 = AssetBundleLoader.LoadAssetAsync<GameObject>("a", "Sphere");
             yield return obj1;
-            var obj2 = AssetBundleManager.LoadAssetAsync<GameObject>("b", "Sphere");
+            var obj2 = AssetBundleLoader.LoadAssetAsync<GameObject>("b", "Sphere");
             yield return obj2;
 
             Instantiate(obj1.Asset);
