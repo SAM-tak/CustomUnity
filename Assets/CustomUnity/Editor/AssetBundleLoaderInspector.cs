@@ -3,7 +3,7 @@ using UnityEditor;
 namespace CustomUnity
 {
     [CustomEditor(typeof(AssetBundleLoader))]
-    public class AssetBundleManagerInspector : Editor
+    public class AssetBundleLoaderInspector : Editor
     {
         SerializedProperty script;
         SerializedProperty foldoutManifest;
@@ -37,13 +37,6 @@ namespace CustomUnity
                     EditorGUILayout.LabelField("Name", "Hash");
                     foreach(var i in AssetBundleLoader.Manifest.GetAllAssetBundles()) {
                         EditorGUILayout.LabelField(i, AssetBundleLoader.Manifest.GetAssetBundleHash(i).ToString());
-                    }
-                    var bundlesWithVariant = AssetBundleLoader.Manifest.GetAllAssetBundlesWithVariant();
-                    if(bundlesWithVariant != null && bundlesWithVariant.Length > 0) {
-                        EditorGUILayout.Space();
-                        foreach(var i in AssetBundleLoader.Manifest.GetAllAssetBundlesWithVariant()) {
-                            EditorGUILayout.LabelField(i, AssetBundleLoader.Manifest.GetAssetBundleHash(i).ToString());
-                        }
                     }
                     EditorGUI.indentLevel--;
                 }

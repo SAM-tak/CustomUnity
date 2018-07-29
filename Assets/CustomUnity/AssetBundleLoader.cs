@@ -362,7 +362,7 @@ namespace CustomUnity
 
             if(UsesExternalBundleVariantResolutionMechanism(baseName)) return baseName;
 
-            if(assetBundleName.Contains('.') || ActiveVariants == null || ActiveVariants.Length == 0) return assetBundleName;
+            if(assetBundleName.Contains('.')) return assetBundleName;
 
             string[] bundlesWithVariant;
 #if UNITY_EDITOR
@@ -385,14 +385,21 @@ namespace CustomUnity
 
                 if(curBaseName != baseName) continue;
 
-                int found = Array.IndexOf(ActiveVariants, curVariant);
-                
-                if(found != -1 && found < bestFit) {
+                int found = ActiveVariants == null ? -1 : Array.IndexOf(ActiveVariants, curVariant);
+
+                // If there is no active variant found. We still want to use the first
+                if(found == -1) found = int.MaxValue - 1;
+
+                if(found < bestFit) {
                     bestFit = found;
                     bestFitIndex = i;
                 }
             }
-            
+
+            if(bestFit == int.MaxValue - 1) {
+                if(CurrentLogMode == LogMode.All) Log.Warning($"[AssetBundelLoader] Ambigious asset bundle variant chosen because there was no matching active variant: {bundlesWithVariant[bestFitIndex]}");
+            }
+
             if(bestFitIndex != -1) return bundlesWithVariant[bestFitIndex];
             else return assetBundleName;
         }
