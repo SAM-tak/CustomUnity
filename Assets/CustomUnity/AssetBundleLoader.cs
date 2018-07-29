@@ -561,13 +561,14 @@ namespace CustomUnity
         /// <summary>
         /// Starts a load operation for asset bundle.
         /// </summary>
-        static public AssetBundleLoadOperation LoadBundleAsync(string assetBundleName)
+        static public AssetBundleLoadOperation LoadAsync(string assetBundleName)
         {
             if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundelLoader] Loading {assetBundleName} bundle");
 
             AssetBundleLoadOperation operation = null;
 #if UNITY_EDITOR
             if(SimulatesAssetBundleInEditor) {
+                assetBundleName = RemapVariantName(assetBundleName);
                 var assetPaths = AssetDatabase.GetAssetPathsFromAssetBundle(assetBundleName);
                 if(assetPaths.Length == 0) {
                     Log.Error($"[AssetBundelLoader] There is no asset bundle named {assetBundleName}");
