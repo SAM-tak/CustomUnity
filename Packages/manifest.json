@@ -1,4 +1,11 @@
 {
-	"dependencies": {
-	}
+  "dependencies": {
+    "com.unity.ads": "exclude",
+    "com.unity.analytics": "exclude",
+    "com.unity.assetbundlebrowser": "1.6.0",
+    "com.unity.package-manager-ui": "1.9.11",
+    "com.unity.purchasing": "exclude",
+    "com.unity.standardevents": "exclude",
+    "com.unity.textmeshpro": "exclude"
+  }
 }

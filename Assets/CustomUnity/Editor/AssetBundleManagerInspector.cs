@@ -26,7 +26,7 @@ namespace CustomUnity
             EditorGUILayout.PropertyField(script);
             EditorGUI.EndDisabledGroup();
 
-            if(AssetBundleManager.SimulateAssetBundleInEditor) return;
+            if(AssetBundleManager.SimulatesAssetBundleInEditor) return;
 
             EditorGUILayout.LabelField("BaseDownloadingURL : " + AssetBundleManager.BaseDownloadingURL);
 

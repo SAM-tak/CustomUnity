@@ -273,3 +273,4 @@ Tests.csproj
 CustomUnityEditor.csproj
 !CustomUnity.Log/
 !CustomUnity.Editor.Log/
+AssetBundles/

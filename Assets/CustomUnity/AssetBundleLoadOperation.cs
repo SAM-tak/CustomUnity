@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.iOS;
 #endif
 using System.Collections;
-using System.Linq;
 
 namespace CustomUnity
 {
@@ -140,84 +139,50 @@ namespace CustomUnity
 
     public class AssetBundleDownloadFromWebOperation : AssetBundleDownloadOperation
     {
-        WWW m_WWW;
-        string m_Url;
+        WWW www;
+        readonly string url;
 
         public AssetBundleDownloadFromWebOperation(string assetBundleName, WWW www) : base(assetBundleName)
         {
             if(www == null) throw new System.ArgumentNullException("www");
-            m_Url = www.url;
-            m_WWW = www;
+            url = www.url;
+            this.www = www;
         }
 
-        protected override bool DownloadIsDone { get { return (m_WWW == null) || m_WWW.isDone; } }
+        protected override bool DownloadIsDone { get { return (www == null) || www.isDone; } }
 
         protected override void FinishDownload()
         {
-            Error = m_WWW.error;
+            Error = www.error;
             if(string.IsNullOrEmpty(Error)) {
-                var bundle = m_WWW.assetBundle;
+                var bundle = www.assetBundle;
                 if(bundle == null) Error = string.Format("{0} is not a valid asset bundle.", AssetBundleName);
-                else AssetBundle = new LoadedAssetBundle(m_WWW.assetBundle);
+                else AssetBundle = new LoadedAssetBundle(www.assetBundle);
             }
-            m_WWW.Dispose();
-            m_WWW = null;
+            www.Dispose();
+            www = null;
         }
 
         public override string GetSourceURL()
         {
-            return m_Url;
+            return url;
         }
 
         public override float Progress()
         {
-            return IsDone() ? 1.0f : m_WWW != null ? m_WWW.progress : 0.0f;
+            return IsDone() ? 1.0f : www != null ? www.progress : 0.0f;
         }
     }
 
 #if UNITY_EDITOR
     public class AssetBundleLoadLevelSimulationOperation : AssetBundleLoadOperation
     {
-        AsyncOperation m_Operation = null;
+        AsyncOperation operation = null;
 
-        public AssetBundleLoadLevelSimulationOperation(string assetBundleName, string levelName, bool isAdditive)
+        public AssetBundleLoadLevelSimulationOperation(string levelPath, bool isAdditive)
         {
-            string[] levelPaths = UnityEditor.AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, levelName);
-            if(levelPaths.Length == 0) {
-                ///@TODO: The error needs to differentiate that an asset bundle name doesn't exist
-                //        from that there right scene does not exist in the asset bundle...
-
-                Debug.LogError("There is no scene with name \"" + levelName + "\" in " + assetBundleName);
-                return;
-            }
-
-            string levelPath = null;
-            if(AssetBundleManager.ActiveVariants.Any()) {
-                foreach(var i in levelPaths) {
-                    var importer = UnityEditor.AssetImporter.GetAtPath(i);
-                    if(AssetBundleManager.ActiveVariants.Contains(importer.assetBundleVariant)) {
-                        levelPath = i;
-                        break;
-                    }
-                }
-            }
-            if(levelPath == null) {
-                foreach(var i in levelPaths) {
-                    var importer = UnityEditor.AssetImporter.GetAtPath(i);
-                    if(string.IsNullOrEmpty(importer.assetBundleVariant)) {
-                        levelPath = i;
-                        break;
-                    }
-                }
-            }
-
-            if(levelPath == null) {
-                Debug.LogError("There is no scene with name \"" + levelName + "\" in " + assetBundleName);
-                return;
-            }
-
-            if(isAdditive) m_Operation = UnityEditor.EditorApplication.LoadLevelAdditiveAsyncInPlayMode(levelPath);
-            else m_Operation = UnityEditor.EditorApplication.LoadLevelAsyncInPlayMode(levelPath);
+            if(isAdditive) operation = UnityEditor.EditorApplication.LoadLevelAdditiveAsyncInPlayMode(levelPath);
+            else operation = UnityEditor.EditorApplication.LoadLevelAsyncInPlayMode(levelPath);
         }
 
         public override bool Update()
@@ -227,32 +192,32 @@ namespace CustomUnity
 
         public override bool IsDone()
         {
-            return m_Operation == null || m_Operation.isDone;
+            return operation == null || operation.isDone;
         }
 
         public override float Progress()
         {
-            return IsDone() ? 1.0f : m_Operation != null ? m_Operation.progress : 0.0f;
+            return IsDone() ? 1.0f : operation != null ? operation.progress : 0.0f;
         }
     }
 #endif
 
     public class AssetBundleLoadOperationFull : AssetBundleLoadOperation
     {
-        protected string m_AssetBundleName;
-        protected string m_DownloadingError;
+        protected string assetBundleName;
+        protected string downloadingError;
         protected bool done;
 
-        public AssetBundleLoadOperationFull(string assetbundleName)
+        public AssetBundleLoadOperationFull(string assetBundleName)
         {
-            m_AssetBundleName = assetbundleName;
+            this.assetBundleName = assetBundleName;
         }
 
         // Returns true if more Update calls are required.
         public override bool Update()
         {
-            var bundle = AssetBundleManager.GetLoadedAssetBundle(m_AssetBundleName, out m_DownloadingError);
-            if(bundle != null || !string.IsNullOrEmpty(m_DownloadingError)) {
+            var bundle = AssetBundleManager.GetLoadedAssetBundle(assetBundleName, out downloadingError);
+            if(bundle != null || !string.IsNullOrEmpty(downloadingError)) {
                 done = true;
                 return false;
             }
@@ -263,8 +228,8 @@ namespace CustomUnity
         {
             // Return if meeting downloading error.
             // m_DownloadingError might come from the dependency downloading.
-            if(m_DownloadingError != null) {
-                Debug.LogError(m_DownloadingError);
+            if(downloadingError != null) {
+                Debug.LogError(downloadingError);
                 return true;
             }
 
@@ -279,27 +244,27 @@ namespace CustomUnity
 
     public class AssetBundleLoadLevelOperation : AssetBundleLoadOperation
     {
-        protected string m_AssetBundleName;
-        protected string m_LevelName;
-        protected bool m_IsAdditive;
-        protected string m_DownloadingError;
-        protected AsyncOperation m_Request;
+        protected string assetBundleName;
+        protected string levelName;
+        protected bool isAdditive;
+        protected string downloadingError;
+        protected AsyncOperation request;
 
-        public AssetBundleLoadLevelOperation(string assetbundleName, string levelName, bool isAdditive)
+        public AssetBundleLoadLevelOperation(string assetBundleName, string levelName, bool isAdditive)
         {
-            m_AssetBundleName = assetbundleName;
-            m_LevelName = levelName;
-            m_IsAdditive = isAdditive;
+            this.assetBundleName = assetBundleName;
+            this.levelName = levelName;
+            this.isAdditive = isAdditive;
         }
 
         // Returns true if more Update calls are required.
         public override bool Update()
         {
-            if(m_Request != null) return false;
+            if(request != null) return false;
 
-            var bundle = AssetBundleManager.GetLoadedAssetBundle(m_AssetBundleName, out m_DownloadingError);
+            var bundle = AssetBundleManager.GetLoadedAssetBundle(assetBundleName, out downloadingError);
             if(bundle != null) {
-                m_Request = SceneManager.LoadSceneAsync(m_LevelName, m_IsAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single);
+                request = SceneManager.LoadSceneAsync(levelName, isAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single);
                 return false;
             }
 
@@ -310,38 +275,35 @@ namespace CustomUnity
         {
             // Return if meeting downloading error.
             // m_DownloadingError might come from the dependency downloading.
-            if(m_Request == null && m_DownloadingError != null) {
-                Debug.LogError(m_DownloadingError);
+            if(request == null && downloadingError != null) {
+                Debug.LogError(downloadingError);
                 return true;
             }
 
-            return m_Request != null && m_Request.isDone;
+            return request != null && request.isDone;
         }
 
         public override float Progress()
         {
-            return IsDone() ? 1.0f : m_Request != null ? m_Request.progress : 0.0f;
+            return IsDone() ? 1.0f : request != null ? request.progress : 0.0f;
         }
     }
 
-    public abstract class AssetBundleLoadAssetOperation : AssetBundleLoadOperation
+    public abstract class AssetBundleLoadAssetOperation<T> : AssetBundleLoadOperation where T : Object
     {
-        public abstract T GetAsset<T>() where T : Object;
+        public abstract T Asset { get; }
     }
 
-    public class AssetBundleLoadAssetOperationSimulation : AssetBundleLoadAssetOperation
+    public class AssetBundleLoadAssetOperationSimulation<T> : AssetBundleLoadAssetOperation<T> where T : Object
     {
-        Object m_SimulatedObject;
+        protected T simulatedObject;
 
-        public AssetBundleLoadAssetOperationSimulation(Object simulatedObject)
+        public AssetBundleLoadAssetOperationSimulation(T simulatedObject)
         {
-            m_SimulatedObject = simulatedObject;
+            this.simulatedObject = simulatedObject;
         }
 
-        public override T GetAsset<T>()
-        {
-            return m_SimulatedObject as T;
-        }
+        public override T Asset { get { return simulatedObject; } }
 
         public override bool Update()
         {
@@ -354,35 +316,34 @@ namespace CustomUnity
         }
     }
 
-    public class AssetBundleLoadAssetOperationFull : AssetBundleLoadAssetOperation
+    public class AssetBundleLoadAssetOperationFull<T> : AssetBundleLoadAssetOperation<T> where T : Object
     {
-        protected string m_AssetBundleName;
-        protected string m_AssetName;
-        protected string m_DownloadingError;
-        protected System.Type m_Type;
-        protected AssetBundleRequest m_Request = null;
+        protected string assetBundleName;
+        protected string assetName;
+        protected string downloadingError;
+        protected AssetBundleRequest request = null;
 
-        public AssetBundleLoadAssetOperationFull(string bundleName, string assetName, System.Type type)
+        public AssetBundleLoadAssetOperationFull(string assetBundleName, string assetName)
         {
-            m_AssetBundleName = bundleName;
-            m_AssetName = assetName;
-            m_Type = type;
+            this.assetBundleName = assetBundleName;
+            this.assetName = assetName;
         }
 
-        public override T GetAsset<T>()
-        {
-            if(m_Request != null && m_Request.isDone) return m_Request.asset as T;
-            else return null;
+        public override T Asset {
+            get {
+                if(request != null && request.isDone) return request.asset as T;
+                else return null;
+            }
         }
 
         // Returns true if more Update calls are required.
         public override bool Update()
         {
-            if(m_Request != null) return false;
+            if(request != null) return false;
 
-            var bundle = AssetBundleManager.GetLoadedAssetBundle(m_AssetBundleName, out m_DownloadingError);
+            var bundle = AssetBundleManager.GetLoadedAssetBundle(assetBundleName, out downloadingError);
             if(bundle != null) {
-                m_Request = bundle.AssetBundle.LoadAssetAsync(m_AssetName, m_Type);
+                request = bundle.AssetBundle.LoadAssetAsync(assetName, typeof(T));
                 return false;
             }
             return true;
@@ -392,23 +353,23 @@ namespace CustomUnity
         {
             // Return if meeting downloading error.
             // m_DownloadingError might come from the dependency downloading.
-            if(m_Request == null && m_DownloadingError != null) {
-                Debug.LogError(m_DownloadingError);
+            if(request == null && downloadingError != null) {
+                Debug.LogError(downloadingError);
                 return true;
             }
 
-            return m_Request != null && m_Request.isDone;
+            return request != null && request.isDone;
         }
 
         public override float Progress()
         {
-            return IsDone() ? 1.0f : m_Request.progress;
+            return IsDone() ? 1.0f : request.progress;
         }
     }
 
-    public class AssetBundleLoadManifestOperation : AssetBundleLoadAssetOperationFull
+    public class AssetBundleLoadManifestOperation : AssetBundleLoadAssetOperationFull<AssetBundleManifest>
     {
-        public AssetBundleLoadManifestOperation(string bundleName, string assetName, System.Type type) : base(bundleName, assetName, type)
+        public AssetBundleLoadManifestOperation(string bundleName, string assetName) : base(bundleName, assetName)
         {
         }
 
@@ -416,8 +377,8 @@ namespace CustomUnity
         {
             base.Update();
 
-            if(m_Request != null && m_Request.isDone) {
-                AssetBundleManager.Manifest = GetAsset<AssetBundleManifest>();
+            if(request != null && request.isDone) {
+                AssetBundleManager.Manifest = Asset;
                 return false;
             }
             return true;
