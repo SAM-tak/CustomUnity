@@ -35,6 +35,7 @@ namespace CustomUnity
         bool done;
 
         public string AssetBundleName { get; private set; }
+        public bool IsImplicit { get; private set; }
         public LoadedAssetBundle AssetBundle { get; protected set; }
         public string Error { get; protected set; }
 
@@ -58,9 +59,10 @@ namespace CustomUnity
 
         public abstract string GetSourceURL();
 
-        public AssetBundleDownloadOperation(string assetBundleName)
+        public AssetBundleDownloadOperation(string assetBundleName, bool isImplicit)
         {
             AssetBundleName = assetBundleName;
+            IsImplicit = isImplicit;
         }
     }
 
@@ -71,7 +73,7 @@ namespace CustomUnity
     {
         OnDemandResourcesRequest request;
 
-        public AssetBundleDownloadFromODROperation(string assetBundleName) : base(assetBundleName)
+        public AssetBundleDownloadFromODROperation(string assetBundleName, bool isImplicit) : base(assetBundleName, isImplicit)
         {
             // Work around Xcode crash when opening Resources tab when a 
             // resource name contains slash character
@@ -97,7 +99,7 @@ namespace CustomUnity
                 request.Dispose();
             }
             else {
-                AssetBundle = new LoadedAssetBundle(bundle);
+                AssetBundle = new LoadedAssetBundle(bundle, IsImplicit);
                 // At the time of unload request is already set to null, so capture it to local variable.
                 var localRequest = request;
                 // Dispose of request only when bundle is unloaded to keep the ODR pin alive.
@@ -118,12 +120,12 @@ namespace CustomUnity
     // Read asset bundle synchronously from an iOS / tvOS asset catalog
     public class AssetBundleOpenFromAssetCatalogOperation : AssetBundleDownloadOperation
     {
-        public AssetBundleOpenFromAssetCatalogOperation(string assetBundleName) : base(assetBundleName)
+        public AssetBundleOpenFromAssetCatalogOperation(string assetBundleName, bool isImplicit) : base(assetBundleName, isImplicit)
         {
             var path = "res://" + assetBundleName;
             var bundle = UnityEngine.AssetBundle.LoadFromFile(path);
             if(bundle == null) Error = string.Format("Failed to load {0}", path);
-            else AssetBundle = new LoadedAssetBundle(bundle);
+            else AssetBundle = new LoadedAssetBundle(bundle, IsImplicit);
         }
 
         protected override bool DownloadIsDone { get { return true; } }
@@ -142,7 +144,7 @@ namespace CustomUnity
         WWW www;
         readonly string url;
 
-        public AssetBundleDownloadFromWebOperation(string assetBundleName, WWW www) : base(assetBundleName)
+        public AssetBundleDownloadFromWebOperation(string assetBundleName, bool isImplicit, WWW www) : base(assetBundleName, isImplicit)
         {
             if(www == null) throw new System.ArgumentNullException("www");
             url = www.url;
@@ -157,7 +159,7 @@ namespace CustomUnity
             if(string.IsNullOrEmpty(Error)) {
                 var bundle = www.assetBundle;
                 if(bundle == null) Error = string.Format("{0} is not a valid asset bundle.", AssetBundleName);
-                else AssetBundle = new LoadedAssetBundle(www.assetBundle);
+                else AssetBundle = new LoadedAssetBundle(www.assetBundle, IsImplicit);
             }
             www.Dispose();
             www = null;
@@ -235,11 +237,6 @@ namespace CustomUnity
 
             return done;
         }
-
-        public override float Progress()
-        {
-            return IsDone() ? 1.0f : 0.0f;
-        }
     }
 
     public class AssetBundleLoadLevelOperation : AssetBundleLoadOperation
@@ -289,21 +286,21 @@ namespace CustomUnity
         }
     }
 
-    public abstract class AssetBundleLoadAssetOperation<T> : AssetBundleLoadOperation where T : Object
+    public abstract class AssetBundleLoadAssetOperation : AssetBundleLoadOperation
     {
-        public abstract T Asset { get; }
+        public abstract Object Asset { get; }
     }
 
-    public class AssetBundleLoadAssetOperationSimulation<T> : AssetBundleLoadAssetOperation<T> where T : Object
+    public class AssetBundleLoadAssetOperationSimulation : AssetBundleLoadAssetOperation
     {
-        protected T simulatedObject;
+        protected Object simulatedObject;
 
-        public AssetBundleLoadAssetOperationSimulation(T simulatedObject)
+        public AssetBundleLoadAssetOperationSimulation(Object simulatedObject)
         {
             this.simulatedObject = simulatedObject;
         }
 
-        public override T Asset { get { return simulatedObject; } }
+        public override Object Asset { get { return simulatedObject; } }
 
         public override bool Update()
         {
@@ -316,22 +313,24 @@ namespace CustomUnity
         }
     }
 
-    public class AssetBundleLoadAssetOperationFull<T> : AssetBundleLoadAssetOperation<T> where T : Object
+    public class AssetBundleLoadAssetOperationFull : AssetBundleLoadAssetOperation
     {
         protected string assetBundleName;
         protected string assetName;
+        protected System.Type type;
         protected string downloadingError;
         protected AssetBundleRequest request = null;
 
-        public AssetBundleLoadAssetOperationFull(string assetBundleName, string assetName)
+        public AssetBundleLoadAssetOperationFull(string assetBundleName, string assetName, System.Type type)
         {
             this.assetBundleName = assetBundleName;
             this.assetName = assetName;
+            this.type = type;
         }
 
-        public override T Asset {
+        public override Object Asset {
             get {
-                if(request != null && request.isDone) return request.asset as T;
+                if(request != null && request.isDone) return request.asset;
                 else return null;
             }
         }
@@ -343,7 +342,7 @@ namespace CustomUnity
 
             var bundle = AssetBundleLoader.GetLoadedAssetBundle(assetBundleName, out downloadingError);
             if(bundle != null) {
-                request = bundle.AssetBundle.LoadAssetAsync(assetName, typeof(T));
+                request = bundle.AssetBundle.LoadAssetAsync(assetName, type);
                 return false;
             }
             return true;
@@ -367,9 +366,9 @@ namespace CustomUnity
         }
     }
 
-    public class AssetBundleLoadManifestOperation : AssetBundleLoadAssetOperationFull<AssetBundleManifest>
+    public class AssetBundleLoadManifestOperation : AssetBundleLoadAssetOperationFull
     {
-        public AssetBundleLoadManifestOperation(string bundleName, string assetName) : base(bundleName, assetName)
+        public AssetBundleLoadManifestOperation(string bundleName, string assetName) : base(bundleName, assetName, typeof(AssetBundleManifest))
         {
         }
 
@@ -378,7 +377,7 @@ namespace CustomUnity
             base.Update();
 
             if(request != null && request.isDone) {
-                AssetBundleLoader.Manifest = Asset;
+                AssetBundleLoader.Manifest = Asset as AssetBundleManifest;
                 return false;
             }
             return true;

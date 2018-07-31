@@ -45,9 +45,15 @@ namespace CustomUnity
             foldoutLoadedAssetBundles.isExpanded = EditorGUILayout.Foldout(foldoutLoadedAssetBundles.isExpanded, "Loaded Asset Bundles");
             if(foldoutLoadedAssetBundles.isExpanded) {
                 EditorGUI.indentLevel++;
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Name", "Reference Count");
+                EditorGUILayout.LabelField("Implicity");
+                EditorGUILayout.EndHorizontal();
                 foreach(var i in AssetBundleLoader.LoadedAssetBundles) {
+                    EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField(i.Key, i.Value.ReferencedCount.ToString());
+                    EditorGUILayout.LabelField(i.Value.IsImplicit.ToString());
+                    EditorGUILayout.EndHorizontal();
                 }
                 EditorGUI.indentLevel--;
             }

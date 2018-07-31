@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -39,6 +40,7 @@ namespace CustomUnity
     {
         public AssetBundle AssetBundle { get; internal set; }
         public int ReferencedCount { get; internal set; }
+        public bool IsImplicit { get; internal set; }
 
         internal event Action OnUnload;
 
@@ -50,9 +52,10 @@ namespace CustomUnity
             OnUnload = null;
         }
 
-        public LoadedAssetBundle(AssetBundle assetBundle)
+        public LoadedAssetBundle(AssetBundle assetBundle, bool isImplicit)
         {
             AssetBundle = assetBundle;
+            IsImplicit = isImplicit;
             ReferencedCount = 1;
         }
     }
@@ -374,6 +377,10 @@ namespace CustomUnity
             else
 #endif
             {
+                if(Manifest == null) {
+                    //Log.Error("[AssetBundelLoader] Please initialize AssetBundleManifest by calling AssetBundleManager.Initialize()");
+                    return assetBundleName;
+                }
                 bundlesWithVariant = Manifest.GetAllAssetBundlesWithVariant();
             }
 
@@ -414,6 +421,10 @@ namespace CustomUnity
             loadedAssetBundles.TryGetValue(assetBundleName, out bundle);
             if(bundle != null) {
                 if(isLoadingAsDependency) bundle.ReferencedCount++;
+                else if(bundle.IsImplicit) {
+                    bundle.IsImplicit = false;
+                    bundle.ReferencedCount++;
+                }
                 return true;
             }
 
@@ -453,7 +464,7 @@ namespace CustomUnity
                 if(isLoadingAssetBundleManifest) download = new WWW(url);
                 else download = WWW.LoadFromCacheOrDownload(url, Manifest.GetAssetBundleHash(assetBundleName), 0);
 
-                inProgressOperations.Add(new AssetBundleDownloadFromWebOperation(assetBundleName, download));
+                inProgressOperations.Add(new AssetBundleDownloadFromWebOperation(assetBundleName, isLoadingAsDependency, download));
             }
             downloadingBundles[assetBundleName] = 0;
 
@@ -494,7 +505,7 @@ namespace CustomUnity
 #endif
             assetBundleName = RemapVariantName(assetBundleName);
 
-            UnloadAssetBundleInternal(assetBundleName);
+            UnloadAssetBundleInternal(assetBundleName, false);
         }
 
         static protected void UnloadDependencies(string assetBundleName)
@@ -504,19 +515,25 @@ namespace CustomUnity
 
             // Loop dependencies.
             foreach(var i in dependencyNames) {
-                UnloadAssetBundleInternal(i);
+                UnloadAssetBundleInternal(i, true);
             }
 
             dependencies.Remove(assetBundleName);
         }
 
-        static protected void UnloadAssetBundleInternal(string assetBundleName)
+        static protected void UnloadAssetBundleInternal(string assetBundleName, bool isImplicit)
         {
             string error;
             var bundle = GetLoadedAssetBundle(assetBundleName, out error);
             if(bundle == null) return;
 
-            if(--bundle.ReferencedCount == 0) {
+            if(isImplicit) --bundle.ReferencedCount;
+            else if(!bundle.IsImplicit) {
+                bundle.IsImplicit = true;
+                --bundle.ReferencedCount;
+            }
+
+            if(bundle.ReferencedCount == 0) {
                 bundle.Unload();
                 loadedAssetBundles.Remove(assetBundleName);
                 UnloadDependencies(assetBundleName);
@@ -589,7 +606,7 @@ namespace CustomUnity
         /// <summary>
         /// Starts a load operation for an asset from the given asset bundle.
         /// </summary>
-        static public AssetBundleLoadAssetOperation<T> LoadAssetAsync<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
+        static public AssetBundleLoadAssetOperation LoadAssetAsync(string assetBundleName, string assetName, System.Type type)
         {
             if(LogsAll) Log.Info($"[AssetBundelLoader] Loading {assetName} from {assetBundleName} bundle");
 
@@ -602,10 +619,10 @@ namespace CustomUnity
                     return null;
                 }
                 foreach(var i in assetPaths) {
-                    var target = AssetDatabase.LoadAssetAtPath(i, typeof(T)) as T;
-                    if(target) return new AssetBundleLoadAssetOperationSimulation<T>(target);
+                    var target = AssetDatabase.LoadAssetAtPath(i, type);
+                    if(target) return new AssetBundleLoadAssetOperationSimulation(target);
                 }
-                Log.Error($"[AssetBundelLoader] There is no asset with name \"{assetName}\" with type {typeof(T)} in {assetBundleName}");
+                Log.Error($"[AssetBundelLoader] There is no asset with name \"{assetName}\" with type {type} in {assetBundleName}");
                 return null;
             }
             else
@@ -613,12 +630,55 @@ namespace CustomUnity
             {
                 assetBundleName = RemapVariantName(assetBundleName);
                 LoadAssetBundle(assetBundleName, false);
-                var operation = new AssetBundleLoadAssetOperationFull<T>(assetBundleName, assetName);
+                var operation = new AssetBundleLoadAssetOperationFull(assetBundleName, assetName, type);
 
                 inProgressOperations.Add(operation);
 
                 return operation;
             }
+        }
+
+        public class AssetLoadOperation<T> : IEnumerator where T : UnityEngine.Object
+        {
+            public AssetLoadOperation(AssetBundleLoadAssetOperation operation)
+            {
+                this.operation = operation;
+            }
+
+            AssetBundleLoadAssetOperation operation;
+
+            public AssetBundleLoadAssetOperation Operation { get { return operation; } }
+
+            public T Asset { get { return operation.Asset as T; } }
+
+            public object Current { get { return operation.Current; } }
+
+            public bool MoveNext()
+            {
+                return operation.MoveNext();
+            }
+
+            public void Reset()
+            {
+                operation.Reset();
+            }
+            
+            public bool IsDone()
+            {
+                return operation.IsDone();
+            }
+        }
+
+        /// <summary>
+        /// Starts a load operation for an asset from the given asset bundle.(Type specified)
+        /// </summary>
+        /// <param name="assetBundleName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        static public AssetLoadOperation<T> LoadAssetAsync<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
+        {
+            return new AssetLoadOperation<T>(LoadAssetAsync(assetBundleName, assetName, typeof(T)));
         }
 
         /// <summary>
