@@ -37,7 +37,7 @@ namespace CustomUnity
             EditorGUILayout.LabelField("Animator Controller");
             controller = EditorGUILayout.ObjectField(controller, typeof(AnimatorController), false) as AnimatorController;
 
-            if (controller == null) return;
+            if(controller == null) return;
 
             var clipList = AssetDatabase.LoadAllAssetRepresentationsAtPath(AssetDatabase.GetAssetPath(controller)).Where(x => x is AnimationClip).Select(x => x as AnimationClip).ToList();
 

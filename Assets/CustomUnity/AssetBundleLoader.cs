@@ -66,10 +66,6 @@ namespace CustomUnity
     /// </summary>
     public class AssetBundleLoader : MonoBehaviour
     {
-        public enum LogMode { All, JustErrors };
-
-        public static LogMode CurrentLogMode { get; set; } = LogMode.All;
-
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
         public const string DevelopmentAssetBundleServer = "http://127.0.0.1:7888";
 #endif
@@ -154,8 +150,21 @@ namespace CustomUnity
         [SerializeField] bool foldoutManifest;
         [SerializeField] bool foldoutLoadedAssetBundles;
         [SerializeField] bool foldoutDownLoadings;
-        
-        static bool LogsAll { get { return CurrentLogMode == LogMode.All; } }
+
+        public enum LogFlags
+        {
+            Level1 = 1,
+            Level2 = 1 << 1,
+            Level3 = 1 << 2,
+            All = Level1 | Level2 | Level3,
+            ErrorsAndWarnning = Level2 | Level3,
+            JustErrors = Level3
+        };
+
+        public static LogFlags LogMode { get; set; } = LogFlags.All;
+        static bool LogsInfo => (LogMode & LogFlags.Level1) > 0;
+        static bool LogsWarn => (LogMode & LogFlags.Level2) > 0;
+        static bool LogsErrr => (LogMode & LogFlags.Level3) > 0;
 
         static string GetStreamingAssetsPath()
         {
@@ -210,7 +219,7 @@ namespace CustomUnity
 #endif
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
             if(string.IsNullOrEmpty(DevelopmentAssetBundleServer)) {
-                Log.Error("[AssetBundelLoader] Development Server URL could not be found.");
+                if(LogsErrr) Log.Error("[AssetBundelLoader] Development Server URL could not be found.");
             }
             else {
                 SetSourceAssetBundleURL(DevelopmentAssetBundleServer);
@@ -274,7 +283,7 @@ namespace CustomUnity
         static public AssetBundleLoadManifestOperation Initialize(string manifestAssetBundleName)
         {
 #if UNITY_EDITOR
-            if(LogsAll) Log.Info($"[AssetBundelLoader] Simulation Mode: {(SimulatesAssetBundleInEditor ? "Enabled" : "Disabled")}");
+            if(LogsInfo) Log.Info($"[AssetBundelLoader] Simulation Mode: {(SimulatesAssetBundleInEditor ? "Enabled" : "Disabled")}");
 #endif
             SetDevelopmentAssetBundleServer();
 
@@ -305,7 +314,7 @@ namespace CustomUnity
         // that this asset bundle depends on.
         static protected void LoadAssetBundle(string assetBundleName, bool isLoadingAssetBundleManifest)
         {
-            if(LogsAll) Log.Info($"[AssetBundelLoader] Loading Asset Bundle {(isLoadingAssetBundleManifest ? "Manifest" : "")} : {assetBundleName}");
+            if(LogsInfo) Log.Info($"[AssetBundelLoader] Loading Asset Bundle {(isLoadingAssetBundleManifest ? "Manifest" : "")} : {assetBundleName}");
 
 #if UNITY_EDITOR
             // If we're in Editor simulation mode, we don't have to really load the assetBundle and its dependencies.
@@ -314,7 +323,7 @@ namespace CustomUnity
 
             if(!isLoadingAssetBundleManifest) {
                 if(Manifest == null) {
-                    Log.Error("[AssetBundelLoader] Please initialize AssetBundleManifest by calling AssetBundleManager.Initialize()");
+                    if(LogsErrr) Log.Error("[AssetBundelLoader] Please initialize AssetBundleManifest by calling AssetBundleManager.Initialize()");
                     return;
                 }
             }
@@ -406,7 +415,7 @@ namespace CustomUnity
             }
 
             if(bestFit == int.MaxValue - 1) {
-                if(LogsAll) Log.Warning($"[AssetBundelLoader] Ambigious asset bundle variant chosen because there was no matching active variant: {bundlesWithVariant[bestFitIndex]}");
+                if(LogsWarn) Log.Warning($"[AssetBundelLoader] Ambigious asset bundle variant chosen because there was no matching active variant: {bundlesWithVariant[bestFitIndex]}");
             }
 
             if(bestFitIndex != -1) return bundlesWithVariant[bestFitIndex];
@@ -475,7 +484,7 @@ namespace CustomUnity
         static protected void LoadDependencies(string assetBundleName)
         {
             if(Manifest == null) {
-                Log.Error("[AssetBundleLoader] Please initialize AssetBundleManifest by calling AssetBundleManager.Initialize()");
+                if(LogsErrr) Log.Error("[AssetBundleLoader] Please initialize AssetBundleManifest by calling AssetBundleManager.Initialize()");
                 return;
             }
 
@@ -537,7 +546,7 @@ namespace CustomUnity
                 bundle.Unload();
                 loadedAssetBundles.Remove(assetBundleName);
                 UnloadDependencies(assetBundleName);
-                if(LogsAll) Log.Info($"[AssetBundelLoader] {assetBundleName} has been unloaded successfully");
+                if(LogsInfo) Log.Info($"[AssetBundelLoader] {assetBundleName} has been unloaded successfully");
             }
         }
 
@@ -578,7 +587,7 @@ namespace CustomUnity
         /// </summary>
         static public AssetBundleLoadOperation LoadAsync(string assetBundleName)
         {
-            if(LogsAll) Log.Info($"[AssetBundelLoader] Loading {assetBundleName} bundle");
+            if(LogsInfo) Log.Info($"[AssetBundelLoader] Loading {assetBundleName} bundle");
 
             AssetBundleLoadOperation operation = null;
 #if UNITY_EDITOR
@@ -586,7 +595,7 @@ namespace CustomUnity
                 assetBundleName = RemapVariantName(assetBundleName);
                 var assetPaths = AssetDatabase.GetAssetPathsFromAssetBundle(assetBundleName);
                 if(assetPaths.Length == 0) {
-                    Log.Error($"[AssetBundelLoader] There is no asset bundle named {assetBundleName}");
+                    if(LogsErrr) Log.Error($"[AssetBundelLoader] There is no asset bundle named {assetBundleName}");
                 }
                 return null;
             }
@@ -608,21 +617,21 @@ namespace CustomUnity
         /// </summary>
         static public AssetBundleLoadAssetOperation LoadAssetAsync(string assetBundleName, string assetName, System.Type type)
         {
-            if(LogsAll) Log.Info($"[AssetBundelLoader] Loading {assetName} from {assetBundleName} bundle");
+            if(LogsInfo) Log.Info($"[AssetBundelLoader] Loading {assetName} from {assetBundleName} bundle");
 
 #if UNITY_EDITOR
             if(SimulatesAssetBundleInEditor) {
                 assetBundleName = RemapVariantName(assetBundleName);
                 string[] assetPaths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, assetName);
                 if(assetPaths.Length == 0) {
-                    Log.Error($"[AssetBundelLoader] There is no asset with name \"{assetName}\" in {assetBundleName}");
+                    if(LogsErrr) Log.Error($"[AssetBundelLoader] There is no asset with name \"{assetName}\" in {assetBundleName}");
                     return null;
                 }
                 foreach(var i in assetPaths) {
                     var target = AssetDatabase.LoadAssetAtPath(i, type);
                     if(target) return new AssetBundleLoadAssetOperationSimulation(target);
                 }
-                Log.Error($"[AssetBundelLoader] There is no asset with name \"{assetName}\" with type {type} in {assetBundleName}");
+                if(LogsErrr) Log.Error($"[AssetBundelLoader] There is no asset with name \"{assetName}\" with type {type} in {assetBundleName}");
                 return null;
             }
             else
@@ -647,24 +656,15 @@ namespace CustomUnity
             
             public AssetBundleLoadAssetOperation Operation { get; private set; }
 
-            public T Asset { get { return Operation?.Asset as T; } }
+            public T Asset => Operation?.Asset as T;
 
-            public object Current { get { return Operation?.Current; } }
+            public object Current => Operation?.Current;
 
-            public bool MoveNext()
-            {
-                return Operation != null ? Operation.MoveNext() : false;
-            }
+            public bool MoveNext() => Operation?.MoveNext() ?? false;
 
-            public void Reset()
-            {
-                Operation?.Reset();
-            }
+            public void Reset() => Operation?.Reset();
             
-            public bool IsDone()
-            {
-                return Operation != null ? Operation.IsDone() : true;
-            }
+            public bool IsDone() => Operation?.IsDone() ?? true;
         }
 
         /// <summary>
@@ -684,20 +684,20 @@ namespace CustomUnity
         /// </summary>
         static public AssetBundleLoadOperation LoadLevelAsync(string assetBundleName, string levelName, bool isAdditive)
         {
-            if(LogsAll) Log.Info($"[AssetBundelLoader] Loading {levelName} from {assetBundleName} bundle");
+            if(LogsInfo) Log.Info($"[AssetBundelLoader] Loading {levelName} from {assetBundleName} bundle");
 
 #if UNITY_EDITOR
             if(SimulatesAssetBundleInEditor) {
                 assetBundleName = RemapVariantName(assetBundleName);
                 string[] assetPaths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, levelName);
                 if(assetPaths.Length == 0) {
-                    Log.Error($"[AssetBundelLoader] There is no asset with name \"{levelName}\" in {assetBundleName}");
+                    if(LogsErrr) Log.Error($"[AssetBundelLoader] There is no asset with name \"{levelName}\" in {assetBundleName}");
                     return null;
                 }
                 foreach(var i in assetPaths) {
                     if(AssetDatabase.GetMainAssetTypeAtPath(i) == typeof(Scene)) return new AssetBundleLoadLevelSimulationOperation(i, isAdditive);
                 }
-                Log.Error($"[AssetBundelLoader] There is no asset with name \"{levelName}\" with type {typeof(Scene)} in {assetBundleName}");
+                if(LogsErrr) Log.Error($"[AssetBundelLoader] There is no asset with name \"{levelName}\" with type {typeof(Scene)} in {assetBundleName}");
                 return null;
             }
             else

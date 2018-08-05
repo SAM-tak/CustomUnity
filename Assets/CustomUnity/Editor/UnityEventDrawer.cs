@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,20 +13,20 @@ namespace CustomUnity
     [CustomPropertyDrawer(typeof(UnityEvent), true)]
     public class UnityEventDrawer : PropertyDrawer
     {
-        private Dictionary<string, State> m_States = new Dictionary<string, State>();
+        Dictionary<string, State> m_States = new Dictionary<string, State>();
         // Find internal methods with reflection
-        private static MethodInfo findMethod = typeof(UnityEventBase).GetMethod("FindMethod", BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(object), typeof(PersistentListenerMode), typeof(Type) }, null);
-        private static MethodInfo temp = typeof(GUIContent).GetMethod("Temp", BindingFlags.NonPublic | BindingFlags.Static, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
-        private static PropertyInfo mixedValueContent = typeof(EditorGUI).GetProperty("mixedValueContent", BindingFlags.NonPublic | BindingFlags.Static);
-        private Styles m_Styles;
-        private string m_Text;
-        private UnityEventBase m_DummyEvent;
-        private SerializedProperty m_Prop;
-        private SerializedProperty m_ListenersArray;
-        private ReorderableList m_ReorderableList;
-        private int m_LastSelectedIndex;
+        static MethodInfo findMethod = typeof(UnityEventBase).GetMethod("FindMethod", BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(object), typeof(PersistentListenerMode), typeof(Type) }, null);
+        static MethodInfo temp = typeof(GUIContent).GetMethod("Temp", BindingFlags.NonPublic | BindingFlags.Static, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
+        static PropertyInfo mixedValueContent = typeof(EditorGUI).GetProperty("mixedValueContent", BindingFlags.NonPublic | BindingFlags.Static);
+        Styles m_Styles;
+        string m_Text;
+        UnityEventBase m_DummyEvent;
+        SerializedProperty m_Prop;
+        SerializedProperty m_ListenersArray;
+        ReorderableList m_ReorderableList;
+        int m_LastSelectedIndex;
 
-        private static string GetEventParams(UnityEventBase evt)
+        static string GetEventParams(UnityEventBase evt)
         {
             var method = (MethodInfo)findMethod.Invoke(evt, new object[] { "Invoke", evt, PersistentListenerMode.EventDefined, null });
             var stringBuilder = new StringBuilder();
@@ -41,7 +41,7 @@ namespace CustomUnity
             return stringBuilder.ToString();
         }
 
-        private State GetState(SerializedProperty prop)
+        State GetState(SerializedProperty prop)
         {
             string propertyPath = prop.propertyPath;
             State state;
@@ -63,7 +63,7 @@ namespace CustomUnity
             return state;
         }
 
-        private State RestoreState(SerializedProperty property)
+        State RestoreState(SerializedProperty property)
         {
             var state = GetState(property);
             m_ListenersArray = state.m_ReorderableList.serializedProperty;
@@ -85,23 +85,15 @@ namespace CustomUnity
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             RestoreState(property);
-            float num = 0.0f;
-            if(m_ReorderableList != null)
-                num = m_ReorderableList.GetHeight();
-            return num;
+            return m_ReorderableList?.GetHeight() ?? 0f;
         }
 
         public void OnGUI(Rect position)
         {
-            if(m_ListenersArray == null || !m_ListenersArray.isArray)
-                return;
+            if(m_ListenersArray == null || !m_ListenersArray.isArray || m_ReorderableList == null) return;
             m_DummyEvent = GetDummyEvent(m_Prop);
-            if(m_DummyEvent == null)
-                return;
-            if(m_Styles == null)
-                m_Styles = new Styles();
-            if(m_ReorderableList == null)
-                return;
+            if(m_DummyEvent == null) return;
+            if(m_Styles == null) m_Styles = new Styles();
             int indentLevel = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
             m_ReorderableList.DoList(position);
@@ -115,12 +107,12 @@ namespace CustomUnity
             GUI.Label(headerRect, text);
         }
 
-        private static PersistentListenerMode GetMode(SerializedProperty mode)
+        static PersistentListenerMode GetMode(SerializedProperty mode)
         {
             return (PersistentListenerMode)mode.enumValueIndex;
         }
 
-        private void DrawEventListener(Rect rect, int index, bool isactive, bool isfocused)
+        void DrawEventListener(Rect rect, int index, bool isactive, bool isfocused)
         {
             var arrayElementAtIndex = m_ListenersArray.GetArrayElementAtIndex(index);
             ++rect.y;
@@ -140,11 +132,11 @@ namespace CustomUnity
             EditorGUI.BeginChangeCheck();
             GUI.Box(position2, GUIContent.none);
             EditorGUI.PropertyField(position2, propertyRelative4, GUIContent.none);
-            if(EditorGUI.EndChangeCheck())
-                propertyRelative5.stringValue = null;
+            if(EditorGUI.EndChangeCheck()) propertyRelative5.stringValue = null;
             var persistentListenerMode = GetMode(propertyRelative2);
-            if(propertyRelative4.objectReferenceValue == null || string.IsNullOrEmpty(propertyRelative5.stringValue))
+            if(propertyRelative4.objectReferenceValue == null || string.IsNullOrEmpty(propertyRelative5.stringValue)) {
                 persistentListenerMode = PersistentListenerMode.Void;
+            }
             SerializedProperty propertyRelative6;
             switch(persistentListenerMode) {
             case PersistentListenerMode.Object:
@@ -168,8 +160,7 @@ namespace CustomUnity
             }
             string stringValue = propertyRelative3.FindPropertyRelative("m_ObjectArgumentAssemblyTypeName").stringValue;
             var type = typeof(UnityEngine.Object);
-            if(!string.IsNullOrEmpty(stringValue))
-                type = Type.GetType(stringValue, false) ?? typeof(UnityEngine.Object);
+            if(!string.IsNullOrEmpty(stringValue)) type = Type.GetType(stringValue, false) ?? typeof(UnityEngine.Object);
             if(persistentListenerMode == PersistentListenerMode.Object) {
                 EditorGUI.BeginChangeCheck();
                 var @object = EditorGUI.ObjectField(position3, GUIContent.none, propertyRelative6.objectReferenceValue, type, true);
@@ -179,9 +170,7 @@ namespace CustomUnity
             else if(persistentListenerMode != PersistentListenerMode.Void && persistentListenerMode != PersistentListenerMode.EventDefined) {
                 // Try to find Find the EnumActionAttribute
                 var method = GetMethod(m_DummyEvent, propertyRelative5.stringValue, propertyRelative4.objectReferenceValue, GetMode(propertyRelative2), type);
-                object[] attributes = null;
-                if(method != null)
-                    attributes = method.GetCustomAttributes(typeof(EnumActionAttribute), true);
+                object[] attributes = method?.GetCustomAttributes(typeof(EnumActionAttribute), true);
                 if(attributes != null && attributes.Length > 0) {
                     // Make an enum popup
                     var enumType = ((EnumActionAttribute)attributes[0]).enumType;
@@ -194,13 +183,12 @@ namespace CustomUnity
             EditorGUI.BeginDisabledGroup(propertyRelative4.objectReferenceValue == null);
             EditorGUI.BeginProperty(rect1, GUIContent.none, propertyRelative5);
             GUIContent content;
-            if(EditorGUI.showMixedValue) {
-                content = (GUIContent)mixedValueContent.GetValue(null, null);
-            }
+            if(EditorGUI.showMixedValue) content = (GUIContent)mixedValueContent.GetValue(null, null);
             else {
                 var stringBuilder = new StringBuilder();
-                if(propertyRelative4.objectReferenceValue == null || string.IsNullOrEmpty(propertyRelative5.stringValue))
+                if(propertyRelative4.objectReferenceValue == null || string.IsNullOrEmpty(propertyRelative5.stringValue)) {
                     stringBuilder.Append("No Function");
+                }
                 else if(!IsPersistantListenerValid(m_DummyEvent, propertyRelative5.stringValue, propertyRelative4.objectReferenceValue, GetMode(propertyRelative2), type)) {
                     var str = "UnknownComponent";
                     UnityEngine.Object objectReferenceValue = propertyRelative4.objectReferenceValue;
@@ -212,22 +200,19 @@ namespace CustomUnity
                     stringBuilder.Append(propertyRelative4.objectReferenceValue.GetType().Name);
                     if(!string.IsNullOrEmpty(propertyRelative5.stringValue)) {
                         stringBuilder.Append(".");
-                        if(propertyRelative5.stringValue.StartsWith("set_"))
-                            stringBuilder.Append(propertyRelative5.stringValue.Substring(4));
-                        else
-                            stringBuilder.Append(propertyRelative5.stringValue);
+                        if(propertyRelative5.stringValue.StartsWith("set_")) stringBuilder.Append(propertyRelative5.stringValue.Substring(4));
+                        else stringBuilder.Append(propertyRelative5.stringValue);
                     }
                 }
                 content = (GUIContent)temp.Invoke(null, new object[] { stringBuilder.ToString() });
             }
-            if(GUI.Button(rect1, content, EditorStyles.popup))
-                BuildPopupList(propertyRelative4.objectReferenceValue, m_DummyEvent, arrayElementAtIndex).DropDown(rect1);
+            if(GUI.Button(rect1, content, EditorStyles.popup)) BuildPopupList(propertyRelative4.objectReferenceValue, m_DummyEvent, arrayElementAtIndex).DropDown(rect1);
             EditorGUI.EndProperty();
             EditorGUI.EndDisabledGroup();
             GUI.backgroundColor = backgroundColor;
         }
 
-        private Rect[] GetRowRects(Rect rect)
+        Rect[] GetRowRects(Rect rect)
         {
             var rectArray = new Rect[4];
             rect.height = 16f;
@@ -247,13 +232,13 @@ namespace CustomUnity
             return rectArray;
         }
 
-        private void RemoveButton(ReorderableList list)
+        void RemoveButton(ReorderableList list)
         {
             ReorderableList.defaultBehaviours.DoRemoveButton(list);
             m_LastSelectedIndex = list.index;
         }
 
-        private void AddEventListener(ReorderableList list)
+        void AddEventListener(ReorderableList list)
         {
             if(m_ListenersArray.hasMultipleDifferentValues) {
                 foreach(UnityEngine.Object targetObject in m_ListenersArray.serializedObject.targetObjects) {
@@ -265,8 +250,7 @@ namespace CustomUnity
                 m_ListenersArray.serializedObject.Update();
                 list.index = list.serializedProperty.arraySize - 1;
             }
-            else
-                ReorderableList.defaultBehaviours.DoAddButton(list);
+            else ReorderableList.defaultBehaviours.DoAddButton(list);
             m_LastSelectedIndex = list.index;
             var arrayElementAtIndex = m_ListenersArray.GetArrayElementAtIndex(list.index);
             var propertyRelative1 = arrayElementAtIndex.FindPropertyRelative("m_CallState");
@@ -285,35 +269,31 @@ namespace CustomUnity
             propertyRelative5.FindPropertyRelative("m_ObjectArgumentAssemblyTypeName").stringValue = null;
         }
 
-        private void SelectEventListener(ReorderableList list)
+        void SelectEventListener(ReorderableList list)
         {
             m_LastSelectedIndex = list.index;
         }
 
-        private void EndDragChild(ReorderableList list)
+        void EndDragChild(ReorderableList list)
         {
             m_LastSelectedIndex = list.index;
         }
 
-        private static UnityEventBase GetDummyEvent(SerializedProperty prop)
+        static UnityEventBase GetDummyEvent(SerializedProperty prop)
         {
             var type = Type.GetType(prop.FindPropertyRelative("m_TypeName").stringValue, false);
-            if(type == null)
-                return new UnityEvent();
+            if(type == null) return new UnityEvent();
             return Activator.CreateInstance(type) as UnityEventBase;
         }
 
-        private static IEnumerable<ValidMethodMap> CalculateMethodMap(UnityEngine.Object target, Type[] t, bool allowSubclasses)
+        static IEnumerable<ValidMethodMap> CalculateMethodMap(UnityEngine.Object target, Type[] t, bool allowSubclasses)
         {
             var validMethodMapList = new List<ValidMethodMap>();
-            if(target == null || t == null)
-                return validMethodMapList;
+            if(target == null || t == null) return validMethodMapList;
             var type = target.GetType();
             var list = ((IEnumerable<MethodInfo>)type.GetMethods()).Where(x => !x.IsSpecialName).ToList();
-            var source = ((IEnumerable<PropertyInfo>)type.GetProperties()).AsEnumerable().Where(x =>
-            {
-                if(x.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length == 0)
-                    return x.GetSetMethod() != null;
+            var source = ((IEnumerable<PropertyInfo>)type.GetProperties()).AsEnumerable().Where(x => {
+                if(x.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length == 0) return x.GetSetMethod() != null;
                 return false;
             });
             list.AddRange(source.Select(x => x.GetSetMethod()));
@@ -329,39 +309,37 @@ namespace CustomUnity
                             if(allowSubclasses && t[index].IsAssignableFrom(parameters[index].ParameterType))
                                 flag = true;
                         }
-                        if(flag)
+                        if(flag) {
                             validMethodMapList.Add(new ValidMethodMap() {
                                 target = target,
                                 methodInfo = current
                             });
+                        }
                     }
                 }
             }
             return validMethodMapList;
         }
 
-        public static bool IsPersistantListenerValid(UnityEventBase dummyEvent, string methodName, UnityEngine.Object uObject, PersistentListenerMode modeEnum, Type argumentType)
+        public static bool IsPersistantListenerValid(UnityEventBase dummyEvent, string methodName, UnityEngine.Object @object, PersistentListenerMode modeEnum, Type argumentType)
         {
-            if(uObject == null || string.IsNullOrEmpty(methodName))
-                return false;
-            return GetMethod(dummyEvent, methodName, uObject, modeEnum, argumentType) != null;
+            if(@object == null || string.IsNullOrEmpty(methodName)) return false;
+            return GetMethod(dummyEvent, methodName, @object, modeEnum, argumentType) != null;
         }
 
-        private static MethodInfo GetMethod(UnityEventBase dummyEvent, string methodName, UnityEngine.Object uObject, PersistentListenerMode modeEnum, Type argumentType)
+        static MethodInfo GetMethod(UnityEventBase dummyEvent, string methodName, UnityEngine.Object @object, PersistentListenerMode modeEnum, Type argumentType)
         {
-            return (MethodInfo)findMethod.Invoke(dummyEvent, new object[] { methodName, uObject, modeEnum, argumentType });
+            return (MethodInfo)findMethod.Invoke(dummyEvent, new object[] { methodName, @object, modeEnum, argumentType });
         }
 
-        private static GenericMenu BuildPopupList(UnityEngine.Object target, UnityEventBase dummyEvent, SerializedProperty listener)
+        static GenericMenu BuildPopupList(UnityEngine.Object target, UnityEventBase dummyEvent, SerializedProperty listener)
         {
             var target1 = target;
-            if(target1 is Component)
-                target1 = (target as Component).gameObject;
+            if(target1 is Component) target1 = (target as Component).gameObject;
             var propertyRelative = listener.FindPropertyRelative("m_MethodName");
             var menu = new GenericMenu();
             menu.AddItem(new GUIContent("No Function"), string.IsNullOrEmpty(propertyRelative.stringValue), new GenericMenu.MenuFunction2(ClearEventFunction), new UnityEventFunction(listener, null, null, PersistentListenerMode.EventDefined));
-            if(target1 == null)
-                return menu;
+            if(target1 == null) return menu;
             menu.AddSeparator(string.Empty);
             var array = ((IEnumerable<ParameterInfo>)dummyEvent.GetType().GetMethod("Invoke").GetParameters()).Select(x => x.ParameterType).ToArray();
             GeneratePopUpForType(menu, target1, false, listener, array);
@@ -369,14 +347,13 @@ namespace CustomUnity
                 var components = (target1 as GameObject).GetComponents<Component>();
                 var list = ((IEnumerable<Component>)components).Where(c => c != null).Select(c => c.GetType().Name).GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
                 foreach(var component in components) {
-                    if(!(component == null))
-                        GeneratePopUpForType(menu, component, list.Contains(component.GetType().Name), listener, array);
+                    if(component != null) GeneratePopUpForType(menu, component, list.Contains(component.GetType().Name), listener, array);
                 }
             }
             return menu;
         }
 
-        private static void GeneratePopUpForType(GenericMenu menu, UnityEngine.Object target, bool useFullTargetName, SerializedProperty listener, Type[] delegateArgumentsTypes)
+        static void GeneratePopUpForType(GenericMenu menu, UnityEngine.Object target, bool useFullTargetName, SerializedProperty listener, Type[] delegateArgumentsTypes)
         {
             var methods = new List<ValidMethodMap>();
             string targetName = !useFullTargetName ? target.GetType().Name : target.GetType().FullName;
@@ -405,13 +382,14 @@ namespace CustomUnity
             AddMethodsToMenu(menu, listener, methods, targetName);
         }
 
-        private static void AddMethodsToMenu(GenericMenu menu, SerializedProperty listener, List<ValidMethodMap> methods, string targetName)
+        static void AddMethodsToMenu(GenericMenu menu, SerializedProperty listener, List<ValidMethodMap> methods, string targetName)
         {
-            foreach(var method in methods.OrderBy(e => e.methodInfo.Name.StartsWith("set_") ? 0 : 1).ThenBy(e => e.methodInfo.Name))
+            foreach(var method in methods.OrderBy(e => e.methodInfo.Name.StartsWith("set_") ? 0 : 1).ThenBy(e => e.methodInfo.Name)) {
                 AddFunctionsForScript(menu, listener, method, targetName);
+            }
         }
 
-        private static void GetMethodsForTargetAndMode(UnityEngine.Object target, Type[] delegateArgumentsTypes, List<ValidMethodMap> methods, PersistentListenerMode mode, bool allowSubclasses = false)
+        static void GetMethodsForTargetAndMode(UnityEngine.Object target, Type[] delegateArgumentsTypes, List<ValidMethodMap> methods, PersistentListenerMode mode, bool allowSubclasses = false)
         {
             var methodMaps = CalculateMethodMap(target, delegateArgumentsTypes, allowSubclasses).ToArray();
             for(int i = 0; i < methodMaps.Length; i++) {
@@ -420,7 +398,7 @@ namespace CustomUnity
             }
         }
 
-        private static void AddFunctionsForScript(GenericMenu menu, SerializedProperty listener, ValidMethodMap method, string targetName)
+        static void AddFunctionsForScript(GenericMenu menu, SerializedProperty listener, ValidMethodMap method, string targetName)
         {
             var mode1 = method.mode;
             var objectReferenceValue = listener.FindPropertyRelative("m_Target").objectReferenceValue;
@@ -436,43 +414,42 @@ namespace CustomUnity
                     stringBuilder.Append(", ");
             }
             var on = objectReferenceValue == method.target && stringValue == method.methodInfo.Name && mode1 == mode2;
-            if(on && mode1 == PersistentListenerMode.Object && method.methodInfo.GetParameters().Length == 1)
+            if(on && mode1 == PersistentListenerMode.Object && method.methodInfo.GetParameters().Length == 1) {
                 on &= method.methodInfo.GetParameters()[0].ParameterType.AssemblyQualifiedName == propertyRelative.stringValue;
+            }
             var formattedMethodName = GetFormattedMethodName(targetName, method.methodInfo.Name, stringBuilder.ToString(), mode1 == PersistentListenerMode.EventDefined);
             menu.AddItem(new GUIContent(formattedMethodName), on, new GenericMenu.MenuFunction2(SetEventFunction), new UnityEventFunction(listener, method.target, method.methodInfo, mode1));
         }
 
-        private static string GetTypeName(Type t)
+        static string GetTypeName(Type t)
         {
-            if(t == typeof(int))
-                return "int";
-            if(t == typeof(float))
-                return "float";
-            if(t == typeof(string))
-                return "string";
-            if(t == typeof(bool))
-                return "bool";
-            return t.Name;
+            if(t == typeof(int)) return "int";
+            else if(t == typeof(float)) return "float";
+            else if(t == typeof(string)) return "string";
+            else if(t == typeof(bool)) return "bool";
+            else return t.Name;
         }
 
-        private static string GetFormattedMethodName(string targetName, string methodName, string args, bool dynamic)
+        static string GetFormattedMethodName(string targetName, string methodName, string args, bool dynamic)
         {
             if(dynamic) {
-                if(methodName.StartsWith("set_"))
+                if(methodName.StartsWith("set_")) {
                     return string.Format("{0}/{1}", targetName, methodName.Substring(4));
-                return string.Format("{0}/{1}", targetName, methodName);
+                }
+                else return string.Format("{0}/{1}", targetName, methodName);
             }
-            if(methodName.StartsWith("set_"))
+            else if(methodName.StartsWith("set_")) {
                 return string.Format("{0}/{2} {1}", targetName, methodName.Substring(4), args);
-            return string.Format("{0}/{1} ({2})", targetName, methodName, args);
+            }
+            else return string.Format("{0}/{1} ({2})", targetName, methodName, args);
         }
 
-        private static void SetEventFunction(object source)
+        static void SetEventFunction(object source)
         {
             ((UnityEventFunction)source).Assign();
         }
 
-        private static void ClearEventFunction(object source)
+        static void ClearEventFunction(object source)
         {
             ((UnityEventFunction)source).Clear();
         }
@@ -483,26 +460,26 @@ namespace CustomUnity
             public int lastSelectedIndex;
         }
 
-        private class Styles
+        class Styles
         {
             public readonly GUIContent iconToolbarMinus = EditorGUIUtility.IconContent("Toolbar Minus");
             public readonly GUIStyle genericFieldStyle = EditorStyles.label;
             public readonly GUIStyle removeButton = "InvisibleButton";
         }
 
-        private struct ValidMethodMap
+        struct ValidMethodMap
         {
             public UnityEngine.Object target;
             public MethodInfo methodInfo;
             public PersistentListenerMode mode;
         }
 
-        private struct UnityEventFunction
+        struct UnityEventFunction
         {
-            private readonly SerializedProperty m_Listener;
-            private readonly UnityEngine.Object m_Target;
-            private readonly MethodInfo m_Method;
-            private readonly PersistentListenerMode m_Mode;
+            readonly SerializedProperty m_Listener;
+            readonly UnityEngine.Object m_Target;
+            readonly MethodInfo m_Method;
+            readonly PersistentListenerMode m_Mode;
 
             public UnityEventFunction(SerializedProperty listener, UnityEngine.Object target, MethodInfo method, PersistentListenerMode mode)
             {
@@ -530,7 +507,7 @@ namespace CustomUnity
                 m_Listener.serializedObject.ApplyModifiedProperties();
             }
 
-            private void ValidateObjectParamater(SerializedProperty arguments, PersistentListenerMode mode)
+            void ValidateObjectParamater(SerializedProperty arguments, PersistentListenerMode mode)
             {
                 var propertyRelative1 = arguments.FindPropertyRelative("m_ObjectArgumentAssemblyTypeName");
                 var propertyRelative2 = arguments.FindPropertyRelative("m_ObjectArgument");
@@ -540,11 +517,9 @@ namespace CustomUnity
                     propertyRelative2.objectReferenceValue = null;
                 }
                 else {
-                    if(objectReferenceValue == null)
-                        return;
+                    if(objectReferenceValue == null) return;
                     var type = Type.GetType(propertyRelative1.stringValue, false);
-                    if(typeof(UnityEngine.Object).IsAssignableFrom(type) && type.IsInstanceOfType(objectReferenceValue))
-                        return;
+                    if(typeof(UnityEngine.Object).IsAssignableFrom(type) && type.IsInstanceOfType(objectReferenceValue)) return;
                     propertyRelative2.objectReferenceValue = null;
                 }
             }

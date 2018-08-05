@@ -26,12 +26,9 @@ namespace CustomUnity
     public class ReadOnlyEnumFlagsDrawer : PropertyDrawer
     {
         static GUIStyle customStyle;
-        static GUIStyle CustomStyle
-        {
-            get
-            {
-                if (customStyle == null)
-                {
+        static GUIStyle CustomStyle {
+            get {
+                if(customStyle == null) {
                     customStyle = new GUIStyle(EditorStyles.layerMaskField);
                     customStyle.normal.textColor = customStyle.hover.textColor = customStyle.focused.textColor = Color.gray;
                 }
@@ -67,8 +64,7 @@ namespace CustomUnity
     public class ReadOnlyEnumFlagsWhenPlayingDrawer : PropertyDrawer
     {
         static GUIStyle customStyle;
-        static GUIStyle CustomStyle
-        {
+        static GUIStyle CustomStyle {
             get {
                 if(customStyle == null) {
                     customStyle = new GUIStyle(EditorStyles.layerMaskField);

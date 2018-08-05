@@ -9,21 +9,13 @@ namespace CustomUnity
 {
     public abstract class AssetBundleLoadOperation : IEnumerator
     {
-        public object Current { get { return null; } }
+        public object Current => null;
 
-        public bool MoveNext()
-        {
-            return !IsDone();
-        }
+        public bool MoveNext() => !IsDone();
 
-        public void Reset()
-        {
-        }
+        public void Reset() { }
 
-        public virtual float Progress()
-        {
-            return IsDone() ? 1.0f : 0.0f;
-        }
+        public virtual float Progress() => IsDone() ? 1.0f : 0.0f;
 
         abstract public bool Update();
 
@@ -32,8 +24,6 @@ namespace CustomUnity
 
     public abstract class AssetBundleDownloadOperation : AssetBundleLoadOperation
     {
-        bool done;
-
         public string AssetBundleName { get; private set; }
         public bool IsImplicit { get; private set; }
         public LoadedAssetBundle AssetBundle { get; protected set; }
@@ -41,6 +31,8 @@ namespace CustomUnity
 
         protected abstract bool DownloadIsDone { get; }
         protected abstract void FinishDownload();
+
+        bool done;
 
         public override bool Update()
         {
@@ -52,10 +44,7 @@ namespace CustomUnity
             return !done;
         }
 
-        public override bool IsDone()
-        {
-            return done;
-        }
+        public override bool IsDone() => done;
 
         public abstract string GetSourceURL();
 
@@ -147,11 +136,11 @@ namespace CustomUnity
         public AssetBundleDownloadFromWebOperation(string assetBundleName, bool isImplicit, WWW www) : base(assetBundleName, isImplicit)
         {
             if(www == null) throw new System.ArgumentNullException("www");
-            url = www.url;
             this.www = www;
+            url = www.url;
         }
 
-        protected override bool DownloadIsDone { get { return (www == null) || www.isDone; } }
+        protected override bool DownloadIsDone => www?.isDone ?? true;
 
         protected override void FinishDownload()
         {
@@ -165,15 +154,9 @@ namespace CustomUnity
             www = null;
         }
 
-        public override string GetSourceURL()
-        {
-            return url;
-        }
+        public override string GetSourceURL() => url;
 
-        public override float Progress()
-        {
-            return IsDone() ? 1.0f : www != null ? www.progress : 0.0f;
-        }
+        public override float Progress() => IsDone() ? 1.0f : www?.progress ?? 0.0f;
     }
 
 #if UNITY_EDITOR
@@ -187,20 +170,11 @@ namespace CustomUnity
             else operation = UnityEditor.EditorApplication.LoadLevelAsyncInPlayMode(levelPath);
         }
 
-        public override bool Update()
-        {
-            return false;
-        }
+        public override bool Update() => false;
 
-        public override bool IsDone()
-        {
-            return operation == null || operation.isDone;
-        }
+        public override bool IsDone() => operation == null || operation.isDone;
 
-        public override float Progress()
-        {
-            return IsDone() ? 1.0f : operation != null ? operation.progress : 0.0f;
-        }
+        public override float Progress() => IsDone() ? 1.0f : operation?.progress ?? 0.0f;
     }
 #endif
 
@@ -218,8 +192,7 @@ namespace CustomUnity
         // Returns true if more Update calls are required.
         public override bool Update()
         {
-            var bundle = AssetBundleLoader.GetLoadedAssetBundle(assetBundleName, out downloadingError);
-            if(bundle != null || !string.IsNullOrEmpty(downloadingError)) {
+            if(AssetBundleLoader.GetLoadedAssetBundle(assetBundleName, out downloadingError) != null || !string.IsNullOrEmpty(downloadingError)) {
                 done = true;
                 return false;
             }
@@ -280,10 +253,7 @@ namespace CustomUnity
             return request != null && request.isDone;
         }
 
-        public override float Progress()
-        {
-            return IsDone() ? 1.0f : request != null ? request.progress : 0.0f;
-        }
+        public override float Progress() => IsDone() ? 1.0f : request != null ? request.progress : 0.0f;
     }
 
     public abstract class AssetBundleLoadAssetOperation : AssetBundleLoadOperation
@@ -300,17 +270,11 @@ namespace CustomUnity
             this.simulatedObject = simulatedObject;
         }
 
-        public override Object Asset { get { return simulatedObject; } }
+        public override Object Asset => simulatedObject;
 
-        public override bool Update()
-        {
-            return false;
-        }
+        public override bool Update() => false;
 
-        public override bool IsDone()
-        {
-            return true;
-        }
+        public override bool IsDone() => true;
     }
 
     public class AssetBundleLoadAssetOperationFull : AssetBundleLoadAssetOperation
@@ -328,12 +292,7 @@ namespace CustomUnity
             this.type = type;
         }
 
-        public override Object Asset {
-            get {
-                if(request != null && request.isDone) return request.asset;
-                else return null;
-            }
-        }
+        public override Object Asset => request?.isDone ?? false ? request?.asset : null;
 
         // Returns true if more Update calls are required.
         public override bool Update()
@@ -360,10 +319,7 @@ namespace CustomUnity
             return request != null && request.isDone;
         }
 
-        public override float Progress()
-        {
-            return IsDone() ? 1.0f : request.progress;
-        }
+        public override float Progress() => IsDone() ? 1.0f : request.progress;
     }
 
     public class AssetBundleLoadManifestOperation : AssetBundleLoadAssetOperationFull
