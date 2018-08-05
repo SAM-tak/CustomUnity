@@ -14,13 +14,12 @@ namespace YourProjectNamespace
 
             yield return AssetBundleLoader.Initialize();
 
-            var obj1 = AssetBundleLoader.LoadAssetAsync<GameObject>("a", "Sphere");
-            yield return obj1;
-            var obj2 = AssetBundleLoader.LoadAssetAsync<GameObject>("b", "Sphere");
-            yield return obj2;
+            var op1 = AssetBundleLoader.LoadAssetAsync<GameObject>("a", "Sphere");
+            var op2 = AssetBundleLoader.LoadAssetAsync<GameObject>("b", "Sphere");
+            yield return new WaitForEnumerators(op1, op2);
 
-            Instantiate(obj1.Asset);
-            Instantiate(obj2.Asset);
+            Instantiate(op1.Asset);
+            Instantiate(op2.Asset);
         }
     }
 }

@@ -637,35 +637,33 @@ namespace CustomUnity
                 return operation;
             }
         }
-
-        public class AssetLoadOperation<T> : IEnumerator where T : UnityEngine.Object
+        
+        public struct AssetLoadOperation<T> : IEnumerator where T : UnityEngine.Object
         {
             public AssetLoadOperation(AssetBundleLoadAssetOperation operation)
             {
-                this.operation = operation;
+                Operation = operation;
             }
+            
+            public AssetBundleLoadAssetOperation Operation { get; private set; }
 
-            AssetBundleLoadAssetOperation operation;
+            public T Asset { get { return Operation?.Asset as T; } }
 
-            public AssetBundleLoadAssetOperation Operation { get { return operation; } }
-
-            public T Asset { get { return operation.Asset as T; } }
-
-            public object Current { get { return operation.Current; } }
+            public object Current { get { return Operation?.Current; } }
 
             public bool MoveNext()
             {
-                return operation.MoveNext();
+                return Operation != null ? Operation.MoveNext() : false;
             }
 
             public void Reset()
             {
-                operation.Reset();
+                Operation?.Reset();
             }
             
             public bool IsDone()
             {
-                return operation.IsDone();
+                return Operation != null ? Operation.IsDone() : true;
             }
         }
 
