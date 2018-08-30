@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CustomUnity
@@ -27,19 +28,11 @@ namespace CustomUnity
 
         public object Current => null;
 
-        public bool MoveNext()
-        {
-            return !enumrators.All(x => !MoveNextRecursively(x));
-        }
+        public bool MoveNext() => !enumrators.All(x => !x.MoveNextRecursively());
 
         public void Reset()
         {
             foreach(var i in enumrators) i.Reset();
-        }
-
-        bool MoveNextRecursively(IEnumerator enumrator)
-        {
-            return enumerator.Current is IEnumerator && MoveNextReccursively((IEnumerator)enumerator.Current) ? true : enumerator.MoveNext();
         }
     }
 }
