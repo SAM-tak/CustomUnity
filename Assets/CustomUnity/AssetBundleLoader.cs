@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -146,6 +147,8 @@ namespace CustomUnity
         /// and check suitable assetBundle variants.
         /// </summary>
         public static AssetBundleManifest Manifest { get; internal set; }
+
+        const int MaxParallelDownloadCount = 4;
 
         [SerializeField] bool foldoutManifest;
         [SerializeField] bool foldoutLoadedAssetBundles;
@@ -461,7 +464,7 @@ namespace CustomUnity
 #endif
             }
             else {
-                WWW download = null;
+                UnityWebRequest download = null;
 
                 if(!bundleBaseDownloadingURL.EndsWith("/")) {
                     bundleBaseDownloadingURL += "/";
@@ -470,8 +473,8 @@ namespace CustomUnity
                 var url = bundleBaseDownloadingURL + assetBundleName;
 
                 // For manifest assetbundle, always download it as we don't have hash for it.
-                if(isLoadingAssetBundleManifest) download = new WWW(url);
-                else download = WWW.LoadFromCacheOrDownload(url, Manifest.GetAssetBundleHash(assetBundleName), 0);
+                if(isLoadingAssetBundleManifest) download = UnityWebRequestAssetBundle.GetAssetBundle(url);
+                else download = UnityWebRequestAssetBundle.GetAssetBundle(url, Manifest.GetAssetBundleHash(assetBundleName), 0);
 
                 inProgressOperations.Add(new AssetBundleDownloadFromWebOperation(assetBundleName, isLoadingAsDependency, download));
             }
@@ -553,7 +556,7 @@ namespace CustomUnity
         void Update()
         {
             // Update all in progress operations
-            for(int i = 0; i < InProgressOperations.Count;) {
+            for(int i = 0; i < InProgressOperations.Count && i < MaxParallelDownloadCount;) {
                 var operation = InProgressOperations[i];
                 if(operation.Update()) i++;
                 else {

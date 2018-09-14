@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
 #if ENABLE_IOS_ON_DEMAND_RESOURCES
 using UnityEngine.iOS;
 #endif
@@ -130,33 +131,44 @@ namespace CustomUnity
 
     public class AssetBundleDownloadFromWebOperation : AssetBundleDownloadOperation
     {
-        WWW www;
+        UnityWebRequest webRequest;
         readonly string url;
 
-        public AssetBundleDownloadFromWebOperation(string assetBundleName, bool isImplicit, WWW www) : base(assetBundleName, isImplicit)
+        public AssetBundleDownloadFromWebOperation(string assetBundleName, bool isImplicit, UnityWebRequest webRequest) : base(assetBundleName, isImplicit)
         {
-            if(www == null) throw new System.ArgumentNullException("www");
-            this.www = www;
-            url = www.url;
+            if(webRequest == null) throw new System.ArgumentNullException("webRequest");
+            this.webRequest = webRequest;
+            url = webRequest.url;
         }
 
-        protected override bool DownloadIsDone => www?.isDone ?? true;
+        protected override bool DownloadIsDone => send ? (webRequest?.isDone ?? true) : false;
+
+        bool send;
+
+        public override bool Update()
+        {
+            if(!send) {
+                send = true;
+                webRequest.SendWebRequest();
+            }
+            return base.Update();
+        }
 
         protected override void FinishDownload()
         {
-            Error = www.error;
+            Error = webRequest.error;
             if(string.IsNullOrEmpty(Error)) {
-                var bundle = www.assetBundle;
+                var bundle = ((DownloadHandlerAssetBundle)webRequest.downloadHandler).assetBundle;
                 if(bundle == null) Error = string.Format("{0} is not a valid asset bundle.", AssetBundleName);
-                else AssetBundle = new LoadedAssetBundle(www.assetBundle, IsImplicit);
+                else AssetBundle = new LoadedAssetBundle(bundle, IsImplicit);
             }
-            www.Dispose();
-            www = null;
+            webRequest.Dispose();
+            webRequest = null;
         }
 
         public override string GetSourceURL() => url;
 
-        public override float Progress() => IsDone() ? 1.0f : www?.progress ?? 0.0f;
+        public override float Progress() => IsDone() ? 1.0f : Mathf.Max(0, webRequest?.downloadProgress ?? 0.0f);
     }
 
 #if UNITY_EDITOR
