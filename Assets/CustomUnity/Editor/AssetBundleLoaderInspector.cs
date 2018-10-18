@@ -8,14 +8,16 @@ namespace CustomUnity
         SerializedProperty script;
         SerializedProperty foldoutManifest;
         SerializedProperty foldoutLoadedAssetBundles;
-        SerializedProperty foldoutDownLoadings;
+        SerializedProperty foldoutDownloadings;
+        SerializedProperty foldoutAssetLoadings;
 
         void OnEnable()
         {
             script = serializedObject.FindProperty("m_Script");
             foldoutManifest = serializedObject.FindProperty("foldoutManifest");
             foldoutLoadedAssetBundles = serializedObject.FindProperty("foldoutLoadedAssetBundles");
-            foldoutDownLoadings = serializedObject.FindProperty("foldoutDownLoadings");
+            foldoutDownloadings = serializedObject.FindProperty("foldoutDownloadings");
+            foldoutAssetLoadings = serializedObject.FindProperty("foldoutAssetLoadings");
         }
 
         public override void OnInspectorGUI()
@@ -58,13 +60,24 @@ namespace CustomUnity
                 EditorGUI.indentLevel--;
             }
 
-            foldoutDownLoadings.isExpanded = EditorGUILayout.Foldout(foldoutDownLoadings.isExpanded, "DownLoadings");
-            if(foldoutDownLoadings.isExpanded) {
+            foldoutDownloadings.isExpanded = EditorGUILayout.Foldout(foldoutDownloadings.isExpanded, "Downloadings");
+            if(foldoutDownloadings.isExpanded) {
                 EditorGUI.indentLevel++;
                 EditorGUILayout.LabelField("Name", "Progress");
                 foreach(var i in AssetBundleLoader.InProgressOperations) {
                     var op = i as AssetBundleDownloadOperation;
                     if(op != null) EditorGUILayout.LabelField(op.AssetBundleName, op.Progress().ToString());
+                }
+                EditorGUI.indentLevel--;
+            }
+
+            foldoutAssetLoadings.isExpanded = EditorGUILayout.Foldout(foldoutAssetLoadings.isExpanded, "Asset Loadings");
+            if(foldoutAssetLoadings.isExpanded) {
+                EditorGUI.indentLevel++;
+                EditorGUILayout.LabelField("Name", "Progress");
+                foreach(var i in AssetBundleLoader.InProgressOperations) {
+                    var op = i as AssetBundleLoadAssetOperationFull;
+                    if(op != null) EditorGUILayout.LabelField(op.AssetBundleName + "/" + op.AssetName, op.Progress().ToString());
                 }
                 EditorGUI.indentLevel--;
             }

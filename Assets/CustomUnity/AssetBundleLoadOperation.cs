@@ -192,19 +192,19 @@ namespace CustomUnity
 
     public class AssetBundleLoadOperationFull : AssetBundleLoadOperation
     {
-        protected string assetBundleName;
+        public string AssetBundleName { get; protected set; }
         protected string downloadingError;
         protected bool done;
 
         public AssetBundleLoadOperationFull(string assetBundleName)
         {
-            this.assetBundleName = assetBundleName;
+            AssetBundleName = assetBundleName;
         }
 
         // Returns true if more Update calls are required.
         public override bool Update()
         {
-            if(AssetBundleLoader.GetLoadedAssetBundle(assetBundleName, out downloadingError) != null || !string.IsNullOrEmpty(downloadingError)) {
+            if(AssetBundleLoader.GetLoadedAssetBundle(AssetBundleName, out downloadingError) != null || !string.IsNullOrEmpty(downloadingError)) {
                 done = true;
                 return false;
             }
@@ -215,7 +215,7 @@ namespace CustomUnity
         {
             // Return if meeting downloading error.
             // m_DownloadingError might come from the dependency downloading.
-            if(downloadingError != null) {
+            if(!string.IsNullOrEmpty(downloadingError)) {
                 Debug.LogError(downloadingError);
                 return true;
             }
@@ -250,14 +250,14 @@ namespace CustomUnity
                 return false;
             }
 
-            return true;
+            return string.IsNullOrEmpty(downloadingError);
         }
 
         public override bool IsDone()
         {
             // Return if meeting downloading error.
             // m_DownloadingError might come from the dependency downloading.
-            if(request == null && downloadingError != null) {
+            if(request == null && !string.IsNullOrEmpty(downloadingError)) {
                 Debug.LogError(downloadingError);
                 return true;
             }
@@ -291,17 +291,17 @@ namespace CustomUnity
 
     public class AssetBundleLoadAssetOperationFull : AssetBundleLoadAssetOperation
     {
-        protected string assetBundleName;
-        protected string assetName;
-        protected System.Type type;
+        public string AssetBundleName { get; protected set; }
+        public string AssetName { get; protected set; }
+        public System.Type Type { get; protected set; }
         protected string downloadingError;
         protected AssetBundleRequest request = null;
 
         public AssetBundleLoadAssetOperationFull(string assetBundleName, string assetName, System.Type type)
         {
-            this.assetBundleName = assetBundleName;
-            this.assetName = assetName;
-            this.type = type;
+            AssetBundleName = assetBundleName;
+            AssetName = assetName;
+            Type = type;
         }
 
         public override Object Asset => request?.isDone ?? false ? request?.asset : null;
@@ -311,19 +311,19 @@ namespace CustomUnity
         {
             if(request != null) return false;
 
-            var bundle = AssetBundleLoader.GetLoadedAssetBundle(assetBundleName, out downloadingError);
+            var bundle = AssetBundleLoader.GetLoadedAssetBundle(AssetBundleName, out downloadingError);
             if(bundle != null) {
-                request = bundle.AssetBundle.LoadAssetAsync(assetName, type);
+                request = bundle.AssetBundle.LoadAssetAsync(AssetName, Type);
                 return false;
             }
-            return true;
+            return string.IsNullOrEmpty(downloadingError);
         }
 
         public override bool IsDone()
         {
             // Return if meeting downloading error.
             // m_DownloadingError might come from the dependency downloading.
-            if(request == null && downloadingError != null) {
+            if(request == null && !string.IsNullOrEmpty(downloadingError)) {
                 Debug.LogError(downloadingError);
                 return true;
             }

@@ -152,7 +152,8 @@ namespace CustomUnity
 
         [SerializeField] bool foldoutManifest;
         [SerializeField] bool foldoutLoadedAssetBundles;
-        [SerializeField] bool foldoutDownLoadings;
+        [SerializeField] bool foldoutDownloadings;
+        [SerializeField] bool foldoutAssetLoadings;
 
         public enum LogFlags
         {
@@ -445,6 +446,7 @@ namespace CustomUnity
                 return true;
             }
 
+            if(downloadingErrors.ContainsKey(assetBundleName)) downloadingErrors.Remove(assetBundleName);
             var bundleBaseDownloadingURL = GetAssetBundleBaseDownloadingURL(assetBundleName);
 
             if(bundleBaseDownloadingURL.ToLower().StartsWith("odr://")) {
