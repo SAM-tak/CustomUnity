@@ -129,6 +129,42 @@ namespace CustomUnity
     }
 #endif
 
+    public class AssetBundleLoadFromFileOperation : AssetBundleDownloadOperation
+    {
+        AssetBundleCreateRequest request;
+        readonly string path;
+
+        public AssetBundleLoadFromFileOperation(string assetBundleName, bool isImplicit, string path) : base(assetBundleName, isImplicit)
+        {
+            this.path = path;
+        }
+
+        protected override bool DownloadIsDone => send ? (request?.isDone ?? true) : false;
+
+        bool send;
+
+        public override bool Update()
+        {
+            if(!send) {
+                send = true;
+                request = UnityEngine.AssetBundle.LoadFromFileAsync(path);
+            }
+            return base.Update();
+        }
+
+        protected override void FinishDownload()
+        {
+            var bundle = request.assetBundle;
+            if(bundle == null) Error = string.Format("{0} is not a valid asset bundle.", AssetBundleName);
+            else AssetBundle = new LoadedAssetBundle(bundle, IsImplicit);
+            request = null;
+        }
+
+        public override string GetSourceURL() => path;
+
+        public override float Progress() => IsDone() ? 1.0f : Mathf.Max(0, request?.progress ?? 0.0f);
+    }
+
     public class AssetBundleDownloadFromWebOperation : AssetBundleDownloadOperation
     {
         UnityWebRequest webRequest;
@@ -265,7 +301,7 @@ namespace CustomUnity
             return request != null && request.isDone;
         }
 
-        public override float Progress() => IsDone() ? 1.0f : request != null ? request.progress : 0.0f;
+        public override float Progress() => IsDone() ? 1.0f : (request?.progress ?? 0.0f);
     }
 
     public abstract class AssetBundleLoadAssetOperation : AssetBundleLoadOperation
@@ -331,7 +367,7 @@ namespace CustomUnity
             return request != null && request.isDone;
         }
 
-        public override float Progress() => IsDone() ? 1.0f : request.progress;
+        public override float Progress() => IsDone() ? 1.0f : (request?.progress ?? 0.0f);
     }
 
     public class AssetBundleLoadManifestOperation : AssetBundleLoadAssetOperationFull

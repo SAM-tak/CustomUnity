@@ -63,10 +63,9 @@ namespace CustomUnity
             foldoutDownloadings.isExpanded = EditorGUILayout.Foldout(foldoutDownloadings.isExpanded, "Downloadings");
             if(foldoutDownloadings.isExpanded) {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.LabelField("Name", "Progress");
                 foreach(var i in AssetBundleLoader.InProgressOperations) {
                     var op = i as AssetBundleDownloadOperation;
-                    if(op != null) EditorGUILayout.LabelField(op.AssetBundleName, op.Progress().ToString());
+                    if(op != null) EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(), op.Progress(), op.AssetBundleName);
                 }
                 EditorGUI.indentLevel--;
             }
@@ -74,10 +73,9 @@ namespace CustomUnity
             foldoutAssetLoadings.isExpanded = EditorGUILayout.Foldout(foldoutAssetLoadings.isExpanded, "Asset Loadings");
             if(foldoutAssetLoadings.isExpanded) {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.LabelField("Name", "Progress");
                 foreach(var i in AssetBundleLoader.InProgressOperations) {
                     var op = i as AssetBundleLoadAssetOperationFull;
-                    if(op != null) EditorGUILayout.LabelField(op.AssetBundleName + "/" + op.AssetName, op.Progress().ToString());
+                    if(op != null) EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(), op.Progress(), op.AssetBundleName + "/" + op.AssetName);
                 }
                 EditorGUI.indentLevel--;
             }

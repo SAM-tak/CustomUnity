@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -110,6 +111,8 @@ namespace CustomUnity
         {
             Caching.ClearCache();
         }
+
+        static bool dirty = false;
 #endif
         
         static readonly Dictionary<string, LoadedAssetBundle> loadedAssetBundles = new Dictionary<string, LoadedAssetBundle>();
@@ -169,27 +172,14 @@ namespace CustomUnity
         static bool LogsInfo => (LogMode & LogFlags.Level1) > 0;
         static bool LogsWarn => (LogMode & LogFlags.Level2) > 0;
         static bool LogsErrr => (LogMode & LogFlags.Level3) > 0;
-
-        static string GetStreamingAssetsPath()
-        {
-            if(Application.isEditor) {
-                return "file://" + Environment.CurrentDirectory.Replace("\\", "/"); // Use the build output folder directly.
-            }
-            else if(Application.isMobilePlatform || Application.isConsolePlatform) {
-                return Application.streamingAssetsPath;
-            }
-            else {// For standalone player.
-                return "file://" + Application.streamingAssetsPath;
-            }
-        }
-
+        
         /// <summary>
         /// Sets base downloading URL to a directory relative to the streaming assets directory.
         /// Asset bundles are loaded from a local directory.
         /// </summary>
         public static void SetSourceAssetBundleDirectory(string relativePath)
         {
-            BaseDownloadingURL = GetStreamingAssetsPath() + relativePath;
+            BaseDownloadingURL = Path.Combine(Application.streamingAssetsPath, relativePath);
         }
 
         /// <summary>
@@ -465,6 +455,14 @@ namespace CustomUnity
                 new ApplicationException($"Can't load bundle {assetBundleName} through asset catalog: this Unity version or build target doesn't support it.");
 #endif
             }
+            else if(bundleBaseDownloadingURL.ToLower().StartsWith(Application.streamingAssetsPath.ToLower() + "/")) {
+                if(!bundleBaseDownloadingURL.EndsWith("/")) {
+                    bundleBaseDownloadingURL += "/";
+                }
+
+                var path = bundleBaseDownloadingURL + assetBundleName;
+                inProgressOperations.Add(new AssetBundleLoadFromFileOperation(assetBundleName, isLoadingAsDependency, path));
+            }
             else {
                 UnityWebRequest download = null;
 
@@ -516,6 +514,7 @@ namespace CustomUnity
 #if UNITY_EDITOR
             // If we're in Editor simulation mode, we don't have to load the manifest assetBundle.
             if(SimulatesAssetBundleInEditor) return;
+            dirty = true;
 #endif
             assetBundleName = RemapVariantName(assetBundleName);
 
@@ -557,6 +556,12 @@ namespace CustomUnity
 
         void Update()
         {
+#if UNITY_EDITOR
+            if(InProgressOperations.Count > 0 || dirty) {
+                dirty = false;
+                EditorUtility.SetDirty(this);
+            }
+#endif
             // Update all in progress operations
             for(int i = 0; i < InProgressOperations.Count && i < MaxParallelDownloadCount;) {
                 var operation = InProgressOperations[i];
