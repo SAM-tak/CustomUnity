@@ -251,10 +251,10 @@ namespace CustomUnity
         }
 
         /// <summary>
-        /// Returns true if certain asset bundle has been downloaded without checking
+        /// Returns true if certain asset bundle has been loaded without checking
         /// whether the dependencies have been loaded.
         /// </summary>
-        static public bool IsAssetBundleDownloaded(string assetBundleName)
+        static public bool IsAssetBundleLoaded(string assetBundleName)
         {
             return loadedAssetBundles.ContainsKey(assetBundleName);
         }
@@ -455,6 +455,7 @@ namespace CustomUnity
                 new ApplicationException($"Can't load bundle {assetBundleName} through asset catalog: this Unity version or build target doesn't support it.");
 #endif
             }
+#if UNITY_EDITOR || !UNITY_WEBGL
             else if(bundleBaseDownloadingURL.ToLower().StartsWith(Application.streamingAssetsPath.ToLower() + "/")) {
                 if(!bundleBaseDownloadingURL.EndsWith("/")) {
                     bundleBaseDownloadingURL += "/";
@@ -463,9 +464,8 @@ namespace CustomUnity
                 var path = bundleBaseDownloadingURL + assetBundleName;
                 inProgressOperations.Add(new AssetBundleLoadFromFileOperation(assetBundleName, isLoadingAsDependency, path));
             }
+#endif
             else {
-                UnityWebRequest download = null;
-
                 if(!bundleBaseDownloadingURL.EndsWith("/")) {
                     bundleBaseDownloadingURL += "/";
                 }
@@ -473,8 +473,9 @@ namespace CustomUnity
                 var url = bundleBaseDownloadingURL + assetBundleName;
 
                 // For manifest assetbundle, always download it as we don't have hash for it.
-                if(isLoadingAssetBundleManifest) download = UnityWebRequestAssetBundle.GetAssetBundle(url);
-                else download = UnityWebRequestAssetBundle.GetAssetBundle(url, Manifest.GetAssetBundleHash(assetBundleName), 0);
+                var download = isLoadingAssetBundleManifest ?
+                    UnityWebRequestAssetBundle.GetAssetBundle(url) :
+                    UnityWebRequestAssetBundle.GetAssetBundle(url, Manifest.GetAssetBundleHash(assetBundleName), 0);
 
                 inProgressOperations.Add(new AssetBundleDownloadFromWebOperation(assetBundleName, isLoadingAsDependency, download));
             }
@@ -625,7 +626,7 @@ namespace CustomUnity
         /// <summary>
         /// Starts a load operation for an asset from the given asset bundle.
         /// </summary>
-        static public AssetBundleLoadAssetOperation LoadAssetAsync(string assetBundleName, string assetName, System.Type type)
+        static public AssetBundleLoadAssetOperation LoadAssetAsync(string assetBundleName, string assetName, Type type)
         {
             if(LogsInfo) Log.Info($"[AssetBundelLoader] Loading {assetName} from {assetBundleName} bundle");
 
