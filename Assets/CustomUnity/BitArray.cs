@@ -10,22 +10,22 @@ namespace CustomUnity
 
     public struct NBitArray<N> where N : struct, IBit<int>
     {
-        System.Int32[] store;
+        int[] store;
 
         public NBitArray(int count)
         {
-            store = new System.Int32[(count * default(N).Value + 31) / 32];
+            store = new int[(count * default(N).Value + 31) / 32];
         }
         
         public void Resize(int count)
         {
             var newsize = (count * default(N).Value + 31) / 32;
             if(store != null && store.Length != newsize) {
-                var newstore = new System.Int32[newsize];
+                var newstore = new int[newsize];
                 newstore.CopyTo(store, 0);
                 store = newstore;
             }
-            else store = new System.Int32[newsize];
+            else store = new int[newsize];
         }
 
         public byte Get(int index)
