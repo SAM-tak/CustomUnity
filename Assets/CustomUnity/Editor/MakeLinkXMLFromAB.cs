@@ -16,6 +16,7 @@ namespace CustomUnity
         const string kLatestSelectedPath = "MakeLinkXMLFromAB.LatestSelectedPath";
 
         /// <summary>
+        /// Latest selected folder. will save to EditorPrefs.
         /// </summary>
         public static string LatestSelectedPath {
             get {
