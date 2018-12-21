@@ -6,7 +6,7 @@ namespace YourProjectNamespace
 {
     public class AssetBundleLoadTest : MonoBehaviour
     {
-        [SerializeField] string[] activeVariatns;
+        public string[] activeVariatns;
 
         IEnumerator Start()
         {
