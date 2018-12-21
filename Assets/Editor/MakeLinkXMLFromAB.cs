@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,78 +9,82 @@ using UnityEditor;
 using UnityEngine;
 using System.Text.RegularExpressions;
 
-static public class MakeLinkXMLFromAB
+
+public class MakeLinkXMLFromAB : Editor
 {
-    [MenuItem("Assets/Make link.xml")]
-    static void Check()
+    [MenuItem("Assets/AssetBundles/Dump Classes/iOS")]
+    static void DumpiOS()
     {
-        var systemScriptMatch = new Regex(@"\- Class: (\d+)\n  Script: \{instanceID: (\d+)\}", RegexOptions.Singleline);
-        var userScriptMatch = new Regex(@"\- Class: (\d+)\n  Script: \{fileID: (\d+), guid: ([^,]+), type: (\d+)\}", RegexOptions.Singleline);
+        Dump("AssetBundles/iOS");
+    }
 
-        var classNameSet = new HashSet<string>();
-        foreach(var i in Directory.GetFiles("AssetBundles/StandaloneWindows", "*.manifest", SearchOption.AllDirectories)) {
+    [MenuItem("Assets/AssetBundles/Dump Classes/Android")]
+    static void DumpAndroid()
+    {
+        Dump("AssetBundles/Android");
+    }
+    
+    [MenuItem("Assets/AssetBundles/Dump Classes/WebGL")]
+    static void DumpWebGL()
+    {
+        Dump("AssetBundles/WebGL");
+    }
+
+    static void Dump(string rootPath)
+    {
+        Debug.Log("<color=red>--- request classes ---</color>");
+        var classNames = new HashSet<string>();
+        foreach(var i in Directory.GetFiles(rootPath, "*.manifest", SearchOption.AllDirectories)) {
             var text = File.ReadAllText(i);
-            var matches = systemScriptMatch.Matches(text);
+            var matches = Regex.Matches(text, @"Script: \{fileID: (?<id>.+), guid: (?<guid>.+), type: 3\}");
 
             foreach(Match match in matches) {
-                var classid = int.Parse(match.Groups[1].Value);
-                classNameSet.Add(GetClassName(classid));
-            }
-
-            matches = userScriptMatch.Matches(text);
-
-            foreach(Match match in matches) {
-                //var classid = int.Parse(match.Groups[1].Value);
-                var fileid = int.Parse(match.Groups[2].Value);
-                var hash = match.Groups[3].ToString();
-                var path = AssetDatabase.GUIDToAssetPath(hash);
-                if(Path.GetExtension(path) == ".dll") {
-                    classNameSet.Add(GetClassName(path, fileid));
+                var id = int.Parse(match.Groups[1].ToString());
+                var hash = match.Groups[2].ToString();
+                var dllPath = AssetDatabase.GUIDToAssetPath(hash);
+                if(Path.GetExtension(dllPath) == ".cs") {
+                    //dllPath = "Library/ScriptAssemblies/Assembly-CSharp-firstpass.dll";
+                    if(!classNames.Contains(dllPath)) {
+                        Debug.Log(dllPath);
+                        classNames.Add(dllPath);
+                    }
                 }
                 else {
-                    classNameSet.Add(path);
+                    var name = GetClassName(dllPath, id);
+                    if(name != null && !classNames.Contains(name)) {
+                        Debug.Log(name);
+                        classNames.Add(name);
+                    }
                 }
             }
-        }
-        Debug.Log("<color=red>--- request classes ---</color>");
-        foreach(var className in classNameSet) {
-            Debug.Log(className);
         }
     }
 
     static string GetClassName(string path, int id)
     {
-        var assembly = Assembly.LoadFile(path);
-        var modules = assembly.GetLoadedModules();
-        foreach(var module in modules) {
-            foreach(var t in module.GetTypes()) {
-                if(t.IsSubclassOf(typeof(Component))) {
-
-                    if(FileIDUtil.Compute(t) == id) {
-                        return t.FullName;
+        if(!string.IsNullOrEmpty(path)) {
+            var assembly = Assembly.LoadFile(path);
+            var modules = assembly.GetLoadedModules();
+            foreach(var module in modules) {
+                foreach(var t in module.GetTypes()) {
+                    if(t.IsSubclassOf(typeof(Component))) {
+                        if(FileIDUtil.Compute(t) == id) {
+                            return t.FullName;
+                        }
                     }
                 }
             }
         }
+        else {
+            Debug.LogWarningFormat("Missing Reference {0}", id);
+        }
         return null;
     }
 
-    public static string GetClassName(int classId)
-    {
-        var assembly = Assembly.GetAssembly(typeof(MonoScript));
-        var unityType = assembly.GetType("UnityEditor.UnityType");
-        var findTypeByPresistentTypeID = unityType.GetMethod("FindTypeByPersistentTypeID");
-        var classObject = findTypeByPresistentTypeID.Invoke(null, new object[] { classId });
-        if(classObject == null) return null;
-        var nameProperty = classObject.GetType().GetProperty("name");
-        return (string)nameProperty.GetValue(classObject);
-    }
-
     #region MD4
-
     // Taken from http://www.superstarcoders.com/blogs/posts/md4-hash-algorithm-in-c-sharp.aspx
     // Probably not the best implementation of MD4, but it works.
-    public class MD4 : HashAlgorithm
+    internal class MD4 : HashAlgorithm
     {
         private uint _a;
         private uint _b;
@@ -232,7 +237,7 @@ static public class MakeLinkXMLFromAB
         }
     }
 
-    public static class FileIDUtil
+    internal static class FileIDUtil
     {
         public static int Compute(Type t)
         {
