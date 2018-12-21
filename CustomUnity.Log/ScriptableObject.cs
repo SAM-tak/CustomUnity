@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace CustomUnity
 {
-    public abstract class MaterialEditor : UnityEditor.MaterialEditor
+    public abstract class ScriptableObject : UnityEngine.ScriptableObject
     {
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogInfo(object message)

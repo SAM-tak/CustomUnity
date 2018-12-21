@@ -35,12 +35,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEditor">
-      <HintPath>..\..\..\..\..\..\Program Files\Unity 2018.1.0b13\Editor\Data\Managed\UnityEditor.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\..\Program Files\Unity\Editor\Data\Managed\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\Program Files\Unity 2018.1.0b13\Editor\Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\..\Program Files\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

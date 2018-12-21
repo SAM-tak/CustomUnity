@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace CustomUnity
 {
@@ -9,7 +9,13 @@ namespace CustomUnity
         {
             UnityEngine.Debug.Log(message, this);
         }
-        
+
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        protected void LogInfo(string message)
+        {
+            UnityEngine.Debug.Log(message, this);
+        }
+
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogInfo(string format, params object[] args)
         {
@@ -23,6 +29,12 @@ namespace CustomUnity
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        protected void LogWarning(string message)
+        {
+            UnityEngine.Debug.LogWarning(message, this);
+        }
+
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogWarning(string format, params object[] args)
         {
             UnityEngine.Debug.LogWarningFormat(this, format, args);
@@ -30,6 +42,12 @@ namespace CustomUnity
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogError(object message)
+        {
+            UnityEngine.Debug.LogError(message, this);
+        }
+
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        protected void LogError(string message)
         {
             UnityEngine.Debug.LogError(message, this);
         }
