@@ -13,72 +13,103 @@ using System.Text.RegularExpressions;
 public class MakeLinkXMLFromAB : Editor
 {
     [MenuItem("Assets/AssetBundles/Dump Classes/iOS")]
-    static void DumpiOS()
+    public static void DumpiOS()
     {
         Dump("AssetBundles/iOS");
     }
 
     [MenuItem("Assets/AssetBundles/Dump Classes/Android")]
-    static void DumpAndroid()
+    public static void DumpAndroid()
     {
         Dump("AssetBundles/Android");
     }
     
     [MenuItem("Assets/AssetBundles/Dump Classes/WebGL")]
-    static void DumpWebGL()
+    public static void DumpWebGL()
     {
         Dump("AssetBundles/WebGL");
     }
 
     static void Dump(string rootPath)
     {
-        Debug.Log("<color=red>--- request classes ---</color>");
-        var classNames = new HashSet<string>();
+        var systemScriptMatch = new Regex(@"\- Class: (\d+)\n  Script: \{instanceID: (\d+)\}", RegexOptions.Singleline);
+        var userScriptMatch = new Regex(@"\- Class: (\d+)\n  Script: \{fileID: (\d+), guid: ([^,]+), type: (\d+)\}", RegexOptions.Singleline);
+        var classSet = new HashSet<Type>();
+        //var missingHashes = new HashSet<string>();
         foreach(var i in Directory.GetFiles(rootPath, "*.manifest", SearchOption.AllDirectories)) {
             var text = File.ReadAllText(i);
-            var matches = Regex.Matches(text, @"Script: \{fileID: (?<id>.+), guid: (?<guid>.+), type: 3\}");
 
-            foreach(Match match in matches) {
-                var id = int.Parse(match.Groups[1].ToString());
-                var hash = match.Groups[2].ToString();
-                var dllPath = AssetDatabase.GUIDToAssetPath(hash);
-                if(Path.GetExtension(dllPath) == ".cs") {
-                    //dllPath = "Library/ScriptAssemblies/Assembly-CSharp-firstpass.dll";
-                    if(!classNames.Contains(dllPath)) {
-                        Debug.Log(dllPath);
-                        classNames.Add(dllPath);
-                    }
+            foreach(Match match in systemScriptMatch.Matches(text)) {
+                var classid = int.Parse(match.Groups[1].Value);
+                var type = GetType(classid);
+                if(type != null) classSet.Add(type);
+            }
+
+            foreach(Match match in userScriptMatch.Matches(text)) {
+                //var classid = int.Parse(match.Groups[1].Value);
+                var fileid = int.Parse(match.Groups[2].Value);
+                var hash = match.Groups[3].ToString();
+                var path = AssetDatabase.GUIDToAssetPath(hash);
+                if(Path.GetExtension(path) == ".dll") {
+                    var type = GetType(path, fileid);
+                    if(type != null) classSet.Add(type);
                 }
                 else {
-                    var name = GetClassName(dllPath, id);
-                    if(name != null && !classNames.Contains(name)) {
-                        Debug.Log(name);
-                        classNames.Add(name);
+                    if(!string.IsNullOrEmpty(path)) {
+                        var type = AssetDatabase.LoadAssetAtPath<MonoScript>(path).GetClass();
+                        if(type != null) classSet.Add(type);
                     }
+                    //else missingHashes.Add(hash);
                 }
             }
         }
+
+        var linkInfo = new Dictionary<string, List<string>>();
+        foreach(var i in classSet) {
+            var asmname = i.Assembly.FullName.Split(',')[0];
+            if(linkInfo.ContainsKey(asmname)) linkInfo[asmname].Add(i.FullName);
+            else linkInfo[asmname] = new List<string> { i.FullName };
+        }
+
+        Debug.Log("<color=red>write to Assets/link.xml</color>");
+        using(var s = File.CreateText("Assets/link.xml")) {
+            s.WriteLine("<linker>");
+            foreach(var i in linkInfo) {
+                s.WriteLine(string.Format("    <assembly fullname=\"{0}\">", i.Key));
+                foreach(var j in i.Value) {
+                    s.WriteLine(string.Format("        <type fullname=\"{0}\" preserve=\"all\"/>", j));
+                }
+                s.WriteLine("    </assembly>");
+            }
+            s.WriteLine("</linker>");
+        }
+
+        //foreach(var i in missingHashes) Debug.LogWarningFormat("Missing Reference {0}", i);
     }
 
-    static string GetClassName(string path, int id)
+    static Type GetType(string path, int id)
     {
-        if(!string.IsNullOrEmpty(path)) {
-            var assembly = Assembly.LoadFile(path);
-            var modules = assembly.GetLoadedModules();
-            foreach(var module in modules) {
-                foreach(var t in module.GetTypes()) {
-                    if(t.IsSubclassOf(typeof(Component))) {
-                        if(FileIDUtil.Compute(t) == id) {
-                            return t.FullName;
-                        }
-                    }
+        var assembly = Assembly.LoadFile(path);
+        var modules = assembly.GetLoadedModules();
+        foreach(var module in modules) {
+            foreach(var t in module.GetTypes()) {
+                if(t.IsSubclassOf(typeof(Component)) && FileIDUtil.Compute(t) == id) {
+                    return t;
                 }
             }
         }
-        else {
-            Debug.LogWarningFormat("Missing Reference {0}", id);
-        }
         return null;
+    }
+
+    static Type GetType(int classId)
+    {
+        var assembly = Assembly.GetAssembly(typeof(MonoScript));
+        var unityType = assembly.GetType("UnityEditor.UnityType");
+        var findTypeByPersistentTypeID = unityType.GetMethod("FindTypeByPersistentTypeID");
+        var classObject = findTypeByPersistentTypeID.Invoke(null, new object[] { classId });
+        if(classObject == null) return null;
+        var nameProperty = classObject.GetType().GetProperty("name");
+        return Assembly.GetAssembly(typeof(UnityEngine.Object)).GetType("UnityEngine." + nameProperty.GetValue(classObject, null));
     }
 
     #region MD4
