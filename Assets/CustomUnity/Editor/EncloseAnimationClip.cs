@@ -1,5 +1,4 @@
 using System.IO;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
@@ -9,9 +8,11 @@ namespace CustomUnity
 {
     public class EncloseAnimationClip : EditorWindow
     {
-        AnimatorController controller;
+        Object target;
 
         string clipName;
+
+        Vector2 scrollPosition = new Vector2(0, 0);
 
         const string menuString = "Assets/Enclose AnimationClip";
         const int priority = 51;
@@ -20,13 +21,13 @@ namespace CustomUnity
         static void Open()
         {
             var window = GetWindow<EncloseAnimationClip>(true, "Enclose AnimationClip", true);
-            window.controller = Selection.activeObject as AnimatorController;
+            window.target = Selection.activeObject;
         }
 
         [MenuItem(menuString, priority = priority, validate = true)]
         static bool Validate()
         {
-            return Selection.activeObject is AnimatorController;
+            return Selection.activeObject != null && (Selection.activeObject.hideFlags & (HideFlags.NotEditable | HideFlags.DontSaveInEditor)) == 0;
         }
 
         static readonly GUIContent removeIcon = new GUIContent(EditorGUIUtility.IconContent("Toolbar Minus").image, "Remove clip");
@@ -35,11 +36,11 @@ namespace CustomUnity
         void OnGUI()
         {
             EditorGUILayout.LabelField("Animator Controller");
-            controller = EditorGUILayout.ObjectField(controller, typeof(AnimatorController), false) as AnimatorController;
+            target = EditorGUILayout.ObjectField(target, typeof(Object), false);
+            
+            if(target == null) return;
 
-            if(controller == null) return;
-
-            var clipList = AssetDatabase.LoadAllAssetRepresentationsAtPath(AssetDatabase.GetAssetPath(controller)).Where(x => x is AnimationClip).Select(x => x as AnimationClip).ToList();
+            var clipList = AssetDatabase.LoadAllAssetRepresentationsAtPath(AssetDatabase.GetAssetPath(target)).Where(x => x is AnimationClip).Select(x => x as AnimationClip).ToList();
 
             var dropArea = EditorGUILayout.BeginVertical("box");
 
@@ -63,7 +64,7 @@ namespace CustomUnity
                         else {
                             var cloned = Instantiate(animationClip);
                             cloned.name = animationClip.name;
-                            AssetDatabase.AddObjectToAsset(cloned, controller);
+                            AssetDatabase.AddObjectToAsset(cloned, target);
                             dirty = true;
                         }
                     }
@@ -81,7 +82,7 @@ namespace CustomUnity
             EditorGUI.BeginDisabledGroup(invalid);
             if(GUILayout.Button("Add", GUILayout.Width(60))) {
                 var animationClip = AnimatorController.AllocateAnimatorClip(clipName);
-                AssetDatabase.AddObjectToAsset(animationClip, controller);
+                AssetDatabase.AddObjectToAsset(animationClip, target);
                 dirty = true;
                 clipName = null;
             }
@@ -92,8 +93,12 @@ namespace CustomUnity
             if(clipList.Count > 0) {
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Enclosed Clips");
+
+                scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
                 foreach(var enclosedClip in clipList) {
                     EditorGUILayout.BeginHorizontal();
+
+                    EditorGUI.BeginDisabledGroup((enclosedClip.hideFlags & HideFlags.NotEditable) != 0);
 
                     var newName = EditorGUILayout.DelayedTextField(enclosedClip.name);
 
@@ -109,7 +114,7 @@ namespace CustomUnity
                     if(GUILayout.Button(extractIcon, GUILayout.Width(20))) {
                         var cloned = Instantiate(enclosedClip) as AnimationClip;
                         cloned.name = enclosedClip.name;
-                        var destinationPath = Path.Combine(Path.GetDirectoryName(AssetDatabase.GetAssetPath(controller)), cloned.name + ".anim");
+                        var destinationPath = Path.Combine(Path.GetDirectoryName(AssetDatabase.GetAssetPath(target)), cloned.name + ".anim");
                         if(File.Exists(destinationPath)) {
                             EditorUtility.DisplayDialog("Error", "\"" + destinationPath + "\" is already exists.", "OK");
                         }
@@ -119,8 +124,10 @@ namespace CustomUnity
                             dirty = true;
                         }
                     }
+                    EditorGUI.EndDisabledGroup();
                     EditorGUILayout.EndHorizontal();
                 }
+                EditorGUILayout.EndScrollView();
             }
             if(dirty) {
                 AssetDatabase.SaveAssets();
