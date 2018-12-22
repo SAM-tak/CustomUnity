@@ -1,3 +1,12 @@
+//-------------------------------------------------------------------------
+// How to build AssetBundleServer.
+//
+// in CustomUnity directory:
+// [Windows]
+// "C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\bin\mcs.bat" AssetBundleServer\AssetBundleServer.cs -out:Assets\CustomUnity\Editor\AssetBundleServer.exe
+// [MacOSX]
+// /Application/Unity/Content/MonoBleedingEdge/bin/mcs AssetBundleServer/AssetBundleServer.cs -out:Assets/CustomUnity/Editor/AssetBundleServer.exe
+//-------------------------------------------------------------------------
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,7 +20,7 @@ namespace AssetBundleServer
     {
         public static void WatchDog(object processID)
         {
-            Console.WriteLine("Watching parent processID: {0}!", processID);
+            Console.WriteLine($"Watching parent processID: {processID}!");
             Process masterProcess = Process.GetProcessById((int)processID);
             while(masterProcess == null || !masterProcess.HasExited) {
                 Thread.Sleep(1000);
@@ -50,9 +59,9 @@ namespace AssetBundleServer
             bool detailedLogging = false;
             int port = 7888;
 
-            Console.WriteLine("Starting up asset bundle server.", port);
-            Console.WriteLine("Port: {0}", port);
-            Console.WriteLine("Directory: {0}", basePath);
+            Console.WriteLine("Starting up asset bundle server.");
+            Console.WriteLine($"Port: {port}");
+            Console.WriteLine($"Directory: {basePath}");
 
             var listener = new HttpListener();
 
@@ -66,9 +75,8 @@ namespace AssetBundleServer
                 }
             }
             */
-
-
-            listener.Prefixes.Add(string.Format("http://*:{0}/", port));
+            
+            listener.Prefixes.Add($"http://*:{port}/");
             listener.Start();
 
             while(true) {
@@ -86,10 +94,12 @@ namespace AssetBundleServer
             string rawUrl = request.RawUrl;
             string path = basePath + rawUrl;
 
-            if(detailedLogging)
-                Console.WriteLine("Requesting file: '{0}'. Relative url: {1} Full url: '{2} AssetBundleDirectory: '{3}''", path, request.RawUrl, request.Url, basePath);
-            else
-                Console.Write("Requesting file: '{0}' ... ", request.RawUrl);
+            if(detailedLogging) {
+                Console.WriteLine($"Requesting file: '{path}'. Relative url: {request.RawUrl} Full url: '{request.Url} AssetBundleDirectory: '{basePath}''");
+            }
+            else {
+                Console.Write($"Requesting file: '{request.RawUrl}' ... ");
+            }
 
             var response = ctx.Response;
             try {
@@ -125,8 +135,8 @@ namespace AssetBundleServer
             }
             catch(System.Exception exc) {
                 Console.WriteLine(" failed.");
-                Console.WriteLine("Requested file failed: '{0}'. Relative url: {1} Full url: '{2} AssetBundleDirectory: '{3}''", path, request.RawUrl, request.Url, basePath);
-                Console.WriteLine("Exception {0}: {1}'", exc.GetType(), exc.Message);
+                Console.WriteLine($"Requested file failed: '{path}'. Relative url: {request.RawUrl} Full url: '{request.Url} AssetBundleDirectory: '{basePath}''");
+                Console.WriteLine($"Exception {exc.GetType()}: {exc.Message}'");
                 response.Abort();
             }
         }
