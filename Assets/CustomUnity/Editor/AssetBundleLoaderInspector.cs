@@ -33,7 +33,7 @@ namespace CustomUnity
             EditorGUILayout.LabelField("BaseDownloadingURL : " + AssetBundleLoader.BaseDownloadingURL);
 
             if(AssetBundleLoader.Manifest) {
-                foldoutManifest.isExpanded = EditorGUILayout.Foldout(foldoutManifest.isExpanded, "Manifests");
+                foldoutManifest.isExpanded = CustomEditorUI.Foldout(foldoutManifest.isExpanded, "Manifests");
                 if(foldoutManifest.isExpanded) {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.LabelField("Name", "Hash");
@@ -44,7 +44,7 @@ namespace CustomUnity
                 }
             }
 
-            foldoutLoadedAssetBundles.isExpanded = EditorGUILayout.Foldout(foldoutLoadedAssetBundles.isExpanded, "Loaded Asset Bundles");
+            foldoutLoadedAssetBundles.isExpanded = CustomEditorUI.Foldout(foldoutLoadedAssetBundles.isExpanded, "Loaded Asset Bundles");
             if(foldoutLoadedAssetBundles.isExpanded) {
                 EditorGUI.indentLevel++;
                 EditorGUILayout.BeginHorizontal();
@@ -60,22 +60,24 @@ namespace CustomUnity
                 EditorGUI.indentLevel--;
             }
 
-            foldoutDownloadings.isExpanded = EditorGUILayout.Foldout(foldoutDownloadings.isExpanded, "Downloadings");
+            foldoutDownloadings.isExpanded = CustomEditorUI.Foldout(foldoutDownloadings.isExpanded, "Downloadings");
             if(foldoutDownloadings.isExpanded) {
                 EditorGUI.indentLevel++;
                 foreach(var i in AssetBundleLoader.InProgressOperations) {
-                    var op = i as AssetBundleDownloadOperation;
-                    if(op != null) EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(), op.Progress(), op.AssetBundleName);
+                    if(i is AssetBundleDownloadOperation op) {
+                        EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(), op.Progress(), op.AssetBundleName);
+                    }
                 }
                 EditorGUI.indentLevel--;
             }
 
-            foldoutAssetLoadings.isExpanded = EditorGUILayout.Foldout(foldoutAssetLoadings.isExpanded, "Asset Loadings");
+            foldoutAssetLoadings.isExpanded = CustomEditorUI.Foldout(foldoutAssetLoadings.isExpanded, "Asset Loadings");
             if(foldoutAssetLoadings.isExpanded) {
                 EditorGUI.indentLevel++;
                 foreach(var i in AssetBundleLoader.InProgressOperations) {
-                    var op = i as AssetBundleLoadAssetOperationFull;
-                    if(op != null) EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(), op.Progress(), op.AssetBundleName + "/" + op.AssetName);
+                    if(i is AssetBundleLoadAssetOperationFull op) {
+                        EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(), op.Progress(), op.AssetBundleName + "/" + op.AssetName);
+                    }
                 }
                 EditorGUI.indentLevel--;
             }

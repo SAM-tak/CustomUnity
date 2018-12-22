@@ -229,21 +229,18 @@ namespace CustomUnity
         {
             if(DownloadingErrors.TryGetValue(assetBundleName, out error)) return null;
 
-            LoadedAssetBundle bundle = null;
-            loadedAssetBundles.TryGetValue(assetBundleName, out bundle);
+            loadedAssetBundles.TryGetValue(assetBundleName, out LoadedAssetBundle bundle);
             if(bundle == null) return null;
 
             // No dependencies are recorded, only the bundle itself is required.
-            string[] dependencies = null;
-            if(!Dependencies.TryGetValue(assetBundleName, out dependencies)) return bundle;
+            if(!Dependencies.TryGetValue(assetBundleName, out string[] dependencies)) return bundle;
 
             // Make sure all dependencies are loaded
             foreach(var dependency in dependencies) {
                 if(DownloadingErrors.TryGetValue(dependency, out error)) return null;
 
                 // Wait all the dependent assetBundles being loaded.
-                LoadedAssetBundle dependentBundle;
-                loadedAssetBundles.TryGetValue(dependency, out dependentBundle);
+                loadedAssetBundles.TryGetValue(dependency, out LoadedAssetBundle dependentBundle);
                 if(dependentBundle == null) return null;
             }
 
@@ -420,8 +417,7 @@ namespace CustomUnity
         static protected bool LoadAssetBundleInternal(string assetBundleName, bool isLoadingAsDependency, bool isLoadingAssetBundleManifest)
         {
             // Already loaded.
-            LoadedAssetBundle bundle = null;
-            loadedAssetBundles.TryGetValue(assetBundleName, out bundle);
+            loadedAssetBundles.TryGetValue(assetBundleName, out LoadedAssetBundle bundle);
             if(bundle != null) {
                 if(isLoadingAsDependency) bundle.ReferencedCount++;
                 else if(bundle.IsImplicit) {
@@ -537,8 +533,7 @@ namespace CustomUnity
 
         static protected void UnloadAssetBundleInternal(string assetBundleName, bool isImplicit)
         {
-            string error;
-            var bundle = GetLoadedAssetBundle(assetBundleName, out error);
+            var bundle = GetLoadedAssetBundle(assetBundleName, out string error);
             if(bundle == null) return;
 
             if(isImplicit) --bundle.ReferencedCount;
@@ -576,8 +571,7 @@ namespace CustomUnity
 
         void ProcessFinishedOperation(AssetBundleLoadOperation operation)
         {
-            var download = operation as AssetBundleDownloadOperation;
-            if(download == null) return;
+            if(!(operation is AssetBundleDownloadOperation download)) return;
 
             if(string.IsNullOrEmpty(download.Error)) {
                 if(downloadingBundles.ContainsKey(download.AssetBundleName)) {
@@ -586,8 +580,7 @@ namespace CustomUnity
                 loadedAssetBundles.Add(download.AssetBundleName, download.AssetBundle);
             }
             else {
-                var msg = string.Format("Failed downloading bundle {0} from {1}: {2}", download.AssetBundleName, download.GetSourceURL(), download.Error);
-                downloadingErrors.Add(download.AssetBundleName, msg);
+                downloadingErrors.Add(download.AssetBundleName, $"Failed downloading bundle {download.AssetBundleName} from {download.GetSourceURL()}: {download.Error}");
             }
 
             downloadingBundles.Remove(download.AssetBundleName);
@@ -734,7 +727,7 @@ namespace CustomUnity
         }
 
 #if UNITY_EDITOR
-        private static string GetPlatformForAssetBundles(BuildTarget target)
+        static string GetPlatformForAssetBundles(BuildTarget target)
         {
             switch(target) {
             case BuildTarget.Android:
@@ -752,6 +745,10 @@ namespace CustomUnity
                 return "StandaloneWindows";
             case BuildTarget.StandaloneOSX:
                 return "StandaloneOSX";
+            case BuildTarget.StandaloneLinux:
+            case BuildTarget.StandaloneLinux64:
+            case BuildTarget.StandaloneLinuxUniversal:
+                return "StandaloneLinux";
             // Add more build targets for your own.
             // If you add more targets, don't forget to add the same platforms to GetPlatformForAssetBundles(RuntimePlatform) function.
             default:
@@ -760,7 +757,7 @@ namespace CustomUnity
         }
 #endif
 
-        private static string GetPlatformForAssetBundles(RuntimePlatform platform)
+        static string GetPlatformForAssetBundles(RuntimePlatform platform)
         {
             switch(platform) {
             case RuntimePlatform.Android:
@@ -777,7 +774,8 @@ namespace CustomUnity
                 return "StandaloneWindows";
             case RuntimePlatform.OSXPlayer:
                 return "StandaloneOSX";
-                //return "StandaloneOSXIntel";
+            case RuntimePlatform.LinuxPlayer:
+                return "StandaloneLinux";
             // Add more build targets for your own.
             // If you add more targets, don't forget to add the same platforms to GetPlatformForAssetBundles(RuntimePlatform) function.
             default:
