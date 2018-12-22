@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace CustomUnity
 {
-    public class MakeLinkXMLFromAB
+    public static class MakeLinkXMLFromAB
     {
         static string latestSelectedPath;
         const string kLatestSelectedPath = "MakeLinkXMLFromAB.LatestSelectedPath";
@@ -33,14 +33,20 @@ namespace CustomUnity
             }
         }
 
-        [MenuItem("Assets/AssetBundles/Make link.xml ...")]
+        [MenuItem("Assets/AssetBundles/Make link.xml...")]
         static void MakeLinkXML()
         {
             LatestSelectedPath = EditorUtility.OpenFolderPanel("Specify AssetBundles root path", LatestSelectedPath, "");
             MakeLinkXML(LatestSelectedPath, "Assets/link.xml", true);
         }
 
-        public static void MakeLinkXML(string rootPath, string outputPath, bool showProgress)
+        /// <summary>
+        /// Make link.xml file.
+        /// </summary>
+        /// <param name="rootPath">top folder of assetbundles</param>
+        /// <param name="outputPath">folder for save link.xml</param>
+        /// <param name="showProgressBar">shows progressbar in processing</param>
+        public static void MakeLinkXML(string rootPath, string outputPath, bool showProgressBar = false)
         {
             var systemScriptMatch = new Regex(@"\- Class: (\d+)\n  Script: \{instanceID: (\d+)\}", RegexOptions.Singleline);
             var userScriptMatch = new Regex(@"\- Class: (\d+)\n  Script: \{fileID: (\d+), guid: ([^,]+), type: (\d+)\}", RegexOptions.Singleline);
@@ -50,7 +56,7 @@ namespace CustomUnity
             int cnt = 0;
             foreach(var i in manifests) {
                 cnt++;
-                if(showProgress) EditorUtility.DisplayProgressBar("Make link.xml", i, cnt / (float)manifests.Length);
+                if(showProgressBar) EditorUtility.DisplayProgressBar("Make link.xml", i, cnt / (float)manifests.Length);
 
                 var text = File.ReadAllText(i);
 
@@ -100,7 +106,7 @@ namespace CustomUnity
             }
 
             //foreach(var i in missingHashes) Debug.LogWarningFormat("Missing Reference {0}", i);
-            if(showProgress) EditorUtility.ClearProgressBar();
+            if(showProgressBar) EditorUtility.ClearProgressBar();
         }
 
         static Type GetType(string path, int id)
@@ -166,7 +172,7 @@ namespace CustomUnity
                 }
             }
 
-            private void ProcessMessage(IEnumerable<byte> bytes)
+            void ProcessMessage(IEnumerable<byte> bytes)
             {
                 foreach(byte i in bytes) {
                     int j = bytesProcessed & 63;
@@ -183,14 +189,14 @@ namespace CustomUnity
                 }
             }
 
-            private static IEnumerable<byte> Bytes(byte[] bytes, int offset, int length)
+            static IEnumerable<byte> Bytes(byte[] bytes, int offset, int length)
             {
                 for(int i = offset; i < length; i++) {
                     yield return bytes[i];
                 }
             }
 
-            private IEnumerable<byte> Bytes(uint word)
+            IEnumerable<byte> Bytes(uint word)
             {
                 yield return (byte)(word & 255);
                 yield return (byte)((word >> 8) & 255);
@@ -198,14 +204,14 @@ namespace CustomUnity
                 yield return (byte)((word >> 24) & 255);
             }
 
-            private IEnumerable<byte> Repeat(byte value, int count)
+            IEnumerable<byte> Repeat(byte value, int count)
             {
                 for(int i = 0; i < count; i++) {
                     yield return value;
                 }
             }
 
-            private IEnumerable<byte> Padding()
+            IEnumerable<byte> Padding()
             {
                 return Repeat(128, 1)
                     .Concat(Repeat(0, ((bytesProcessed + 8) & 0x7fffffc0) + 55 - bytesProcessed))
@@ -213,7 +219,7 @@ namespace CustomUnity
                     .Concat(Repeat(0, 4));
             }
 
-            private void Process16WordBlock()
+            void Process16WordBlock()
             {
                 uint aa = a;
                 uint bb = b;
@@ -249,26 +255,26 @@ namespace CustomUnity
                 }
             }
 
-            private static uint ROL(uint value, int numberOfBits)
+            static uint ROL(uint value, int numberOfBits)
             {
                 return (value << numberOfBits) | (value >> (32 - numberOfBits));
             }
 
-            private static uint Round1Operation(uint a, uint b, uint c, uint d, uint xk, int s)
+            static uint Round1Operation(uint a, uint b, uint c, uint d, uint xk, int s)
             {
                 unchecked {
                     return ROL(a + ((b & c) | (~b & d)) + xk, s);
                 }
             }
 
-            private static uint Round2Operation(uint a, uint b, uint c, uint d, uint xk, int s)
+            static uint Round2Operation(uint a, uint b, uint c, uint d, uint xk, int s)
             {
                 unchecked {
                     return ROL(a + ((b & c) | (b & d) | (c & d)) + xk + 0x5a827999, s);
                 }
             }
 
-            private static uint Round3Operation(uint a, uint b, uint c, uint d, uint xk, int s)
+            static uint Round3Operation(uint a, uint b, uint c, uint d, uint xk, int s)
             {
                 unchecked {
                     return ROL(a + (b ^ c ^ d) + xk + 0x6ed9eba1, s);
