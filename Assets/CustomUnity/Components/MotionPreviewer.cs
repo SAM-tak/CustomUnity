@@ -27,14 +27,12 @@ namespace CustomUnity
         AnimationClipPlayable[] clipPlayables;
         AnimationPlayableOutput playableOutput;
         PlayableGraph playableGraph;
-        bool playableGraphCreated = false;
 
         void OnEnable()
         {
             if(Application.isPlaying) return;
             // Destroys all Playables and Outputs created by the graph.
-            if(!playableGraphCreated) {
-                playableGraphCreated = true;
+            if(!playableGraph.IsValid()) {
                 playableGraph = PlayableGraph.Create();
                 playableGraph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
 
@@ -53,8 +51,7 @@ namespace CustomUnity
         void OnDisable()
         {
             if(Application.isPlaying) return;
-            if(playableGraphCreated) {
-                playableGraphCreated = false;
+            if(playableGraph.IsValid()) {
                 if(clipPlayables != null && clipPlayables.Length > 0) {
                     clipPlayables[0].SetTime(0.0f);
                     playableOutput.SetSourcePlayable(clipPlayables[0]);
@@ -62,6 +59,7 @@ namespace CustomUnity
                 }
                 // Destroys all Playables and Outputs created by the graph.
                 playableGraph.Destroy();
+                playableOutput = AnimationPlayableOutput.Null;
             }
             clips = null;
             clipNames = null;

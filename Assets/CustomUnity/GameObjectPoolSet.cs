@@ -36,22 +36,19 @@ namespace CustomUnity
 
         public GameObject Spawn(string name, Vector3 position, Quaternion rotation)
         {
-            GameObjectPool pool;
-            if(index.TryGetValue(name, out pool)) return pool.Spawn(position, rotation);
+            if(index.TryGetValue(name, out GameObjectPool pool)) return pool.Spawn(position, rotation);
             return null;
         }
 
         public GameObject TrySpawn(string name, Vector3 position, Quaternion rotation)
         {
-            GameObjectPool pool;
-            if(index.TryGetValue(name, out pool)) return pool.TrySpawn(position, rotation);
+            if(index.TryGetValue(name, out GameObjectPool pool)) return pool.TrySpawn(position, rotation);
             return null;
         }
 
         public GameObject Spawn(Transform root, SpawnObjectParameter parameter)
         {
-            GameObjectPool pool;
-            if(parameter && index.TryGetValue(parameter.prefabName, out pool)) {
+            if(parameter && index.TryGetValue(parameter.prefabName, out GameObjectPool pool)) {
                 var origin = parameter.GetOriginNode(root);
                 var go = pool.Spawn(parameter.GetPosition(origin), parameter.GetRotation(origin));
                 if(go) go.transform.parent = parameter.parentToOrigin ? origin : null;
@@ -62,8 +59,7 @@ namespace CustomUnity
 
         public GameObject TrySpawn(Transform root, SpawnObjectParameter parameter)
         {
-            GameObjectPool pool;
-            if(parameter && index.TryGetValue(parameter.prefabName, out pool)) {
+            if(parameter && index.TryGetValue(parameter.prefabName, out GameObjectPool pool)) {
                 var origin = parameter.GetOriginNode(root);
                 var go = pool.TrySpawn(parameter.GetPosition(origin), parameter.GetRotation(origin));
                 if(go) go.transform.parent = parameter.parentToOrigin ? origin : null;

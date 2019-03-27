@@ -25,7 +25,7 @@ namespace CustomUnity
                 var path = AssetDatabase.GetAssetPath(script);
                 if(!path.EndsWith(".cs") || path.Contains("Editor")) return false;
             }
-            return true;
+            return Selection.objects != null && Selection.objects.Length > 0;
         }
 
         static void BuildEditorFile(Object obj)

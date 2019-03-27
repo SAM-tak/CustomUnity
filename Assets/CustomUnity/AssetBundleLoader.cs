@@ -520,8 +520,7 @@ namespace CustomUnity
 
         static protected void UnloadDependencies(string assetBundleName)
         {
-            string[] dependencyNames = null;
-            if(!dependencies.TryGetValue(assetBundleName, out dependencyNames)) return;
+            if(!dependencies.TryGetValue(assetBundleName, out string[] dependencyNames)) return;
 
             // Loop dependencies.
             foreach(var i in dependencyNames) {

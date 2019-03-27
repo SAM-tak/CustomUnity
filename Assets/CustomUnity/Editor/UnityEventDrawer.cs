@@ -44,8 +44,7 @@ namespace CustomUnity
         State GetState(SerializedProperty prop)
         {
             string propertyPath = prop.propertyPath;
-            State state;
-            m_States.TryGetValue(propertyPath, out state);
+            m_States.TryGetValue(propertyPath, out State state);
             if(state == null) {
                 state = new State();
                 var propertyRelative = prop.FindPropertyRelative("m_PersistentCalls.m_Calls");

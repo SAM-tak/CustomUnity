@@ -214,8 +214,7 @@ namespace CustomUnity
 
         public AssetBundleLoadLevelSimulationOperation(string levelPath, bool isAdditive)
         {
-            if(isAdditive) operation = UnityEditor.EditorApplication.LoadLevelAdditiveAsyncInPlayMode(levelPath);
-            else operation = UnityEditor.EditorApplication.LoadLevelAsyncInPlayMode(levelPath);
+            operation = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(levelPath, new LoadSceneParameters(isAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single));
         }
 
         public override bool Update() => false;

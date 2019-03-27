@@ -27,7 +27,12 @@ namespace CustomUnity
         [MenuItem(menuString, priority = priority, validate = true)]
         static bool Validate()
         {
-            return Selection.activeObject != null && (Selection.activeObject.hideFlags & (HideFlags.NotEditable | HideFlags.DontSaveInEditor)) == 0;
+            if(Selection.activeObject == null) return false;
+            var assetPath = AssetDatabase.GetAssetPath(Selection.activeObject);
+            if(string.IsNullOrEmpty(assetPath)) return false;
+            if(Path.GetFileNameWithoutExtension(assetPath) != Selection.activeObject.name) return false;
+            var ext = Path.GetExtension(assetPath);
+            return ext != ".fbx" && ext != ".dae" && ext != ".3ds" && ext != ".dxf" && ext != ".obj" && ext != ".skp" && ext != ".blender";
         }
 
         static readonly GUIContent removeIcon = new GUIContent(EditorGUIUtility.IconContent("Toolbar Minus").image, "Remove clip");
