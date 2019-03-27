@@ -18,7 +18,7 @@ using UnityEditor;
             Initializes the AssetBundle manifest object.
         LoadAssetAsync()
             Loads a given asset from a given AssetBundle and handles all the dependencies.
-        LoadLevelAsync()
+        LoadSceneAsync()
             Loads a given scene from a given AssetBundle and handles all the dependencies.
         LoadDependencies()
             Loads all the dependent AssetBundles for a given AssetBundle.
@@ -685,22 +685,22 @@ namespace CustomUnity
         /// <summary>
         /// Starts a load operation for a level from the given asset bundle.
         /// </summary>
-        static public AssetBundleLoadOperation LoadLevelAsync(string assetBundleName, string levelName, bool isAdditive)
+        static public AssetBundleLoadOperation LoadSceneAsync(string assetBundleName, string sceneName, LoadSceneMode loadSceneMode)
         {
-            if(LogsInfo) Log.Info($"[AssetBundelLoader] Loading {levelName} from {assetBundleName} bundle");
+            if(LogsInfo) Log.Info($"[AssetBundelLoader] Loading {sceneName} from {assetBundleName} bundle");
 
 #if UNITY_EDITOR
             if(SimulatesAssetBundleInEditor) {
                 assetBundleName = RemapVariantName(assetBundleName);
-                string[] assetPaths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, levelName);
+                string[] assetPaths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, sceneName);
                 if(assetPaths.Length == 0) {
-                    if(LogsErrr) Log.Error($"[AssetBundelLoader] There is no asset with name \"{levelName}\" in {assetBundleName}");
+                    if(LogsErrr) Log.Error($"[AssetBundelLoader] There is no scene with name \"{sceneName}\" in {assetBundleName}");
                     return null;
                 }
                 foreach(var i in assetPaths) {
-                    if(AssetDatabase.GetMainAssetTypeAtPath(i) == typeof(Scene)) return new AssetBundleLoadLevelSimulationOperation(i, isAdditive);
+                    if(AssetDatabase.GetMainAssetTypeAtPath(i) == typeof(Scene)) return new AssetBundleLoadSceneSimulationOperation(i, loadSceneMode);
                 }
-                if(LogsErrr) Log.Error($"[AssetBundelLoader] There is no asset with name \"{levelName}\" with type {typeof(Scene)} in {assetBundleName}");
+                if(LogsErrr) Log.Error($"[AssetBundelLoader] There is no scene with name \"{sceneName}\" with type {typeof(Scene)} in {assetBundleName}");
                 return null;
             }
             else
@@ -708,7 +708,7 @@ namespace CustomUnity
             {
                 assetBundleName = RemapVariantName(assetBundleName);
                 LoadAssetBundle(assetBundleName, false);
-                var operation = new AssetBundleLoadLevelOperation(assetBundleName, levelName, isAdditive);
+                var operation = new AssetBundleLoadSceneOperation(assetBundleName, sceneName, loadSceneMode);
 
                 inProgressOperations.Add(operation);
 

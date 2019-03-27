@@ -208,13 +208,13 @@ namespace CustomUnity
     }
 
 #if UNITY_EDITOR
-    public class AssetBundleLoadLevelSimulationOperation : AssetBundleLoadOperation
+    public class AssetBundleLoadSceneSimulationOperation : AssetBundleLoadOperation
     {
         AsyncOperation operation = null;
 
-        public AssetBundleLoadLevelSimulationOperation(string levelPath, bool isAdditive)
+        public AssetBundleLoadSceneSimulationOperation(string levelPath, LoadSceneMode loadSceneMode)
         {
-            operation = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(levelPath, new LoadSceneParameters(isAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single));
+            operation = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(levelPath, new LoadSceneParameters(loadSceneMode));
         }
 
         public override bool Update() => false;
@@ -259,19 +259,19 @@ namespace CustomUnity
         }
     }
 
-    public class AssetBundleLoadLevelOperation : AssetBundleLoadOperation
+    public class AssetBundleLoadSceneOperation : AssetBundleLoadOperation
     {
         protected string assetBundleName;
         protected string levelName;
-        protected bool isAdditive;
+        protected LoadSceneMode loadSceneMode;
         protected string downloadingError;
         protected AsyncOperation request;
 
-        public AssetBundleLoadLevelOperation(string assetBundleName, string levelName, bool isAdditive)
+        public AssetBundleLoadSceneOperation(string assetBundleName, string levelName, LoadSceneMode loadSceneMode)
         {
             this.assetBundleName = assetBundleName;
             this.levelName = levelName;
-            this.isAdditive = isAdditive;
+            this.loadSceneMode = loadSceneMode;
         }
 
         // Returns true if more Update calls are required.
@@ -281,7 +281,7 @@ namespace CustomUnity
 
             var bundle = AssetBundleLoader.GetLoadedAssetBundle(assetBundleName, out downloadingError);
             if(bundle != null) {
-                request = SceneManager.LoadSceneAsync(levelName, isAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single);
+                request = SceneManager.LoadSceneAsync(levelName, loadSceneMode);
                 return false;
             }
 
