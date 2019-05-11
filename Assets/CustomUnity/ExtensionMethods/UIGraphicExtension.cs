@@ -11,10 +11,8 @@ namespace CustomUnity
             if(graphic.canvas.rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay) {
                 return graphic.rectTransform.InverseTransformDirection(eventData.delta);
             }
-            var prev = Vector2.zero;
-            var now = Vector2.zero;
-            if(RectTransformUtility.ScreenPointToLocalPointInRectangle(graphic.rectTransform, eventData.position - eventData.delta, eventData.pressEventCamera, out prev)) {
-                if(RectTransformUtility.ScreenPointToLocalPointInRectangle(graphic.rectTransform, eventData.position, eventData.pressEventCamera, out now)) {
+            if(RectTransformUtility.ScreenPointToLocalPointInRectangle(graphic.rectTransform, eventData.position - eventData.delta, eventData.pressEventCamera, out Vector2 prev)) {
+                if(RectTransformUtility.ScreenPointToLocalPointInRectangle(graphic.rectTransform, eventData.position, eventData.pressEventCamera, out Vector2 now)) {
                     return now - prev;
                 }
             }
@@ -36,8 +34,7 @@ namespace CustomUnity
             if(graphic.canvas.rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay) {
                 return graphic.rectTransform.InverseTransformPoint(eventData.position);
             }
-            var now = Vector2.zero;
-            if(RectTransformUtility.ScreenPointToLocalPointInRectangle(graphic.rectTransform, eventData.position, eventData.enterEventCamera, out now)) {
+            if(RectTransformUtility.ScreenPointToLocalPointInRectangle(graphic.rectTransform, eventData.position, eventData.enterEventCamera, out Vector2 now)) {
                 return now;
             }
             return Vector3.zero;

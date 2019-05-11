@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,11 +16,24 @@ namespace CustomUnity
         
         public IDataSource DataSource { get; set; }
         
-        struct CellPosition
+        struct CellPosition : IEquatable<CellPosition>
         {
             public float position;
             public float size;
+
+            public override bool Equals(object obj) => obj is CellPosition position && Equals(position);
+
+            public bool Equals(CellPosition other) => position == other.position && size == other.size;
+
+            public override int GetHashCode()
+            {
+                var hashCode = 1804577526;
+                hashCode = hashCode * -1521134295 + position.GetHashCode();
+                hashCode = hashCode * -1521134295 + size.GetHashCode();
+                return hashCode;
+            }
         }
+
         CellPosition[] cellPositions;
         
         public Vector2 GetContentSize(IDataSource dataSource)

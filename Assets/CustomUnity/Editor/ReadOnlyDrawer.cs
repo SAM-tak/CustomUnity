@@ -87,7 +87,7 @@ namespace CustomUnity
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var attribute = base.attribute as ReadOnlyIfAttribute;
-            var comparedField = property.serializedObject.FindProperty(attribute.comparedPropertyName);
+            var comparedField = property.serializedObject.FindProperty(attribute.ComparedPropertyName);
 
             // Compare the values to see if the condition is met.
             bool conditionMet = false;
@@ -98,35 +98,35 @@ namespace CustomUnity
                     // Get the value of the compared field.
                     object comparedFieldValue = field.GetValue(property.serializedObject.targetObject);
 
-                    if(attribute.comparisonType < ReadOnlyIfAttribute.Comparison.GreaterThan || comparedFieldValue is IComparable) {
-                        switch(attribute.comparisonType) {
+                    if(attribute.ComparisonType < ReadOnlyIfAttribute.Comparison.GreaterThan || comparedFieldValue is IComparable) {
+                        switch(attribute.ComparisonType) {
                         case ReadOnlyIfAttribute.Comparison.Equals:
-                            conditionMet = comparedFieldValue.Equals(attribute.comparedValue);
+                            conditionMet = comparedFieldValue.Equals(attribute.ComparedValue);
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.NotEqual:
-                            conditionMet = !comparedFieldValue.Equals(attribute.comparedValue);
+                            conditionMet = !comparedFieldValue.Equals(attribute.ComparedValue);
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.GreaterThan:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.comparedValue) > 0;
+                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) > 0;
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.GreaterOrEqual:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.comparedValue) >= 0;
+                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) >= 0;
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.LessThan:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.comparedValue) < 0;
+                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) < 0;
                             break;
 
                         case ReadOnlyIfAttribute.Comparison.LessOrEqual:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.comparedValue) <= 0;
+                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) <= 0;
                             break;
                         }
                     }
                     else {
-                        Debug.LogError(comparedField.type + " is not supported of " + (property.propertyPath.Contains(".") ? System.IO.Path.ChangeExtension(property.propertyPath, attribute.comparedPropertyName) : attribute.comparedPropertyName));
+                        Debug.LogError(comparedField.type + " is not supported of " + (property.propertyPath.Contains(".") ? System.IO.Path.ChangeExtension(property.propertyPath, attribute.ComparedPropertyName) : attribute.ComparedPropertyName));
                     }
                 }
                 catch(Exception ex) {
@@ -134,7 +134,7 @@ namespace CustomUnity
                 }
             }
             else {
-                Debug.LogError(attribute.comparedPropertyName + " is not found.");
+                Debug.LogError(attribute.ComparedPropertyName + " is not found.");
             }
 
             if(conditionMet) {

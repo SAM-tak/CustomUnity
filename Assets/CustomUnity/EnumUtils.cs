@@ -21,7 +21,7 @@ namespace CustomUnity
 
         public static T Parse<T>(string value, bool ignoreCase) where T : struct, System.IComparable, System.IFormattable, System.IConvertible
         {
-            return (T)System.Enum.Parse(typeof(T), value, false);
+            return (T)System.Enum.Parse(typeof(T), value, ignoreCase);
         }
 
         public static T ToObject<T>(object value) where T : struct, System.IComparable, System.IFormattable, System.IConvertible

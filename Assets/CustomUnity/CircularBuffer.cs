@@ -62,7 +62,7 @@ namespace CustomUnity
             if(Count == 0) throw new InvalidOperationException("queue exhausted");
 
             var dequeued = buffer[tail];
-            buffer[tail] = default(T);
+            buffer[tail] = default;
             tail = (tail + 1) % Capacity;
             --Count;
             return dequeued;

@@ -26,15 +26,15 @@ namespace CustomUnity
             LessOrEqual
         }
 
-        public string comparedPropertyName { get; private set; }
-        public object comparedValue { get; private set; }
-        public Comparison comparisonType { get; private set; }
+        public string ComparedPropertyName { get; private set; }
+        public object ComparedValue { get; private set; }
+        public Comparison ComparisonType { get; private set; }
 
         public ReadOnlyIfAttribute(string comparedPropertyName, object comparedValue, Comparison comparisonType = Comparison.Equals)
         {
-            this.comparedPropertyName = comparedPropertyName;
-            this.comparedValue = comparedValue;
-            this.comparisonType = comparisonType;
+            ComparedPropertyName = comparedPropertyName;
+            ComparedValue = comparedValue;
+            ComparisonType = comparisonType;
         }
     }
 }

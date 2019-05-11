@@ -46,10 +46,9 @@ namespace CustomUnity
             if(repeat) {
                 var contentRectLocalPosition = contentRectTransform.localPosition;
                 var viewSize = ScrollRect.viewport.rect.size;
-                var contentMargin = 0f;
                 switch(orientaion) {
                 case Orientaion.Vertical:
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
+                    var contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
                     if(contentRectLocalPosition.y < contentMargin) {
                         contentRectLocalPosition.y = contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
@@ -72,7 +71,6 @@ namespace CustomUnity
             
             var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
 
-            float contentSize = 0;
             int startIndex = 0;
             int endIndex = 0;
             int leftRadix = 0;
@@ -83,7 +81,7 @@ namespace CustomUnity
             var sizeDelta = contentRectTransform.sizeDelta;
             switch(orientaion) {
             case Orientaion.Vertical:
-                contentSize = Math.CeilDiv(totalCount, columnCount) * cellSize.y;
+                var contentSize = Math.CeilDiv(totalCount, columnCount) * cellSize.y;
                 if(repeat) {
                     contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
                     if(contentRectLocalPosition.y < contentMargin / 2 || contentRectLocalPosition.y + viewSize.y > (contentMargin + contentSize + contentMargin / 2)) {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,20 +20,28 @@ namespace CustomUnity
 
         public ScrollRect ScrollRect { get; protected set; }
 
-        public int MaxCells {
-            get {
-                return cellPool != null ? cellPool.Length : 0;
-            }
-        }
+        public int MaxCells { get => cellPool != null ? cellPool.Length : 0; }
 
         public int MaxCellsRequired { get; protected set; }
 
         protected RectTransform contentRectTransform;
 
-        protected struct Cell
+        protected struct Cell : IEquatable<Cell>
         {
             public GameObject cell;
             public int index;
+
+            public override bool Equals(object obj) => obj is Cell cell && Equals(cell);
+
+            public bool Equals(Cell other) => EqualityComparer<GameObject>.Default.Equals(cell, other.cell) && index == other.index;
+
+            public override int GetHashCode()
+            {
+                var hashCode = -981410904;
+                hashCode = hashCode * -1521134295 + EqualityComparer<GameObject>.Default.GetHashCode(cell);
+                hashCode = hashCode * -1521134295 + index.GetHashCode();
+                return hashCode;
+            }
         }
 
         protected Cell[] cellPool;

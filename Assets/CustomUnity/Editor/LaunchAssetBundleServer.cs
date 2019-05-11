@@ -17,7 +17,7 @@ namespace CustomUnity
         const string kLocalAssetbundleServerMenu = "Assets/AssetBundles/Local AssetBundle Server";
 
         [SerializeField]
-        int m_ServerPID = 0;
+        int serverPID = 0;
 
         [SerializeField]
         string assetBundlesDirectory = Path.Combine(Environment.CurrentDirectory, AssetBundlesOutputPath);
@@ -40,15 +40,15 @@ namespace CustomUnity
         
         static bool IsRunning()
         {
-            if(instance.m_ServerPID == 0) return false;
+            if(instance.serverPID == 0) return false;
             try {
-                var process = Process.GetProcessById(instance.m_ServerPID);
+                var process = Process.GetProcessById(instance.serverPID);
                 if(process != null && !process.HasExited) return true;
-                instance.m_ServerPID = 0;
+                instance.serverPID = 0;
                 return false;
             }
             catch {
-                instance.m_ServerPID = 0;
+                instance.serverPID = 0;
                 return false;
             }
         }
@@ -57,16 +57,16 @@ namespace CustomUnity
         {
             EditorApplication.quitting -= KillRunningAssetBundleServer;
 
-            if(instance.m_ServerPID == 0) return;
+            if(instance.serverPID == 0) return;
             EditorPrefs.SetString(AssetBundleLoader.kLocalAssetBundleServerURL, null);
             // Kill the last time we ran
             try {
-                var lastProcess = Process.GetProcessById(instance.m_ServerPID);
+                var lastProcess = Process.GetProcessById(instance.serverPID);
                 lastProcess.Kill();
-                instance.m_ServerPID = 0;
+                instance.serverPID = 0;
             }
             catch(Exception ex) {
-                instance.m_ServerPID = 0;
+                instance.serverPID = 0;
                 Log.Exception(ex);
             }
         }
@@ -96,7 +96,7 @@ namespace CustomUnity
             }
             else {
                 //We seem to have launched, let's save the PID
-                instance.m_ServerPID = launchProcess.Id;
+                instance.serverPID = launchProcess.Id;
 
                 var localIP = "localhost";
                 try {

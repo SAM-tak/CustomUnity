@@ -1,18 +1,32 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
 namespace CustomUnity
 {
-    [System.Serializable]
+    [Serializable]
     public sealed class GameObjectPool
     {
         public GameObject prefab;
         public int quantity;
         
-        struct Entry
+        struct Entry : IEquatable<Entry>
         {
             public GameObject go;
             public float time;
+
+            public override bool Equals(object obj) => obj is Entry entry && Equals(entry);
+
+            public bool Equals(Entry other) => EqualityComparer<GameObject>.Default.Equals(go, other.go) && time == other.time;
+
+            public override int GetHashCode()
+            {
+                var hashCode = -1359831577;
+                hashCode = hashCode * -1521134295 + EqualityComparer<GameObject>.Default.GetHashCode(go);
+                hashCode = hashCode * -1521134295 + time.GetHashCode();
+                return hashCode;
+            }
         }
 
         Entry[] objs;
@@ -26,7 +40,7 @@ namespace CustomUnity
                 objs = new Entry[quantity];
                 for(int i = 0; i < quantity; i++) {
                     objs[i] = new Entry {
-                        go = Object.Instantiate(prefab),
+                        go = UnityEngine.Object.Instantiate(prefab),
                         time = 0
                     };
                     objs[i].go.SetActive(false);

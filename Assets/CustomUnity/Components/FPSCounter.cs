@@ -1,4 +1,3 @@
-using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 #if UNITY_EDITOR
@@ -11,8 +10,7 @@ namespace CustomUnity
     public class FPSCounter : MonoBehaviour
     {
         public Sprite[] digitSprites;
-
-        Image[] digits = new Image[3];
+        readonly Image[] digits = new Image[3];
         float lastLapForFps;
         int lastLapFrameCount;
         

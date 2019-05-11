@@ -532,7 +532,7 @@ namespace CustomUnity
 
         static protected void UnloadAssetBundleInternal(string assetBundleName, bool isImplicit)
         {
-            var bundle = GetLoadedAssetBundle(assetBundleName, out string error);
+            var bundle = GetLoadedAssetBundle(assetBundleName, out _);
             if(bundle == null) return;
 
             if(isImplicit) --bundle.ReferencedCount;
@@ -650,7 +650,7 @@ namespace CustomUnity
             }
         }
         
-        public struct AssetLoadOperation<T> : IEnumerator where T : UnityEngine.Object
+        public struct AssetLoadOperation<T> : IEnumerator, IEquatable<AssetLoadOperation<T>> where T : UnityEngine.Object
         {
             public AssetLoadOperation(AssetBundleLoadAssetOperation operation)
             {
@@ -668,6 +668,17 @@ namespace CustomUnity
             public void Reset() => Operation?.Reset();
             
             public bool IsDone() => Operation?.IsDone() ?? true;
+
+            public override bool Equals(object obj) => obj is AssetLoadOperation<T> operation && Equals(operation);
+
+            public bool Equals(AssetLoadOperation<T> other) => EqualityComparer<AssetBundleLoadAssetOperation>.Default.Equals(Operation, other.Operation);
+
+            public override int GetHashCode()
+            {
+                var hashCode = 1897678323;
+                hashCode = hashCode * -1521134295 + EqualityComparer<AssetBundleLoadAssetOperation>.Default.GetHashCode(Operation);
+                return hashCode;
+            }
         }
 
         /// <summary>

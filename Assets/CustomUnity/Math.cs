@@ -145,10 +145,8 @@ namespace CustomUnity
             var pitch = Mathf.Atan2(sinr, cosr);
 
             // yaw (y-axis rotation)
-            var yaw = 0.0f;
             float sinp = 2.0f * (q.w * q.y - q.z * q.x);
-            if(Mathf.Abs(sinp) >= 1) yaw = sinp < 0 ? -Mathf.PI / 2 : Mathf.PI / 2; // use 90 degrees if out of range
-            else yaw = Mathf.Asin(sinp);
+            float yaw = Mathf.Abs(sinp) >= 1 ? (sinp < 0 ? -Mathf.PI / 2 : Mathf.PI / 2) /* use 90 degrees if out of range */ : Mathf.Asin(sinp);
 
             // roll (z-axis rotation)
             float siny = 2.0f * (q.w * q.z + q.x * q.y);

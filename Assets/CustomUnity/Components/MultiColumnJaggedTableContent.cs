@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -75,11 +76,24 @@ namespace CustomUnity
             }
         }
         
-        struct LookAheadedCellSize
+        struct LookAheadedCellSize : IEquatable<LookAheadedCellSize>
         {
             public int index;
             public Rect rect;
+
+            public override bool Equals(object obj) => obj is LookAheadedCellSize size && Equals(size);
+
+            public bool Equals(LookAheadedCellSize other) => index == other.index && rect.Equals(other.rect);
+
+            public override int GetHashCode()
+            {
+                var hashCode = 1958101098;
+                hashCode = hashCode * -1521134295 + index.GetHashCode();
+                hashCode = hashCode * -1521134295 + EqualityComparer<Rect>.Default.GetHashCode(rect);
+                return hashCode;
+            }
         }
+
         List<LookAheadedCellSize> LookAheadedCellSizes { get; } = new List<LookAheadedCellSize>(10);
 
         protected override void Start()

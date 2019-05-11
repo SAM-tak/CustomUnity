@@ -15,9 +15,9 @@ namespace CustomUnity
     {
         Dictionary<string, State> m_States = new Dictionary<string, State>();
         // Find internal methods with reflection
-        static MethodInfo findMethod = typeof(UnityEventBase).GetMethod("FindMethod", BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(object), typeof(PersistentListenerMode), typeof(Type) }, null);
-        static MethodInfo temp = typeof(GUIContent).GetMethod("Temp", BindingFlags.NonPublic | BindingFlags.Static, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
-        static PropertyInfo mixedValueContent = typeof(EditorGUI).GetProperty("mixedValueContent", BindingFlags.NonPublic | BindingFlags.Static);
+        static readonly MethodInfo findMethod = typeof(UnityEventBase).GetMethod("FindMethod", BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(object), typeof(PersistentListenerMode), typeof(Type) }, null);
+        static readonly MethodInfo temp = typeof(GUIContent).GetMethod("Temp", BindingFlags.NonPublic | BindingFlags.Static, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
+        static readonly PropertyInfo mixedValueContent = typeof(EditorGUI).GetProperty("mixedValueContent", BindingFlags.NonPublic | BindingFlags.Static);
         Styles m_Styles;
         string m_Text;
         UnityEventBase m_DummyEvent;
@@ -466,44 +466,62 @@ namespace CustomUnity
             public readonly GUIStyle removeButton = "InvisibleButton";
         }
 
-        struct ValidMethodMap
+        struct ValidMethodMap : IEquatable<ValidMethodMap>
         {
             public UnityEngine.Object target;
             public MethodInfo methodInfo;
             public PersistentListenerMode mode;
+
+            public override bool Equals(object obj) => obj is ValidMethodMap map && Equals(map);
+
+            public bool Equals(ValidMethodMap other)
+            {
+                return EqualityComparer<UnityEngine.Object>.Default.Equals(target, other.target) &&
+                       EqualityComparer<MethodInfo>.Default.Equals(methodInfo, other.methodInfo) &&
+                       mode == other.mode;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = -357400218;
+                hashCode = hashCode * -1521134295 + EqualityComparer<UnityEngine.Object>.Default.GetHashCode(target);
+                hashCode = hashCode * -1521134295 + EqualityComparer<MethodInfo>.Default.GetHashCode(methodInfo);
+                hashCode = hashCode * -1521134295 + mode.GetHashCode();
+                return hashCode;
+            }
         }
 
-        struct UnityEventFunction
+        struct UnityEventFunction : IEquatable<UnityEventFunction>
         {
-            readonly SerializedProperty m_Listener;
-            readonly UnityEngine.Object m_Target;
-            readonly MethodInfo m_Method;
-            readonly PersistentListenerMode m_Mode;
+            readonly SerializedProperty listener;
+            readonly UnityEngine.Object target;
+            readonly MethodInfo methodInfo;
+            readonly PersistentListenerMode listenerMode;
 
-            public UnityEventFunction(SerializedProperty listener, UnityEngine.Object target, MethodInfo method, PersistentListenerMode mode)
+            public UnityEventFunction(SerializedProperty listener, UnityEngine.Object target, MethodInfo methodInfo, PersistentListenerMode listenerMode)
             {
-                m_Listener = listener;
-                m_Target = target;
-                m_Method = method;
-                m_Mode = mode;
+                this.listener = listener;
+                this.target = target;
+                this.methodInfo = methodInfo;
+                this.listenerMode = listenerMode;
             }
 
             public void Assign()
             {
-                var propertyRelative1 = m_Listener.FindPropertyRelative("m_Target");
-                var propertyRelative2 = m_Listener.FindPropertyRelative("m_MethodName");
-                var propertyRelative3 = m_Listener.FindPropertyRelative("m_Mode");
-                var propertyRelative4 = m_Listener.FindPropertyRelative("m_Arguments");
-                propertyRelative1.objectReferenceValue = m_Target;
-                propertyRelative2.stringValue = m_Method.Name;
-                propertyRelative3.enumValueIndex = (int)m_Mode;
-                if(m_Mode == PersistentListenerMode.Object) {
+                var propertyRelative1 = listener.FindPropertyRelative("m_Target");
+                var propertyRelative2 = listener.FindPropertyRelative("m_MethodName");
+                var propertyRelative3 = listener.FindPropertyRelative("m_Mode");
+                var propertyRelative4 = listener.FindPropertyRelative("m_Arguments");
+                propertyRelative1.objectReferenceValue = target;
+                propertyRelative2.stringValue = methodInfo.Name;
+                propertyRelative3.enumValueIndex = (int)listenerMode;
+                if(listenerMode == PersistentListenerMode.Object) {
                     var propertyRelative5 = propertyRelative4.FindPropertyRelative("m_ObjectArgumentAssemblyTypeName");
-                    var parameters = m_Method.GetParameters();
+                    var parameters = methodInfo.GetParameters();
                     propertyRelative5.stringValue = parameters.Length != 1 || !typeof(UnityEngine.Object).IsAssignableFrom(parameters[0].ParameterType) ? typeof(UnityEngine.Object).AssemblyQualifiedName : parameters[0].ParameterType.AssemblyQualifiedName;
                 }
-                ValidateObjectParamater(propertyRelative4, m_Mode);
-                m_Listener.serializedObject.ApplyModifiedProperties();
+                ValidateObjectParamater(propertyRelative4, listenerMode);
+                listener.serializedObject.ApplyModifiedProperties();
             }
 
             void ValidateObjectParamater(SerializedProperty arguments, PersistentListenerMode mode)
@@ -525,9 +543,29 @@ namespace CustomUnity
 
             public void Clear()
             {
-                m_Listener.FindPropertyRelative("m_MethodName").stringValue = null;
-                m_Listener.FindPropertyRelative("m_Mode").enumValueIndex = 1;
-                m_Listener.serializedObject.ApplyModifiedProperties();
+                listener.FindPropertyRelative("m_MethodName").stringValue = null;
+                listener.FindPropertyRelative("m_Mode").enumValueIndex = 1;
+                listener.serializedObject.ApplyModifiedProperties();
+            }
+
+            public override bool Equals(object obj) => obj is UnityEventFunction function && Equals(function);
+
+            public bool Equals(UnityEventFunction other)
+            {
+                return EqualityComparer<SerializedProperty>.Default.Equals(listener, other.listener) &&
+                       EqualityComparer<UnityEngine.Object>.Default.Equals(target, other.target) &&
+                       EqualityComparer<MethodInfo>.Default.Equals(methodInfo, other.methodInfo) &&
+                       listenerMode == other.listenerMode;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = 878944787;
+                hashCode = hashCode * -1521134295 + EqualityComparer<SerializedProperty>.Default.GetHashCode(listener);
+                hashCode = hashCode * -1521134295 + EqualityComparer<UnityEngine.Object>.Default.GetHashCode(target);
+                hashCode = hashCode * -1521134295 + EqualityComparer<MethodInfo>.Default.GetHashCode(methodInfo);
+                hashCode = hashCode * -1521134295 + listenerMode.GetHashCode();
+                return hashCode;
             }
         }
     }

@@ -1,14 +1,77 @@
+using System;
+using System.Collections.Generic;
+
 namespace CustomUnity
 {
     public interface IBit<T> { T Value { get; } }
-    public struct Bit2 : IBit<int> { public int Value => 2; }
-    public struct Bit3 : IBit<int> { public int Value => 3; }
-    public struct Bit4 : IBit<int> { public int Value => 4; }
-    public struct Bit5 : IBit<int> { public int Value => 5; }
-    public struct Bit6 : IBit<int> { public int Value => 6; }
-    public struct Bit7 : IBit<int> { public int Value => 7; }
 
-    public struct NBitArray<N> where N : struct, IBit<int>
+    public struct Bit2 : IBit<int>, IEquatable<Bit2>
+    {
+        public int Value => 2;
+
+        public override bool Equals(object obj) => obj is Bit2 bit && Equals(bit);
+
+        public bool Equals(Bit2 other) => Value == other.Value;
+
+        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+    }
+
+    public struct Bit3 : IBit<int>, IEquatable<Bit3>
+    {
+        public int Value => 3;
+
+        public override bool Equals(object obj) => obj is Bit3 bit && Equals(bit);
+
+        public bool Equals(Bit3 other) => Value == other.Value;
+
+        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+    }
+
+    public struct Bit4 : IBit<int>, IEquatable<Bit4>
+    {
+        public int Value => 4;
+
+        public override bool Equals(object obj) => obj is Bit4 bit && Equals(bit);
+
+        public bool Equals(Bit4 other) => Value == other.Value;
+
+        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+    }
+
+    public struct Bit5 : IBit<int>, IEquatable<Bit5>
+    {
+        public int Value => 5;
+
+        public override bool Equals(object obj) => obj is Bit5 bit && Equals(bit);
+
+        public bool Equals(Bit5 other) => Value == other.Value;
+
+        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+    }
+
+    public struct Bit6 : IBit<int>, IEquatable<Bit6>
+    {
+        public int Value => 6;
+
+        public override bool Equals(object obj) => obj is Bit6 bit && Equals(bit);
+
+        public bool Equals(Bit6 other) => Value == other.Value;
+
+        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+    }
+
+    public struct Bit7 : IBit<int>, IEquatable<Bit7>
+    {
+        public int Value => 7;
+
+        public override bool Equals(object obj) => obj is Bit7 bit && Equals(bit);
+
+        public bool Equals(Bit7 other) => Value == other.Value;
+
+        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+    }
+
+    public struct NBitArray<N> : IEquatable<NBitArray<N>> where N : struct, IBit<int>
     {
         int[] store;
 
@@ -50,6 +113,12 @@ namespace CustomUnity
             for(int i = 0; i < store.Length; ++i) store[i] = 0;
         }
 
+        public override bool Equals(object obj) => obj is NBitArray<N> array && Equals(array);
+
+        public bool Equals(NBitArray<N> other) => EqualityComparer<int[]>.Default.Equals(store, other.store);
+
+        public override int GetHashCode() => 383674718 + EqualityComparer<int[]>.Default.GetHashCode(store);
+
         public byte this[int index] {
             get {
                 return Get(index);
@@ -60,7 +129,7 @@ namespace CustomUnity
         }
     }
 
-    public struct BitArray32
+    public struct BitArray32 : IEquatable<BitArray32>
     {
         public uint store;
 
@@ -97,9 +166,15 @@ namespace CustomUnity
         {
             return store != 0;
         }
+
+        public override bool Equals(object obj) => obj is BitArray32 array && Equals(array);
+
+        public bool Equals(BitArray32 other) => store == other.store;
+
+        public override int GetHashCode() => 383674718 + store.GetHashCode();
     }
 
-    public struct BitArray64
+    public struct BitArray64 : IEquatable<BitArray64>
     {
         public BitArray32 store1;
         public BitArray32 store2;
@@ -135,13 +210,22 @@ namespace CustomUnity
             return new BitArray64 { store1 = ~src.store1, store2 = ~src.store2 };
         }
 
-        public bool Any()
+        public bool Any() => store1.Any() || store2.Any();
+
+        public override bool Equals(object obj) => obj is BitArray64 array && Equals(array);
+
+        public bool Equals(BitArray64 other) => store1.Equals(other.store1) && store2.Equals(other.store2);
+
+        public override int GetHashCode()
         {
-            return store1.Any() || store2.Any();
+            var hashCode = -1259268631;
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store1);
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store2);
+            return hashCode;
         }
     }
 
-    public struct BitArray96
+    public struct BitArray96 : IEquatable<BitArray96>
     {
         public BitArray32 store1;
         public BitArray32 store2;
@@ -180,13 +264,23 @@ namespace CustomUnity
             return new BitArray96 { store1 = ~src.store1, store2 = ~src.store2, store3 = ~src.store3 };
         }
 
-        public bool Any()
+        public bool Any() => store1.Any() || store2.Any() || store3.Any();
+
+        public override bool Equals(object obj) => obj is BitArray96 array && Equals(array);
+
+        public bool Equals(BitArray96 other) => store1.Equals(other.store1) && store2.Equals(other.store2) && store3.Equals(other.store3);
+
+        public override int GetHashCode()
         {
-            return store1.Any() || store2.Any() || store3.Any();
+            var hashCode = 1225588984;
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store1);
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store2);
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store3);
+            return hashCode;
         }
     }
 
-    public struct BitArray128
+    public struct BitArray128 : IEquatable<BitArray128>
     {
         public BitArray32 store1;
         public BitArray32 store2;
@@ -228,9 +322,20 @@ namespace CustomUnity
             return new BitArray128 { store1 = ~src.store1, store2 = ~src.store2, store3 = ~src.store3, store4 = ~src.store4 };
         }
 
-        public bool Any()
+        public bool Any() => store1.Any() || store2.Any() || store3.Any() || store4.Any();
+
+        public override bool Equals(object obj) => obj is BitArray128 array && Equals(array);
+
+        public bool Equals(BitArray128 other) => store1.Equals(other.store1) && store2.Equals(other.store2) && store3.Equals(other.store3) && store4.Equals(other.store4);
+
+        public override int GetHashCode()
         {
-            return store1.Any() || store2.Any() || store3.Any() || store4.Any();
+            var hashCode = -91448154;
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store1);
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store2);
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store3);
+            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store4);
+            return hashCode;
         }
     }
 }

@@ -1,4 +1,5 @@
 #define PROFILING
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,11 +7,11 @@ using UnityEngine.Profiling;
 
 namespace CustomUnity
 {
-    public struct ProfileSampler : System.IDisposable
+    public struct ProfileSampler : System.IDisposable, IEquatable<ProfileSampler>
     {
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && PROFILING
-        static Dictionary<string, CustomSampler> samplerCache = new Dictionary<string, CustomSampler>(256);
-        static List<CustomSampler> samplerStack = new List<CustomSampler>(256);
+        static readonly Dictionary<string, CustomSampler> samplerCache = new Dictionary<string, CustomSampler>(256);
+        static readonly List<CustomSampler> samplerStack = new List<CustomSampler>(256);
 
         static CustomSampler PeekLast()
         {
@@ -41,7 +42,7 @@ namespace CustomUnity
 #endif
         }
 
-        static public ProfileSampler Create(Object obj, string memberName, int id = 0)
+        static public ProfileSampler Create(UnityEngine.Object obj, string memberName, int id = 0)
         {
 #if(UNITY_EDITOR || DEVELOPMENT_BUILD) && PROFILING
             return new ProfileSampler(obj.GetMemberName(memberName, id));
@@ -50,9 +51,9 @@ namespace CustomUnity
 #endif
         }
 
-#if(UNITY_EDITOR || DEVELOPMENT_BUILD) && PROFILING
-        CustomSampler customSampler;
-        int index;
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && PROFILING
+        readonly CustomSampler customSampler;
+        readonly int index;
 #endif
 
         ProfileSampler(string name)
@@ -85,7 +86,7 @@ namespace CustomUnity
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Begin(Object obj, string memberName, int id)
+        static public void Begin(UnityEngine.Object obj, string memberName, int id)
         {
             Begin(obj.GetMemberName(memberName, id));
         }
@@ -98,7 +99,7 @@ namespace CustomUnity
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void EndAndBegin(Object obj, string memberName, int id)
+        static public void EndAndBegin(UnityEngine.Object obj, string memberName, int id)
         {
             EndAndBegin(obj.GetMemberName(memberName, id));
         }
@@ -112,6 +113,25 @@ namespace CustomUnity
                 samplerStack.RemoveAt(samplerStack.Count - 1);
             }
 #endif
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ProfileSampler sampler && Equals(sampler);
+        }
+
+        public bool Equals(ProfileSampler other)
+        {
+            return EqualityComparer<CustomSampler>.Default.Equals(customSampler, other.customSampler) &&
+                   index == other.index;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1897699739;
+            hashCode = hashCode * -1521134295 + EqualityComparer<CustomSampler>.Default.GetHashCode(customSampler);
+            hashCode = hashCode * -1521134295 + index.GetHashCode();
+            return hashCode;
         }
     }
 }
