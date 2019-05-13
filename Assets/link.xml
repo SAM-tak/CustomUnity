@@ -1,0 +1,14 @@
+<linker>
+    <assembly fullname="UnityEngine.CoreModule">
+        <type fullname="UnityEngine.GameObject" preserve="all"/>
+        <type fullname="UnityEngine.Transform" preserve="all"/>
+        <type fullname="UnityEngine.Material" preserve="all"/>
+        <type fullname="UnityEngine.MeshRenderer" preserve="all"/>
+        <type fullname="UnityEngine.MeshFilter" preserve="all"/>
+        <type fullname="UnityEngine.Mesh" preserve="all"/>
+        <type fullname="UnityEngine.Shader" preserve="all"/>
+    </assembly>
+    <assembly fullname="CustomUnity">
+        <type fullname="CustomUnity.Draggable" preserve="all"/>
+    </assembly>
+</linker>
