@@ -2,12 +2,11 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.Profiling;
 
 namespace CustomUnity
 {
-    public struct ProfileSampler : System.IDisposable, IEquatable<ProfileSampler>
+    public struct ProfileSampler : IDisposable, IEquatable<ProfileSampler>
     {
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && PROFILING
         static readonly Dictionary<string, CustomSampler> samplerCache = new Dictionary<string, CustomSampler>(256);
@@ -33,6 +32,7 @@ namespace CustomUnity
             }
         }
 #endif
+
         static public ProfileSampler Create(string name)
         {
 #if(UNITY_EDITOR || DEVELOPMENT_BUILD) && PROFILING
@@ -115,6 +115,7 @@ namespace CustomUnity
 #endif
         }
 
+#if(UNITY_EDITOR || DEVELOPMENT_BUILD) && PROFILING
         public override bool Equals(object obj)
         {
             return obj is ProfileSampler sampler && Equals(sampler);
@@ -133,5 +134,8 @@ namespace CustomUnity
             hashCode = hashCode * -1521134295 + index.GetHashCode();
             return hashCode;
         }
+#else
+        public bool Equals(ProfileSampler other) => false;
+#endif
     }
 }
