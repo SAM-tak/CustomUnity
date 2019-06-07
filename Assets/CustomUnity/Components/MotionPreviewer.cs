@@ -70,8 +70,11 @@ namespace CustomUnity
         {
             if(Application.isPlaying) return;
             if(clipPlayables != null && clipPlayables.Length > 0 && index < clipPlayables.Length) {
+                clipPlayables[index].SetTime(0.0f);
                 clipPlayables[index].SetTime(frame * (1.0f / 60.0f));
                 playableOutput.SetSourcePlayable(clipPlayables[index]);
+                transform.localPosition = Vector3.zero;
+                transform.localEulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
                 playableGraph.Evaluate();
             }
         }
