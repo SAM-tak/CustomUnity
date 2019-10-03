@@ -96,15 +96,20 @@ namespace CustomUnity
                 cellPool[i].cell = go;
             }
             ScrollRect.onValueChanged.AddListener(_ => UpdateContent());
+            frameCount = 0;
         }
+
+        // workaround for 2019.1 upper
+        int frameCount = 0;
 
         protected virtual void Update()
         {
             OnPreUpdate?.Invoke();
-            if(needsUpdateContent) {
+            if(needsUpdateContent || frameCount < 2) {
                 UpdateContent();
                 needsUpdateContent = false;
             }
+            if(frameCount < int.MaxValue) frameCount++;
         }
 
         protected abstract void UpdateContent();
