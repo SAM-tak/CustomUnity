@@ -352,5 +352,35 @@ namespace CustomUnity
         {
             UnityEngine.Debug.LogWarningFormat(context, format, args);
         }
+
+        //
+        // 概要:
+        //     ///
+        //     Logs a trace message to the Unity Console.
+        //     ///
+        //
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void Trace()
+        {
+            var callerFrame = new StackFrame(1, true);
+            UnityEngine.Debug.LogFormat("Pass {2} (at {0}:{1})", callerFrame.GetFileName(), callerFrame.GetFileLineNumber(), callerFrame.GetMethod().Name);
+        }
+
+        //
+        // 概要:
+        //     ///
+        //     Logs a trace message to the Unity Console.
+        //     ///
+        //
+        // パラメーター:
+        //   context:
+        //     Object to which the message applies.
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void Trace(Object context)
+        {
+            var callerFrame = new StackFrame(1, true);
+            var callerMethod = callerFrame.GetMethod();
+            UnityEngine.Debug.LogFormat(context, "Pass {2}.{3} (at {0}:{1})", callerFrame.GetFileName(), callerFrame.GetFileLineNumber(), callerMethod.DeclaringType.Name, callerMethod.Name);
+        }
     }
 }

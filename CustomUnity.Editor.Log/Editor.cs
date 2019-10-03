@@ -63,5 +63,13 @@ namespace CustomUnity
         {
             UnityEngine.Debug.LogException(exception, this);
         }
+
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        protected void LogTrace()
+        {
+            var callerFrame = new StackFrame(1, true);
+            var callerMethod = callerFrame.GetMethod();
+            UnityEngine.Debug.LogFormat(this, "Pass {2}.{3} (at {0}:{1})", callerFrame.GetFileName(), callerFrame.GetFileLineNumber(), callerMethod.DeclaringType.Name, callerMethod.Name);
+        }
     }
 }

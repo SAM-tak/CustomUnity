@@ -21,7 +21,7 @@ namespace CustomUnity
         {
             UnityEngine.Debug.LogFormat(this, format, args);
         }
-
+        
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogWarning(object message)
         {
@@ -62,6 +62,14 @@ namespace CustomUnity
         protected void LogException(System.Exception exception)
         {
             UnityEngine.Debug.LogException(exception, this);
+        }
+
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        protected void LogTrace()
+        {
+            var callerFrame = new StackFrame(1, true);
+            var callerMethod = callerFrame.GetMethod();
+            UnityEngine.Debug.LogFormat(this, "Pass {2}.{3} (at {0}:{1})", callerFrame.GetFileName(), callerFrame.GetFileLineNumber(), callerMethod.DeclaringType.Name, callerMethod.Name);
         }
     }
 }
