@@ -99,7 +99,7 @@ namespace CustomUnity
             frameCount = 0;
         }
 
-        // workaround for 2019.1 upper
+        // workaround for 2019.1 higher
         int frameCount = 0;
 
         protected virtual void Update()

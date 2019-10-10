@@ -755,9 +755,7 @@ namespace CustomUnity
                 return "StandaloneWindows";
             case BuildTarget.StandaloneOSX:
                 return "StandaloneOSX";
-            case BuildTarget.StandaloneLinux:
             case BuildTarget.StandaloneLinux64:
-            case BuildTarget.StandaloneLinuxUniversal:
                 return "StandaloneLinux";
             // Add more build targets for your own.
             // If you add more targets, don't forget to add the same platforms to GetPlatformForAssetBundles(RuntimePlatform) function.
