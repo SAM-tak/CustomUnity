@@ -25,7 +25,6 @@ namespace CustomUnity
         void OnEnable()
         {
             if(Application.isPlaying) return;
-            // Destroys all Playables and Outputs created by the graph.
             if(clips == null || clips.Length == 0) clips = GetComponent<Animator>().runtimeAnimatorController.animationClips;
         }
         
