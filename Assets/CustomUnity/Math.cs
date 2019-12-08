@@ -211,6 +211,11 @@ namespace CustomUnity
             return new Vector4(self.x, self.y, zw.x, zw.y);
         }
 
+        public static Vector2 ToVector2(this Vector3 self)
+        {
+            return new Vector2(self.x, self.y);
+        }
+
         public static Vector3 ToVector3(this Vector2 self, float z)
         {
             return ((Vector3)self).SetZ(z);
@@ -318,7 +323,37 @@ namespace CustomUnity
         {
             return new Vector4(Mathf.Clamp01(a.x), Mathf.Clamp01(a.y), Mathf.Clamp01(a.z), Mathf.Clamp01(a.w));
         }
-        
+
+        /// <summary>
+        /// Return a vactor has absolete element values of original.
+        /// </summary>
+        /// <param name="a">Origin</param>
+        /// <returns>Absolete Vector</returns>
+        public static Vector2 Abs(Vector2 a)
+        {
+            return new Vector2(Mathf.Abs(a.x), Mathf.Abs(a.y));
+        }
+
+        /// <summary>
+        /// Return a vactor has absolete element values of original.
+        /// </summary>
+        /// <param name="a">Origin</param>
+        /// <returns>Absolete Vector</returns>
+        public static Vector3 Abs(Vector3 a)
+        {
+            return new Vector3(Mathf.Abs(a.x), Mathf.Abs(a.y), Mathf.Abs(a.z));
+        }
+
+        /// <summary>
+        /// Return a vactor has absolete element values of original.
+        /// </summary>
+        /// <param name="a">Origin</param>
+        /// <returns>Absolete Vector</returns>
+        public static Vector4 Abs(Vector4 a)
+        {
+            return new Vector4(Mathf.Abs(a.x), Mathf.Abs(a.y), Mathf.Abs(a.z), Mathf.Abs(a.w));
+        }
+
         //
         // Starting from dx/dt = wxt.
         // We treat dx and dt as infinitessimal factors of x and t, therefore fundemental mathematical operations still apply.
@@ -626,6 +661,141 @@ namespace CustomUnity
             else currentVelocity = Vector3.zero;
 
             return newPosition;
+        }
+
+        public static bool IntersectsLineSegment(Vector2 p1s, Vector2 p1e, Vector2 p2s, Vector2 p2e, out Vector2 intersection)
+        {
+            var d1 = p1e - p1s;
+            if(d1.sqrMagnitude > float.Epsilon) { // first line segment is not dot
+                var d2 = p2e - p2s;
+                if(d2.sqrMagnitude > float.Epsilon) { // second line segment is not dot
+                    var d = d1.x * d2.y - d1.y * d2.x; // cross product of 2d vector
+                    if(Mathf.Abs(d) > float.Epsilon) { // not parallele
+                        var v = p2s - p1s;
+                        var s = (v.x * d1.y - v.y * d1.x) / d;
+                        if(0 <= s && s <= 1) { // cross point is in second line segment
+                            var t = (v.x * d2.y - v.y * d2.x) / d;
+                            if(0 <= t && t <= 1) { // cross point is in first line segment
+                                intersection = p1s + d1 * t;
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            intersection.x = intersection.y = float.NaN;
+            return false;
+        }
+
+        static bool ContainsInOBB(this Vector2 self, Vector2 center, Vector2 size, Vector2 right, Vector2 up)
+        {
+            var v = self - center;
+            if(Mathf.Abs(Vector2.Dot(v, right)) >= size.x) return false;
+            if(Mathf.Abs(Vector2.Dot(v, up)) >= size.y) return false;
+            return true;
+        }
+
+        static void UpdateMin(this Vector2 self, ref Vector2 min)
+        {
+            if(min.x > self.x) min.x = self.x;
+            if(min.y > self.y) min.y = self.y;
+        }
+
+        static void UpdateMax(this Vector2 self, ref Vector2 max)
+        {
+            if(max.x < self.x) max.x = self.x;
+            if(max.y < self.y) max.y = self.y;
+        }
+
+        static void UpdateMinMax(this Vector2 self, ref Vector2 min, ref Vector2 max)
+        {
+            self.UpdateMin(ref min);
+            self.UpdateMax(ref max);
+        }
+
+        public static bool OverlapsOBB(this BoxCollider2D a, BoxCollider2D b, out Vector2 min, out Vector2 max)
+        {
+            min = Vector2.positiveInfinity;
+            max = Vector2.negativeInfinity;
+
+            var ap = a.transform.TransformPoint(a.offset).ToVector2();
+            var adx = a.transform.TransformDirection(Vector2.right).ToVector2();
+            var ady = a.transform.TransformDirection(Vector2.up).ToVector2();
+            var bp = b.transform.TransformPoint(b.offset).ToVector2();
+            var bdx = b.transform.TransformDirection(Vector2.right).ToVector2();
+            var bdy = b.transform.TransformDirection(Vector2.up).ToVector2();
+            var al = a.size * 0.5f;
+            var aex = adx * al.x;
+            var aey = ady * al.y;
+            var bl = b.size * 0.5f;
+            var bex = bdx * bl.x;
+            var bey = bdy * bl.y;
+
+            if(Mathf.Abs(Vector2.Dot(bp - ap, adx)) >= al.x + Mathf.Abs(Vector2.Dot(bex, adx)) + Mathf.Abs(Vector2.Dot(bey, adx))) return false;
+            if(Mathf.Abs(Vector2.Dot(bp - ap, ady)) >= al.y + Mathf.Abs(Vector2.Dot(bex, ady)) + Mathf.Abs(Vector2.Dot(bey, ady))) return false;
+            if(Mathf.Abs(Vector2.Dot(ap - bp, bdx)) >= Mathf.Abs(Vector2.Dot(aex, bdx)) + Mathf.Abs(Vector2.Dot(aey, bdx)) + bl.x) return false;
+            if(Mathf.Abs(Vector2.Dot(ap - bp, bdy)) >= Mathf.Abs(Vector2.Dot(aex, bdy)) + Mathf.Abs(Vector2.Dot(aey, bdy)) + bl.y) return false;
+
+            var ap1 = ap - aex + aey;
+            var ap2 = ap + aex + aey;
+            var ap3 = ap + aex - aey;
+            var ap4 = ap - aex - aey;
+            var bp1 = bp - bex + bey;
+            var bp2 = bp + bex + bey;
+            var bp3 = bp + bex - bey;
+            var bp4 = bp - bex - bey;
+
+            if(IntersectsLineSegment(ap1, ap2, bp1, bp2, out Vector2 intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap1, ap2, bp2, bp3, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap1, ap2, bp3, bp4, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap1, ap2, bp4, bp1, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap2, ap3, bp1, bp2, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap2, ap3, bp2, bp3, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap2, ap3, bp3, bp4, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap2, ap3, bp4, bp1, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap3, ap4, bp1, bp2, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap3, ap4, bp2, bp3, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap3, ap4, bp3, bp4, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap3, ap4, bp4, bp1, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap4, ap1, bp1, bp2, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap4, ap1, bp2, bp3, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap4, ap1, bp3, bp4, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+            if(IntersectsLineSegment(ap4, ap1, bp4, bp1, out intersection)) intersection.UpdateMinMax(ref min, ref max);
+
+            if(ap1.ContainsInOBB(bp, bl, bdx, bdy)) ap1.UpdateMinMax(ref min, ref max);
+            if(ap2.ContainsInOBB(bp, bl, bdx, bdy)) ap2.UpdateMinMax(ref min, ref max);
+            if(ap3.ContainsInOBB(bp, bl, bdx, bdy)) ap3.UpdateMinMax(ref min, ref max);
+            if(ap4.ContainsInOBB(bp, bl, bdx, bdy)) ap4.UpdateMinMax(ref min, ref max);
+            if(bp1.ContainsInOBB(ap, al, adx, ady)) bp1.UpdateMinMax(ref min, ref max);
+            if(bp2.ContainsInOBB(ap, al, adx, ady)) bp2.UpdateMinMax(ref min, ref max);
+            if(bp3.ContainsInOBB(ap, al, adx, ady)) bp3.UpdateMinMax(ref min, ref max);
+            if(bp4.ContainsInOBB(ap, al, adx, ady)) bp4.UpdateMinMax(ref min, ref max);
+
+            return true;
+        }
+
+        public static bool OverlapsOBB(this BoxCollider2D a, BoxCollider2D b)
+        {
+            var ap = a.transform.TransformPoint(a.offset).ToVector2();
+            var adx = a.transform.TransformDirection(Vector2.right).ToVector2();
+            var ady = a.transform.TransformDirection(Vector2.up).ToVector2();
+            var bp = b.transform.TransformPoint(b.offset).ToVector2();
+            var bdx = b.transform.TransformDirection(Vector2.right).ToVector2();
+            var bdy = b.transform.TransformDirection(Vector2.up).ToVector2();
+            var al = a.size * 0.5f;
+            var aex = adx * al.x;
+            var aey = ady * al.y;
+            var bl = b.size * 0.5f;
+            var bex = bdx * bl.x;
+            var bey = bdy * bl.y;
+
+            if(Mathf.Abs(Vector2.Dot(bp - ap, adx)) >= al.x + Mathf.Abs(Vector2.Dot(bex, adx)) + Mathf.Abs(Vector2.Dot(bey, adx))) return false;
+            if(Mathf.Abs(Vector2.Dot(bp - ap, ady)) >= al.y + Mathf.Abs(Vector2.Dot(bex, ady)) + Mathf.Abs(Vector2.Dot(bey, ady))) return false;
+            if(Mathf.Abs(Vector2.Dot(ap - bp, bdx)) >= Mathf.Abs(Vector2.Dot(aex, bdx)) + Mathf.Abs(Vector2.Dot(aey, bdx)) + bl.x) return false;
+            if(Mathf.Abs(Vector2.Dot(ap - bp, bdy)) >= Mathf.Abs(Vector2.Dot(aex, bdy)) + Mathf.Abs(Vector2.Dot(aey, bdy)) + bl.y) return false;
+
+            return true;
         }
     }
 }
