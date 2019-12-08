@@ -9,24 +9,34 @@ namespace CustomUnity
         public GameObjectPool[] pools;
         public readonly Dictionary<string, GameObjectPool> index = new Dictionary<string, GameObjectPool>();
 
-        public void SetUp(System.Action<GameObject> setUpProcPerObject = null)
+        public void SetUp(Transform parent, System.Action<GameObject> setUpProcPerObject = null)
         {
             index.Clear();
             foreach(var i in pools) {
-                i.SetUp();
+                i.SetUp(parent);
                 if(setUpProcPerObject != null) i.ForEachObjects(setUpProcPerObject);
                 index.Add(i.Name, i);
             }
         }
 
-        public void SetUp(System.Action<GameObjectPool, GameObject> setUpProcPerObject)
+        public void SetUp(Transform parent, System.Action<GameObjectPool, GameObject> setUpProcPerObject)
         {
             index.Clear();
             foreach(var i in pools) {
-                i.SetUp();
+                i.SetUp(parent);
                 i.ForEachObjects(x => setUpProcPerObject(i, x));
                 index.Add(i.Name, i);
             }
+        }
+
+        public void SetUp(System.Action<GameObject> setUpProcPerObject = null)
+        {
+            SetUp(null, setUpProcPerObject);
+        }
+
+        public void SetUp(System.Action<GameObjectPool, GameObject> setUpProcPerObject)
+        {
+            SetUp(null, setUpProcPerObject);
         }
 
         public void InactivateAll()

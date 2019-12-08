@@ -34,7 +34,7 @@ namespace CustomUnity
         public string Name { get { return prefab ? prefab.name : null; } }
         public int ActiveCount { get { return objs.Count(i => i.go.activeInHierarchy); } }
 
-        public void SetUp()
+        public void SetUp(Transform parent = null)
         {
             if(prefab) {
                 objs = new Entry[quantity];
@@ -43,6 +43,7 @@ namespace CustomUnity
                         go = UnityEngine.Object.Instantiate(prefab),
                         time = 0
                     };
+                    objs[i].go.transform.parent = parent;
                     objs[i].go.SetActive(false);
                 }
             }
@@ -56,12 +57,12 @@ namespace CustomUnity
             }
         }
 
-        public void ForEachActiveObjects(System.Action<GameObject> action)
+        public void ForEachActiveObjects(Action<GameObject> action)
         {
             foreach(var i in objs) if(i.go.activeInHierarchy) action(i.go);
         }
 
-        public void ForEachObjects(System.Action<GameObject> action)
+        public void ForEachObjects(Action<GameObject> action)
         {
             foreach(var i in objs) action(i.go);
         }
