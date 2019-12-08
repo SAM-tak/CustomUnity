@@ -280,9 +280,12 @@ namespace CustomUnity
 
         static UnityEventBase GetDummyEvent(SerializedProperty prop)
         {
-            var type = Type.GetType(prop.FindPropertyRelative("m_TypeName").stringValue, false);
-            if(type == null) return new UnityEvent();
-            return Activator.CreateInstance(type) as UnityEventBase;
+            var p = prop?.FindPropertyRelative("m_TypeName");
+            if(p != null) {
+                var type = Type.GetType(p.stringValue, false);
+                if(type != null) return Activator.CreateInstance(type) as UnityEventBase;
+            }
+            return new UnityEvent();
         }
 
         static IEnumerable<ValidMethodMap> CalculateMethodMap(UnityEngine.Object target, Type[] t, bool allowSubclasses)

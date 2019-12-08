@@ -35,9 +35,6 @@ namespace CustomUnity
             return ext != ".fbx" && ext != ".dae" && ext != ".3ds" && ext != ".dxf" && ext != ".obj" && ext != ".skp" && ext != ".blender";
         }
 
-        static readonly GUIContent removeIcon = new GUIContent(EditorGUIUtility.IconContent("Toolbar Minus").image, "Remove clip");
-        static readonly GUIContent extractIcon = new GUIContent(EditorGUIUtility.IconContent("BuildSettings.Standalone.Small").image, "Extract clip");
-
         void OnGUI()
         {
             EditorGUILayout.LabelField("Animator Controller");
@@ -98,6 +95,10 @@ namespace CustomUnity
             if(clipList.Count > 0) {
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Enclosed Clips");
+
+
+                var removeIcon = new GUIContent(EditorGUIUtility.IconContent("Toolbar Minus").image, "Remove clip");
+                var extractIcon = new GUIContent(EditorGUIUtility.IconContent("BuildSettings.Standalone.Small").image, "Extract clip");
 
                 scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
                 foreach(var enclosedClip in clipList) {
