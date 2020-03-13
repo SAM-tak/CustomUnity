@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,9 +11,20 @@ namespace CustomUnity
         public EventSystem eventSystem;
         public AnimatorUpdateMode updateMode;
         public float halfLife = 0.3f;
+        public Mergin selectedBoxMergin;
+
+        [Serializable]
+        public struct Mergin
+        {
+            public float left;
+            public float top;
+            public float right;
+            public float bottom;
+        }
 
         ScrollRect scrollRect;
-        
+        GameObject lastSelected;
+
         void Awake()
         {
             scrollRect = GetComponent<ScrollRect>();
@@ -20,11 +32,24 @@ namespace CustomUnity
 
         void Scroll()
         {
-            if(scrollRect.velocity.magnitude < 0.001f && eventSystem.currentSelectedGameObject && eventSystem.currentSelectedGameObject.transform.IsChildOf(scrollRect.content.transform)) {
-                var selected = eventSystem.currentSelectedGameObject.GetComponent<RectTransform>();
+            var selectedGO = lastSelected;
+            if(eventSystem.currentSelectedGameObject
+                && eventSystem.currentSelectedGameObject.transform.IsChildOf(scrollRect.content.transform)
+                && eventSystem.currentSelectedGameObject.GetComponentInParent<ScrollRect>() == scrollRect) {
+                lastSelected = selectedGO = eventSystem.currentSelectedGameObject;
+            }
+            if(scrollRect.velocity.magnitude < 0.001f && selectedGO) {
+                var selected = selectedGO.GetComponent<RectTransform>();
 
                 var viewportRect = new Rect(scrollRect.viewport.TransformPoint(scrollRect.viewport.rect.position), scrollRect.viewport.TransformVector(scrollRect.viewport.rect.size));
                 var selectedRect = new Rect(selected.TransformPoint(selected.rect.position), selected.TransformVector(selected.rect.size));
+
+                var lb = selected.TransformVector(selectedBoxMergin.left, selectedBoxMergin.bottom, 0);
+                selectedRect.xMin -= lb.x;
+                selectedRect.yMin -= lb.y;
+                var rt = selected.TransformVector(selectedBoxMergin.right, selectedBoxMergin.top, 0);
+                selectedRect.xMax += rt.x;
+                selectedRect.yMax += rt.y;
 
                 var diff = Vector3.zero;
                 if(viewportRect.x > selectedRect.x) diff.x += viewportRect.x - selectedRect.x;
