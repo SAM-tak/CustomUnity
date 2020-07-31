@@ -36,6 +36,7 @@ namespace CustomUnity
             else animator.gameObject.SetActive(false);
         }
 
+        // use coroutine for avoid depend to external library (via. UniTask)
         internal class DelayedInactivationHandler : MonoBehaviour { }
         static readonly WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
         IEnumerator InactiveOnEndOfFrame(Animator animator)
