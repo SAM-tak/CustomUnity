@@ -23,7 +23,10 @@ namespace CustomUnity
         }
 
         ScrollRect scrollRect;
+        // フォーカスが外れてもしばらくスクロールの対象にするため
         GameObject lastSelected;
+        // フォーカスされているオブジェクトがいつまでもスクロールの対象にならないようにする時間の計測用
+        float lastSelectedInterval;
 
         void Awake()
         {
@@ -33,11 +36,16 @@ namespace CustomUnity
         void Scroll()
         {
             var selectedGO = lastSelected;
+
             if(eventSystem.currentSelectedGameObject
                 && eventSystem.currentSelectedGameObject.transform.IsChildOf(scrollRect.content.transform)
                 && eventSystem.currentSelectedGameObject.GetComponentInParent<ScrollRect>() == scrollRect) {
                 lastSelected = selectedGO = eventSystem.currentSelectedGameObject;
+                lastSelectedInterval = 0;
             }
+            else if(lastSelectedInterval < halfLife * 2) lastSelectedInterval += Time.unscaledDeltaTime;
+            else lastSelected = null;
+
             if(scrollRect.velocity.magnitude < 0.001f && selectedGO) {
                 var selected = selectedGO.GetComponent<RectTransform>();
 
