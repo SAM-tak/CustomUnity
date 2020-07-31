@@ -248,6 +248,17 @@ namespace CustomUnity
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns>Hadamard product</returns>
+        public static Vector2 Times(Vector2 a, Vector2 b)
+        {
+            return new Vector2(a.x * b.x, a.y * b.y);
+        }
+
+        /// <summary>
+        /// Make Hadamard product
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns>Hadamard product</returns>
         public static Vector3 Times(Vector3 a, Vector3 b)
         {
             return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
@@ -388,7 +399,7 @@ namespace CustomUnity
         {
             float delta = target - current;
             if(Mathf.Abs(delta) > float.Epsilon) {
-                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife);
+                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife * halfLife);
                 float a = 0.5f * omega * deltaTime * deltaTime;
                 float a2 = a * a;
                 return current + delta * Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a));
@@ -408,7 +419,7 @@ namespace CustomUnity
         {
             Vector2 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife);
+                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife * halfLife);
                 float a = 0.5f * omega * deltaTime * deltaTime;
                 float a2 = a * a;
                 return current + delta * Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a));
@@ -428,7 +439,7 @@ namespace CustomUnity
         {
             Vector3 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife);
+                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife * halfLife);
                 float a = 0.5f * omega * deltaTime * deltaTime;
                 float a2 = a * a;
                 return current + delta * Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a));
@@ -448,7 +459,7 @@ namespace CustomUnity
         {
             Vector4 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife);
+                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife * halfLife);
                 float a = 0.5f * omega * deltaTime * deltaTime;
                 float a2 = a * a;
                 return current + delta * Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a));
@@ -468,7 +479,7 @@ namespace CustomUnity
         {
             Quaternion delta = target * Quaternion.Inverse(current);
             if(Quaternion.Angle(delta, Quaternion.identity) > float.Epsilon) {
-                float omega = 1.0f / Mathf.Max(halfLife, float.Epsilon);
+                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife * halfLife);
                 float a = 0.5f * omega * deltaTime * deltaTime;
                 float a2 = a * a;
                 return current * Quaternion.Slerp(Quaternion.identity, delta, Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a)));
@@ -488,7 +499,7 @@ namespace CustomUnity
         {
             Vector2 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                Vector2 omega = Reciprocal(Vector4.Max(EpsilonVector2, halfLife));
+                Vector2 omega = Reciprocal(Vector4.Max(EpsilonVector2, Times(halfLife, halfLife)));
                 Vector2 a = 0.5f * omega * deltaTime * deltaTime;
                 Vector2 a2 = a * a;
                 return current + delta * Clamp01(omega * deltaTime * (Vector2.one + a + 0.48f * a2 + 0.235f * a2 * a));
@@ -508,7 +519,7 @@ namespace CustomUnity
         {
             Vector3 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                Vector3 omega = Reciprocal(Vector4.Max(EpsilonVector3, halfLife));
+                Vector3 omega = Reciprocal(Vector4.Max(EpsilonVector3, Times(halfLife, halfLife)));
                 Vector3 a = 0.5f * omega * deltaTime * deltaTime;
                 Vector3 a2 = Times(a, a);
                 Vector3 k = Vector3.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
@@ -529,7 +540,7 @@ namespace CustomUnity
         {
             Vector4 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
-                Vector4 omega = Reciprocal(Vector4.Max(EpsilonVector4, halfLife));
+                Vector4 omega = Reciprocal(Vector4.Max(EpsilonVector4, Times(halfLife, halfLife)));
                 Vector4 a = 0.5f * omega * deltaTime * deltaTime;
                 Vector4 a2 = Times(a, a);
                 Vector4 k = Vector4.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
