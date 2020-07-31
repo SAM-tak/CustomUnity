@@ -57,7 +57,7 @@ namespace CustomUnity
                 }
             }
             else {
-                LogError("Object {0} emit signal without define signal.", key.name);
+                LogError($"Object {key.name} emit signal without define signal.");
             }
         }
 
