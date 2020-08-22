@@ -10,12 +10,15 @@ using UnityEditorInternal;
 
 namespace CustomUnity
 {
+    // Broken and not fixed yet...
+    // Use EasyEventEditor(https://github.com/Merlin-san/EasyEventEditor) instead.
+#if false
     [CustomPropertyDrawer(typeof(UnityEvent), true)]
     public class UnityEventDrawer : PropertyDrawer
     {
-        Dictionary<string, State> m_States = new Dictionary<string, State>();
+        readonly Dictionary<string, State> m_States = new Dictionary<string, State>();
         // Find internal methods with reflection
-        static readonly MethodInfo findMethod = typeof(UnityEventBase).GetMethod("FindMethod", BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(object), typeof(PersistentListenerMode), typeof(Type) }, null);
+        static readonly MethodInfo findMethod = typeof(UnityEventBase).GetMethod("FindMethod_Impl", BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.Standard, new Type[] { typeof(string), typeof(object) }, null);
         static readonly MethodInfo temp = typeof(GUIContent).GetMethod("Temp", BindingFlags.NonPublic | BindingFlags.Static, null, CallingConventions.Standard, new Type[] { typeof(string) }, null);
         static readonly PropertyInfo mixedValueContent = typeof(EditorGUI).GetProperty("mixedValueContent", BindingFlags.NonPublic | BindingFlags.Static);
         Styles m_Styles;
@@ -28,7 +31,7 @@ namespace CustomUnity
 
         static string GetEventParams(UnityEventBase evt)
         {
-            var method = (MethodInfo)findMethod.Invoke(evt, new object[] { "Invoke", evt, PersistentListenerMode.EventDefined, null });
+            var method = (MethodInfo)findMethod.Invoke(evt, new object[] { "Invoke", evt });
             var stringBuilder = new StringBuilder();
             stringBuilder.Append(" (");
             var array = ((IEnumerable<ParameterInfo>)method.GetParameters()).Select(x => x.ParameterType).ToArray();
@@ -158,8 +161,10 @@ namespace CustomUnity
                 break;
             }
             string stringValue = propertyRelative3.FindPropertyRelative("m_ObjectArgumentAssemblyTypeName").stringValue;
-            var type = typeof(UnityEngine.Object);
-            if(!string.IsNullOrEmpty(stringValue)) type = Type.GetType(stringValue, false) ?? typeof(UnityEngine.Object);
+            Type type = typeof(void);
+            if(persistentListenerMode != PersistentListenerMode.Void && !string.IsNullOrEmpty(stringValue)) {
+                type = Type.GetType(stringValue, false) ?? typeof(UnityEngine.Object);
+            }
             if(persistentListenerMode == PersistentListenerMode.Object) {
                 EditorGUI.BeginChangeCheck();
                 var @object = EditorGUI.ObjectField(position3, GUIContent.none, propertyRelative6.objectReferenceValue, type, true);
@@ -168,7 +173,7 @@ namespace CustomUnity
             }
             else if(persistentListenerMode != PersistentListenerMode.Void && persistentListenerMode != PersistentListenerMode.EventDefined) {
                 // Try to find Find the EnumActionAttribute
-                var method = GetMethod(m_DummyEvent, propertyRelative5.stringValue, propertyRelative4.objectReferenceValue, GetMode(propertyRelative2), type);
+                var method = GetMethod(propertyRelative5.stringValue, propertyRelative4.objectReferenceValue, type);
                 object[] attributes = method?.GetCustomAttributes(typeof(EnumActionAttribute), true);
                 if(attributes != null && attributes.Length > 0) {
                     // Make an enum popup
@@ -188,7 +193,7 @@ namespace CustomUnity
                 if(propertyRelative4.objectReferenceValue == null || string.IsNullOrEmpty(propertyRelative5.stringValue)) {
                     stringBuilder.Append("No Function");
                 }
-                else if(!IsPersistantListenerValid(m_DummyEvent, propertyRelative5.stringValue, propertyRelative4.objectReferenceValue, GetMode(propertyRelative2), type)) {
+                else if(!IsPersistantListenerValid(propertyRelative5.stringValue, propertyRelative4.objectReferenceValue, type)) {
                     var str = "UnknownComponent";
                     UnityEngine.Object objectReferenceValue = propertyRelative4.objectReferenceValue;
                     if(objectReferenceValue != null)
@@ -323,15 +328,15 @@ namespace CustomUnity
             return validMethodMapList;
         }
 
-        public static bool IsPersistantListenerValid(UnityEventBase dummyEvent, string methodName, UnityEngine.Object @object, PersistentListenerMode modeEnum, Type argumentType)
+        public static bool IsPersistantListenerValid(string methodName, UnityEngine.Object @object, Type argumentType)
         {
             if(@object == null || string.IsNullOrEmpty(methodName)) return false;
-            return GetMethod(dummyEvent, methodName, @object, modeEnum, argumentType) != null;
+            return GetMethod(methodName, @object, argumentType) != null;
         }
 
-        static MethodInfo GetMethod(UnityEventBase dummyEvent, string methodName, UnityEngine.Object @object, PersistentListenerMode modeEnum, Type argumentType)
+        static MethodInfo GetMethod(string methodName, UnityEngine.Object @object, Type argumentType)
         {
-            return (MethodInfo)findMethod.Invoke(dummyEvent, new object[] { methodName, @object, modeEnum, argumentType });
+            return UnityEventBase.GetValidMethodInfo(@object, methodName, argumentType == typeof(void) ? new Type[0] : new Type[] { argumentType });
         }
 
         static GenericMenu BuildPopupList(UnityEngine.Object target, UnityEventBase dummyEvent, SerializedProperty listener)
@@ -572,4 +577,5 @@ namespace CustomUnity
             }
         }
     }
+#endif
 }
