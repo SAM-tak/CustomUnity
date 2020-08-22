@@ -33,6 +33,9 @@ namespace CustomUnity
             scrollRect = GetComponent<ScrollRect>();
         }
 
+        float deltaTime => updateMode == AnimatorUpdateMode.UnscaledTime
+            ? (Time.inFixedTimeStep ? Time.fixedUnscaledDeltaTime : Time.unscaledDeltaTime) : (Time.inFixedTimeStep ? Time.fixedDeltaTime : Time.deltaTime);
+
         void Scroll()
         {
             var selectedGO = lastSelected;
@@ -43,19 +46,25 @@ namespace CustomUnity
                 lastSelected = selectedGO = eventSystem.currentSelectedGameObject;
                 lastSelectedInterval = 0;
             }
-            else if(lastSelectedInterval < halfLife * 2) lastSelectedInterval += Time.unscaledDeltaTime;
+            else if(lastSelectedInterval < halfLife * 2) lastSelectedInterval += deltaTime;
             else lastSelected = null;
 
             if(scrollRect.velocity.magnitude < 0.001f && selectedGO) {
                 var selected = selectedGO.GetComponent<RectTransform>();
 
-                var viewportRect = new Rect(scrollRect.viewport.TransformPoint(scrollRect.viewport.rect.position), scrollRect.viewport.TransformVector(scrollRect.viewport.rect.size));
-                var selectedRect = new Rect(selected.TransformPoint(selected.rect.position), selected.TransformVector(selected.rect.size));
+                var viewportRect = new Rect(
+                    scrollRect.content.InverseTransformPoint(scrollRect.viewport.TransformPoint(scrollRect.viewport.rect.position)),
+                    scrollRect.content.InverseTransformVector(scrollRect.viewport.TransformVector(scrollRect.viewport.rect.size))
+                );
+                var selectedRect = new Rect(
+                    scrollRect.content.InverseTransformPoint(selected.TransformPoint(selected.rect.position)),
+                    scrollRect.content.InverseTransformVector(selected.TransformVector(selected.rect.size))
+                );
 
-                var lb = selected.TransformVector(selectedBoxMergin.left, selectedBoxMergin.bottom, 0);
+                var lb = scrollRect.content.InverseTransformVector(selected.TransformVector(selectedBoxMergin.left, selectedBoxMergin.bottom, 0));
                 selectedRect.xMin -= lb.x;
                 selectedRect.yMin -= lb.y;
-                var rt = selected.TransformVector(selectedBoxMergin.right, selectedBoxMergin.top, 0);
+                var rt = scrollRect.content.InverseTransformVector(selected.TransformVector(selectedBoxMergin.right, selectedBoxMergin.top, 0));
                 selectedRect.xMax += rt.x;
                 selectedRect.yMax += rt.y;
 
@@ -68,9 +77,9 @@ namespace CustomUnity
                 if(diff.magnitude > 0.001f) {
                     scrollRect.content.localPosition = Math.RubberStep(
                         scrollRect.content.localPosition,
-                        scrollRect.content.localPosition + scrollRect.content.InverseTransformVector(diff),
+                        scrollRect.content.localPosition + diff,
                         halfLife,
-                        (updateMode == AnimatorUpdateMode.UnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime)
+                        deltaTime
                     );
                 }
             }
