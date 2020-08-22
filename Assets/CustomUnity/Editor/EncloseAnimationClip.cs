@@ -18,14 +18,14 @@ namespace CustomUnity
         const int priority = 51;
 
         [MenuItem(menuString, priority = priority)]
-        static void Open()
+        static public void Open()
         {
             var window = GetWindow<EncloseAnimationClip>(true, "Enclose AnimationClip", true);
             window.target = Selection.activeObject;
         }
 
         [MenuItem(menuString, priority = priority, validate = true)]
-        static bool Validate()
+        static public bool Validate()
         {
             if(Selection.activeObject == null) return false;
             var assetPath = AssetDatabase.GetAssetPath(Selection.activeObject);

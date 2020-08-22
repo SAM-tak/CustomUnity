@@ -14,7 +14,7 @@ namespace CustomUnity
     {
         const string AssetBundlesOutputPath = "AssetBundles";
 
-        const string kLocalAssetbundleServerMenu = "Assets/AssetBundles/Local AssetBundle Server";
+        const string LocalAssetbundleServerMenuString = "Assets/AssetBundles/Local AssetBundle Server";
 
         [SerializeField]
         int serverPID = 0;
@@ -22,19 +22,19 @@ namespace CustomUnity
         [SerializeField]
         string assetBundlesDirectory = Path.Combine(Environment.CurrentDirectory, AssetBundlesOutputPath);
 
-        [MenuItem(kLocalAssetbundleServerMenu)]
-        static void ToggleLocalAssetBundleServer()
+        [MenuItem(LocalAssetbundleServerMenuString)]
+        static public void ToggleLocalAssetBundleServer()
         {
             if(IsRunning()) KillRunningAssetBundleServer();
             else Run();
         }
 
-        [MenuItem(kLocalAssetbundleServerMenu, true)]
-        static bool ToggleLocalAssetBundleServerValidate()
+        [MenuItem(LocalAssetbundleServerMenuString, true)]
+        static public bool ToggleLocalAssetBundleServerValidate()
         {
             var isRunning = IsRunning();
             if(!isRunning) EditorPrefs.SetString(AssetBundleLoader.kLocalAssetBundleServerURL, null);
-            Menu.SetChecked(kLocalAssetbundleServerMenu, isRunning);
+            Menu.SetChecked(LocalAssetbundleServerMenuString, isRunning);
             return true;
         }
         
