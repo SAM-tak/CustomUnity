@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace CustomUnity
 {
     [RequireComponent(typeof(ScrollRect))]
-    public class ScrollToSelected : MonoBehaviour
+    public class ScrollToSelected : UIBehaviour, IScrollHandler
     {
         public EventSystem eventSystem;
         public AnimatorUpdateMode updateMode;
@@ -28,12 +28,13 @@ namespace CustomUnity
         // フォーカスされているオブジェクトがいつまでもスクロールの対象にならないようにする時間の計測用
         float lastSelectedInterval;
 
-        void Awake()
+        new void Awake()
         {
+            base.Awake();
             scrollRect = GetComponent<ScrollRect>();
         }
 
-        float deltaTime => updateMode == AnimatorUpdateMode.UnscaledTime
+        float DeltaTime => updateMode == AnimatorUpdateMode.UnscaledTime
             ? (Time.inFixedTimeStep ? Time.fixedUnscaledDeltaTime : Time.unscaledDeltaTime) : (Time.inFixedTimeStep ? Time.fixedDeltaTime : Time.deltaTime);
 
         void Scroll()
@@ -46,7 +47,7 @@ namespace CustomUnity
                 lastSelected = selectedGO = eventSystem.currentSelectedGameObject;
                 lastSelectedInterval = 0;
             }
-            else if(lastSelectedInterval < halfLife * 2) lastSelectedInterval += deltaTime;
+            else if(lastSelectedInterval < halfLife * 2) lastSelectedInterval += DeltaTime;
             else lastSelected = null;
 
             if(scrollRect.velocity.magnitude < 0.001f && selectedGO) {
@@ -79,7 +80,7 @@ namespace CustomUnity
                         scrollRect.content.localPosition,
                         scrollRect.content.localPosition + diff,
                         halfLife,
-                        deltaTime
+                        DeltaTime
                     );
                 }
             }
@@ -93,6 +94,12 @@ namespace CustomUnity
         void Update()
         {
             if(updateMode != AnimatorUpdateMode.AnimatePhysics) Scroll();
+        }
+
+        public void OnScroll(PointerEventData eventData)
+        {
+            eventSystem.SetSelectedGameObject(null);
+            lastSelected = null;
         }
     }
 }

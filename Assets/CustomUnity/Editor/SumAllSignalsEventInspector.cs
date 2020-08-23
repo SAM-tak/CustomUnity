@@ -1,4 +1,4 @@
-using System.Linq;
+//using System.Linq;
 using UnityEditor;
 
 namespace CustomUnity
@@ -9,15 +9,15 @@ namespace CustomUnity
     {
         //SerializedProperty[] properties;
 
-        void OnEnable()
-        {
-            // TODO: find properties we want to work with
-            //serializedObject.FindProperty();
-            //properties = ((SumAllSignalsEvent)target).signals.Keys.Select(x => {
-            //    var prop = new SerializedProperty();
-            //    prop
-            //}).ToArray()
-        }
+        // TODO: find properties we want to work with
+        //void OnEnable()
+        //{
+        //    serializedObject.FindProperty();
+        //    properties = ((SumAllSignalsEvent)target).signals.Keys.Select(x => {
+        //        var prop = new SerializedProperty();
+        //        prop
+        //    }).ToArray()
+        //}
 
         public override void OnInspectorGUI()
         {
