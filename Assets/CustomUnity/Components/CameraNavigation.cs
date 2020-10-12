@@ -34,6 +34,9 @@ namespace CustomUnity
 
         Vector3 moveVector;
 
+        bool enableTargetPosition;
+        Vector3 targetPosition;
+
         void Start()
         {
             camera = GetComponent<Camera>();
@@ -43,6 +46,7 @@ namespace CustomUnity
         {
             float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
             if(Mathf.Abs(scrollWheel) > 0.0f) {
+                enableTargetPosition = false;
                 transform.position += transform.forward * scrollWheel * wheelSpeed;
             }
 
@@ -54,17 +58,22 @@ namespace CustomUnity
             Vector3 diff = Input.mousePosition - prevMousePos;
             if(Input.GetMouseButtonDown(2) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))) {
                 if(Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out var hit)) {
-                    transform.LookAt(hit.point);
-                    centerDist = Vector3.Distance(transform.position, hit.point);
+                    enableTargetPosition = true;
+                    moveVector = Vector3.zero;
+                    targetPosition = hit.point - (transform.TransformDirection(Vector3.forward) * centerDist);
                 }
             }
             else if(Input.GetMouseButton(2)) {
-                transform.position += GetDragAmount();
+                if(diff.magnitude > Vector3.kEpsilon) {
+                    enableTargetPosition = false;
+                    transform.position += GetDragAmount();
+                }
                 Cursor.SetCursor(handCursor, new Vector2(16, 16), CursorMode.Auto);
             }
             else if(Input.GetMouseButton(1)) {
                 if(Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) {
                     if(diff.magnitude > Vector3.kEpsilon) {
+                        enableTargetPosition = false;
                         var amount = (Mathf.Abs(diff.x) > Mathf.Abs(diff.y) ? diff.x : diff.y) * dollySpeed * Time.unscaledDeltaTime;
                         transform.position += transform.forward * amount;
                         centerDist -= amount;
@@ -98,6 +107,7 @@ namespace CustomUnity
                 }
             }
             else if(Input.GetMouseButton(0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))) {
+                enableTargetPosition = false;
                 var center = transform.TransformPoint(Vector3.forward * centerDist);
                 transform.position += GetDragAmount();
                 transform.LookAt(center);
@@ -109,9 +119,19 @@ namespace CustomUnity
             }
 
             if(moveVector.sqrMagnitude > Vector3.kEpsilon) {
+                enableTargetPosition = false;
                 transform.position += moveVector * Time.unscaledDeltaTime;
                 if(brake) {
                     moveVector = Math.RubberStep(moveVector, Vector3.zero, 0.15f, Time.unscaledDeltaTime);
+                }
+            }
+
+            if(enableTargetPosition) {
+                if(Vector3.Distance(transform.position, targetPosition) > Vector3.kEpsilon) {
+                    transform.position = Math.RubberStep(transform.position, targetPosition, 0.25f, Time.unscaledDeltaTime);
+                }
+                else {
+                    enableTargetPosition = false;
                 }
             }
 
