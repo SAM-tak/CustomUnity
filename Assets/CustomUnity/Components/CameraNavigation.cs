@@ -111,7 +111,7 @@ namespace CustomUnity
                 var center = transform.TransformPoint(Vector3.forward * centerDist);
                 transform.position += GetDragAmount();
                 transform.LookAt(center);
-                transform.position -= transform.TransformDirection(Vector3.forward) * (Vector3.Distance(transform.position, center) - centerDist);
+                transform.position += transform.TransformDirection(Vector3.forward) * (Vector3.Distance(transform.position, center) - centerDist);
                 Cursor.SetCursor(orbitCursor, new Vector2(16, 16), CursorMode.Auto);
             }
             else {
