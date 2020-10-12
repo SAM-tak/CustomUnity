@@ -60,8 +60,7 @@ namespace CustomUnity
             }
             else if(Input.GetMouseButton(2)) {
                 transform.position += GetDragAmount();
-
-                Cursor.SetCursor(handCursor, handCursor.texelSize * 0.5f, CursorMode.ForceSoftware);
+                Cursor.SetCursor(handCursor, new Vector2(16, 16), CursorMode.Auto);
             }
             else if(Input.GetMouseButton(1)) {
                 if(Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) {
@@ -71,7 +70,7 @@ namespace CustomUnity
                         centerDist -= amount;
                         if(centerDist < 0.1f) centerDist = 0.1f;
                     }
-                    Cursor.SetCursor(loupeCursor, loupeCursor.texelSize * 0.5f, CursorMode.ForceSoftware);
+                    Cursor.SetCursor(loupeCursor, new Vector2(16, 16), CursorMode.Auto);
                 }
                 else {
                     if(diff.magnitude > Vector3.kEpsilon) {
@@ -95,7 +94,7 @@ namespace CustomUnity
                     moveVector = transform.TransformDirection(v) * (moveVector.magnitude + moveAcc * Time.unscaledDeltaTime);
                     if(moveVector.magnitude > maxMoveSpeed) moveVector = moveVector.normalized * maxMoveSpeed;
 
-                    Cursor.SetCursor(flyModeCursor, flyModeCursor.texelSize * 0.4f, CursorMode.ForceSoftware);
+                    Cursor.SetCursor(flyModeCursor, new Vector2(14, 12), CursorMode.Auto);
                 }
             }
             else if(Input.GetMouseButton(0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))) {
@@ -103,7 +102,7 @@ namespace CustomUnity
                 transform.position += GetDragAmount();
                 transform.LookAt(center);
                 transform.position -= transform.TransformDirection(Vector3.forward) * (Vector3.Distance(transform.position, center) - centerDist);
-                Cursor.SetCursor(orbitCursor, orbitCursor.texelSize * 0.5f, CursorMode.ForceSoftware);
+                Cursor.SetCursor(orbitCursor, new Vector2(16, 16), CursorMode.Auto);
             }
             else {
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
