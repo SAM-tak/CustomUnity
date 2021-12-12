@@ -1,5 +1,4 @@
 using UnityEngine;
-using CustomUnity;
 
 namespace CustomUnity
 {
@@ -26,7 +25,7 @@ namespace CustomUnity
         public Texture2D handCursor;
         public Texture2D loupeCursor;
 
-        new Camera camera;
+        Camera targetCamera;
 
         Vector3 prevMousePos;
 
@@ -39,7 +38,7 @@ namespace CustomUnity
 
         void Start()
         {
-            camera = GetComponent<Camera>();
+            targetCamera = GetComponent<Camera>();
         }
 
         void Update()
@@ -57,7 +56,7 @@ namespace CustomUnity
             bool brake = true;
             Vector3 diff = Input.mousePosition - prevMousePos;
             if(Input.GetMouseButtonDown(2) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))) {
-                if(Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out var hit)) {
+                if(Physics.Raycast(targetCamera.ScreenPointToRay(Input.mousePosition), out var hit)) {
                     enableTargetPosition = true;
                     moveVector = Vector3.zero;
                     targetPosition = hit.point - (transform.TransformDirection(Vector3.forward) * centerDist);
@@ -142,9 +141,9 @@ namespace CustomUnity
 
         public Vector3 GetDragAmount()
         {
-            var z = camera.WorldToScreenPoint(transform.TransformPoint(Vector3.forward * centerDist)).z;
-            var prev = camera.ScreenToWorldPoint(new Vector3(prevMousePos.x, prevMousePos.y, z));
-            var now = camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, z));
+            var z = targetCamera.WorldToScreenPoint(transform.TransformPoint(Vector3.forward * centerDist)).z;
+            var prev = targetCamera.ScreenToWorldPoint(new Vector3(prevMousePos.x, prevMousePos.y, z));
+            var now = targetCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, z));
             return prev - now;
         }
 

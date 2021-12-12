@@ -114,7 +114,8 @@ namespace CustomUnity
         // maroon	#800000ff	
         public static string Maroon(this string str)
         {
-            return "<color=maroon>" + str + "</color>";
+            //return "<color=maroon>" + str + "</color>";
+            return "<color=#800000ff>" + str + "</color>"; // MeshTextProがmaroonに対応してない
         }
 
         // navy	#000080ff	

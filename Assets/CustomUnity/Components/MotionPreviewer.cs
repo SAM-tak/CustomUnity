@@ -48,6 +48,7 @@ namespace CustomUnity
 
         void OnAnimatorMove()
         {
+            GetComponent<Animator>().applyRootMotion = false;
         }
 
         void PlaySE(string _)

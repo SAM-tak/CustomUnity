@@ -28,6 +28,8 @@ namespace CustomUnity
             EditorGUILayout.PropertyField(script);
             EditorGUI.EndDisabledGroup();
 
+            AssetBundleLoader.Paused = EditorGUILayout.Toggle("Pause", AssetBundleLoader.Paused);
+
             if(AssetBundleLoader.SimulatesAssetBundleInEditor) return;
 
             EditorGUILayout.LabelField("BaseDownloadingURL : " + AssetBundleLoader.BaseDownloadingURL);

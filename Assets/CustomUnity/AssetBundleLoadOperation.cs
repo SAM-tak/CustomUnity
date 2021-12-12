@@ -139,7 +139,7 @@ namespace CustomUnity
             this.path = path;
         }
 
-        protected override bool DownloadIsDone => send ? (request?.isDone ?? true) : false;
+        protected override bool DownloadIsDone => send && (request?.isDone ?? true);
 
         bool send;
 
@@ -172,12 +172,11 @@ namespace CustomUnity
 
         public AssetBundleDownloadFromWebOperation(string assetBundleName, bool isImplicit, UnityWebRequest webRequest) : base(assetBundleName, isImplicit)
         {
-            if(webRequest == null) throw new System.ArgumentNullException("webRequest");
-            this.webRequest = webRequest;
+            this.webRequest = webRequest ?? throw new System.ArgumentNullException("webRequest");
             url = webRequest.url;
         }
 
-        protected override bool DownloadIsDone => send ? (webRequest?.isDone ?? true) : false;
+        protected override bool DownloadIsDone => send && (webRequest?.isDone ?? true);
 
         bool send;
 
@@ -205,12 +204,14 @@ namespace CustomUnity
         public override string GetSourceURL() => url;
 
         public override float Progress() => IsDone() ? 1.0f : Mathf.Max(0, webRequest?.downloadProgress ?? 0.0f);
+
+        public bool IsCached { get => Caching.IsVersionCached(url, AssetBundleLoader.Manifest.GetAssetBundleHash(AssetBundleName)); }
     }
 
 #if UNITY_EDITOR
     public class AssetBundleLoadSceneSimulationOperation : AssetBundleLoadOperation
     {
-        AsyncOperation operation = null;
+        readonly AsyncOperation operation = null;
 
         public AssetBundleLoadSceneSimulationOperation(string levelPath, LoadSceneMode loadSceneMode)
         {

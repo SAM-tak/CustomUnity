@@ -48,7 +48,7 @@ namespace CustomUnity
 
         internal void Unload()
         {
-            AssetBundle?.Unload(false);
+            if(AssetBundle) AssetBundle.Unload(false);
             AssetBundle = null;
             OnUnload?.Invoke();
             OnUnload = null;
@@ -150,6 +150,12 @@ namespace CustomUnity
         /// and check suitable assetBundle variants.
         /// </summary>
         public static AssetBundleManifest Manifest { get; internal set; }
+
+        /// <summary>
+        /// Paused operation.
+        /// </summary>
+        /// to use if you want to push loading operation only to know total downloading size.
+        public static bool Paused { get; set; }
 
         const int MaxParallelDownloadCount = 4;
 
@@ -557,13 +563,15 @@ namespace CustomUnity
                 EditorUtility.SetDirty(this);
             }
 #endif
-            // Update all in progress operations
-            for(int i = 0; i < InProgressOperations.Count && i < MaxParallelDownloadCount;) {
-                var operation = InProgressOperations[i];
-                if(operation.Update()) i++;
-                else {
-                    inProgressOperations.RemoveAt(i);
-                    ProcessFinishedOperation(operation);
+            if(!Paused) {
+                // Update all in progress operations
+                for(int i = 0; i < InProgressOperations.Count && i < MaxParallelDownloadCount;) {
+                    var operation = InProgressOperations[i];
+                    if(operation.Update()) i++;
+                    else {
+                        inProgressOperations.RemoveAt(i);
+                        ProcessFinishedOperation(operation);
+                    }
                 }
             }
         }
