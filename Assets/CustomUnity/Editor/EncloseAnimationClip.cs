@@ -134,7 +134,6 @@ namespace CustomUnity
     [CustomEditor(typeof(AnimatorOverrideController))]
     public class EncloseAnimationClip2 : EncloseAnimationClip
     {
-
         protected override void ReplaceReference(AnimationClip from, AnimationClip to)
         {
             var animatorOverrideController = target as AnimatorOverrideController;
