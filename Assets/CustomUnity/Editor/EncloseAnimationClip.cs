@@ -120,13 +120,27 @@ namespace CustomUnity
             }
         }
 
-        void ReplaceReference(AnimationClip from, AnimationClip to)
+        protected virtual void ReplaceReference(AnimationClip from, AnimationClip to)
         {
             var animatorController = target as AnimatorController;
             foreach(var i in animatorController.layers) {
                 foreach(var j in i.stateMachine.states) {
                     if(j.state.motion == from) j.state.motion = to;
                 }
+            }
+        }
+    }
+
+    [CustomEditor(typeof(AnimatorOverrideController))]
+    public class EncloseAnimationClip2 : EncloseAnimationClip
+    {
+
+        protected override void ReplaceReference(AnimationClip from, AnimationClip to)
+        {
+            var animatorOverrideController = target as AnimatorOverrideController;
+            var clips = animatorOverrideController.animationClips;
+            for(int i = 0; i < clips.Length; ++i) {
+                if(clips[i] == from) clips[i] = to;
             }
         }
     }
