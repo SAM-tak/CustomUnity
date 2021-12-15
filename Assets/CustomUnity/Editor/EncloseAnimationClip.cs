@@ -1,4 +1,5 @@
 using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
@@ -6,17 +7,14 @@ using UnityEditor.Animations;
 
 namespace CustomUnity
 {
-    [CustomEditor(typeof(AnimatorController))]
-    public class EncloseAnimationClip : Editor
+    public class EncloseAnimationClip
     {
         string newClipName;
 
         Vector2 scrollPosition = new Vector2(0, 0);
 
-        public override void OnInspectorGUI()
+        public void DrawGUI(Object target, System.Action<AnimationClip, AnimationClip> replaceReference)
         {
-            base.OnInspectorGUI();
-
             var clips = AssetDatabase.LoadAllAssetRepresentationsAtPath(AssetDatabase.GetAssetPath(target)).Where(x => x is AnimationClip).Select(x => x as AnimationClip).ToArray();
 
             bool dirty = false;
@@ -39,10 +37,10 @@ namespace CustomUnity
                             EditorUtility.DisplayDialog("Error", "can't add an AnimationClip has duplicate or empty name", "OK");
                         }
                         else {
-                            var cloned = Instantiate(animationClip);
+                            var cloned = Object.Instantiate(animationClip);
                             cloned.name = animationClip.name;
                             AssetDatabase.AddObjectToAsset(cloned, target);
-                            ReplaceReference(animationClip, cloned);
+                            replaceReference(animationClip, cloned);
                             AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(animationClip));
                             dirty = true;
                         }
@@ -91,11 +89,11 @@ namespace CustomUnity
                     }
 
                     if(GUILayout.Button(removeIcon, GUILayout.Width(20))) {
-                        DestroyImmediate(enclosedClip, true);
+                        Object.DestroyImmediate(enclosedClip, true);
                         dirty = true;
                     }
                     if(GUILayout.Button(extractIcon, GUILayout.Width(20))) {
-                        var cloned = Instantiate(enclosedClip);
+                        var cloned = Object.Instantiate(enclosedClip);
                         cloned.name = enclosedClip.name;
                         var destinationPath = Path.Combine(Path.GetDirectoryName(AssetDatabase.GetAssetPath(target)), cloned.name + ".anim");
                         if(File.Exists(destinationPath)) {
@@ -104,8 +102,8 @@ namespace CustomUnity
                         else {
                             Debug.Log("extract to " + destinationPath);
                             AssetDatabase.CreateAsset(cloned, destinationPath);
-                            ReplaceReference(enclosedClip, cloned);
-                            DestroyImmediate(enclosedClip, true);
+                            replaceReference(enclosedClip, cloned);
+                            Object.DestroyImmediate(enclosedClip, true);
                             dirty = true;
                         }
                     }
@@ -120,27 +118,76 @@ namespace CustomUnity
             }
         }
 
-        protected virtual void ReplaceReference(AnimationClip from, AnimationClip to)
+        public static void ReplaceReference(AnimatorController animatorController, AnimationClip from, AnimationClip to)
         {
-            var animatorController = target as AnimatorController;
-            foreach(var i in animatorController.layers) {
-                foreach(var j in i.stateMachine.states) {
-                    if(j.state.motion == from) j.state.motion = to;
+            if (animatorController != null) {
+                foreach(var i in animatorController.layers) {
+                    foreach(var j in i.stateMachine.states) {
+                        if(j.state.motion == from) j.state.motion = to;
+                    }
                 }
+            }
+        }
+
+        public static void ReplaceReference(AnimatorOverrideController animatorOverrideController, AnimationClip from, AnimationClip to)
+        {
+            if (animatorOverrideController != null) {
+                var overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+                animatorOverrideController.GetOverrides(overrides);
+                for(int i = 0; i < animatorOverrideController.overridesCount; ++i) {
+                    var tmp = overrides[i];
+                    if (tmp.Key == from) tmp = new KeyValuePair<AnimationClip, AnimationClip>(to, tmp.Value);
+                    if (tmp.Value == from) tmp = new KeyValuePair<AnimationClip, AnimationClip>(tmp.Key, to);
+                    overrides[i] = tmp;
+                }
+                animatorOverrideController.ApplyOverrides(overrides);
             }
         }
     }
 
-    [CustomEditor(typeof(AnimatorOverrideController))]
-    public class EncloseAnimationClip2 : EncloseAnimationClip
+    public class EncloseAnimationClipWindow : EditorWindow
     {
-        protected override void ReplaceReference(AnimationClip from, AnimationClip to)
+        Object target;
+        const string menuString = "Assets/Enclose AnimationClip";
+        const int priority = 51;
+        readonly EncloseAnimationClip encloseAnimationClip = new EncloseAnimationClip();
+
+        [MenuItem(menuString, priority = priority)]
+        static public void Open()
         {
-            var animatorOverrideController = target as AnimatorOverrideController;
-            var clips = animatorOverrideController.animationClips;
-            for(int i = 0; i < clips.Length; ++i) {
-                if(clips[i] == from) clips[i] = to;
-            }
+            var window = GetWindow<EncloseAnimationClipWindow>(true, "Enclose AnimationClip", true);
+            window.target = Selection.activeObject;
+        }
+
+        [MenuItem(menuString, priority = priority, validate = true)]
+        static public bool Validate()
+        {
+            if(Selection.activeObject == null) return false;
+            var assetPath = AssetDatabase.GetAssetPath(Selection.activeObject);
+            if(string.IsNullOrEmpty(assetPath)) return false;
+            if(Path.GetFileNameWithoutExtension(assetPath) != Selection.activeObject.name) return false;
+            var ext = Path.GetExtension(assetPath);
+            return ext != ".fbx" && ext != ".dae" && ext != ".3ds" && ext != ".dxf" && ext != ".obj" && ext != ".skp" && ext != ".blender";
+        }
+
+        void OnGUI()
+        {
+            encloseAnimationClip.DrawGUI(target, (from, to) => {
+                EncloseAnimationClip.ReplaceReference(target as AnimatorController, from, to);
+                EncloseAnimationClip.ReplaceReference(target as AnimatorOverrideController, from, to);
+            });
+        }
+    }
+
+    [CustomEditor(typeof(AnimatorController))]
+    public class AnimatorControllerCustomInspector : Editor
+    {
+        readonly EncloseAnimationClip encloseAnimationClip = new EncloseAnimationClip();
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            encloseAnimationClip.DrawGUI(target, (from, to) => EncloseAnimationClip.ReplaceReference(target as AnimatorController, from, to));
         }
     }
 }
