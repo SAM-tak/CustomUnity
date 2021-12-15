@@ -21,160 +21,160 @@ namespace CustomUnity
         #region String Extention
         public static string Color(this string str, Color color)
         {
-            return "<color=#" + ColorUtility.ToHtmlStringRGBA(color) + ">" + str + "</color>";
+            return $"<color=#{ColorUtility.ToHtmlStringRGBA(color)}>{str}</color>";
         }
 
         public static string Color(this string str, Color32 color)
         {
-            return "<color=#" + ColorUtility.ToHtmlStringRGBA(color) + ">" + str + "</color>";
+            return $"<color=#{ColorUtility.ToHtmlStringRGBA(color)}>{str}</color>";
         }
 
         public static string Color(this string str, uint color)
         {
-            return "<color=#" + color.ToString("X8") + ">" + str + "</color>";
+            return $"<color=#{color.ToString("X8")}>{str}</color>";
         }
 
         public static string Color(this string str, string color)
         {
-            return "<color=" + color + ">" + str + "</color>";
+            return $"<color={color}>{str}</color>";
         }
 
         // aqua (same as cyan)	#00ffffff
         public static string Aqua(this string str)
         {
-            return "<color=aqua>" + str + "</color>";
+            return $"<color=aqua>{str}</color>";
         }
 
         // black	#000000ff
         public static string Black(this string str)
         {
-            return "<color=black>" + str + "</color>";
+            return $"<color=black>{str}</color>";
         }
 
         // blue	#0000ffff
         public static string Blue(this string str)
         {
-            return "<color=blue>" + str + "</color>";
+            return $"<color=blue>{str}</color>";
         }
 
         // brown	#a52a2aff
         public static string Brown(this string str)
         {
-            return "<color=brown>" + str + "</color>";
+            return $"<color=brown>{str}</color>";
         }
 
         // cyan (same as aqua)	#00ffffff
         public static string Cyan(this string str)
         {
-            return "<color=cyan>" + str + "</color>";
+            return $"<color=cyan>{str}</color>";
         }
 
         // darkblue	#0000a0ff
         public static string DarkBlue(this string str)
         {
-            return "<color=darkblue>" + str + "</color>";
+            return $"<color=darkblue>{str}</color>";
         }
 
         // fuchsia (same as magenta)	#ff00ffff
         public static string Fuchsia(this string str)
         {
-            return "<color=fuchsia>" + str + "</color>";
+            return $"<color=fuchsia>{str}</color>";
         }
 
         // green	#008000ff
         public static string Green(this string str)
         {
-            return "<color=green>" + str + "</color>";
+            return $"<color=green>{str}</color>";
         }
 
         // grey	#808080ff
         public static string Grey(this string str)
         {
-            return "<color=grey>" + str + "</color>";
+            return $"<color=grey>{str}</color>";
         }
 
         // lightblue	#add8e6ff
         public static string LightBlue(this string str)
         {
-            return "<color=lightblue>" + str + "</color>";
+            return $"<color=lightblue>{str}</color>";
         }
 
         // lime	#00ff00ff
         public static string Lime(this string str)
         {
-            return "<color=lime>" + str + "</color>";
+            return $"<color=lime>{str}</color>";
         }
 
         // magenta (same as fuchsia)	#ff00ffff	
         public static string Magenta(this string str)
         {
-            return "<color=magenta>" + str + "</color>";
+            return $"<color=magenta>{str}</color>";
         }
 
         // maroon	#800000ff	
         public static string Maroon(this string str)
         {
             //return "<color=maroon>" + str + "</color>";
-            return "<color=#800000ff>" + str + "</color>"; // MeshTextProがmaroonに対応してない
+            return $"<color=#800000ff>{str}</color>"; // MeshTextProがmaroonに対応してない
         }
 
         // navy	#000080ff	
         public static string Navy(this string str)
         {
-            return "<color=navy>" + str + "</color>";
+            return $"<color=navy>{str}</color>";
         }
 
         // olive	#808000ff
         public static string Olive(this string str)
         {
-            return "<color=olive>" + str + "</color>";
+            return $"<color=olive>{str}</color>";
         }
 
         // orange	#ffa500ff
         public static string Orange(this string str)
         {
-            return "<color=orange>" + str + "</color>";
+            return $"<color=orange>{str}</color>";
         }
 
         // purple	#800080ff
         public static string Purple(this string str)
         {
-            return "<color=purple>" + str + "</color>";
+            return $"<color=purple>{str}</color>";
         }
 
         // red	#ff0000ff
         public static string Red(this string str)
         {
-            return "<color=red>" + str + "</color>";
+            return $"<color=red>{str}</color>";
         }
 
         // silver	#c0c0c0ff
         public static string Silver(this string str)
         {
-            return "<color=silver>" + str + "</color>";
+            return $"<color=silver>{str}</color>";
         }
 
         // teal	#008080ff
         public static string Teal(this string str)
         {
-            return "<color=teal>" + str + "</color>";
+            return $"<color=teal>{str}</color>";
         }
 
         // white	#ffffffff
         public static string White(this string str)
         {
-            return "<color=white>" + str + "</color>";
+            return $"<color=white>{str}</color>";
         }
 
         // yellow	#ffff00ff
         public static string Yellow(this string str)
         {
-            return "<color=yellow>" + str + "</color>";
+            return $"<color=yellow>{str}</color>";
         }
 
         public static string Size(this string str, int size)
         {
-            return "<size=" + size + ">" + str + "</size>";
+            return $"<size={size}>{str}</size>";
         }
 
         public static string Small(this string str)
@@ -189,29 +189,27 @@ namespace CustomUnity
 
         public static string Bold(this string str)
         {
-            return "<b>" + str + "</b>";
+            return $"<b>{str}</b>";
         }
 
         public static string Italic(this string str)
         {
-            return "<i>" + str + "</i>";
+            return $"<i>{str}</i>";
         }
 
         public static string Material(this string str, int index)
         {
-            return "<material=" + index + ">" + str + "</material>";
+            return $"<material={index}>{str}</material>";
         }
 
         public static string Quad(int material, int size, float x, float y, float width, float height)
         {
-            return "<quad material=" + material + " size=" + size + " x=" + x + " y=" + y + " width=" + width + " height=" + height + "/>";
-            //return string.Format("<quad material={0} size={1} x={2} y={3} width={4} height={5}>{6}</quad>", material, size, x, y, width, height, str);
+            return $"<quad material={material} size={size} x={x} y={y} width={width} height={height}/>";
         }
 
         public static string Quad(int material, int size, Rect rect)
         {
-            return "<quad material=" + material + " size=" + size + " x=" + rect.x + " y=" + rect.y + " width=" + rect.width + " height=" + rect.height + "/>";
-            //return string.Format("<quad material={0} size={1} x={2} y={3} width={4} height={5}>{6}</quad>", material, fontsize, rect.x, rect.y, rect.width, rect.height, str);
+            return $"<quad material={material} size={size} x={rect.x} y={rect.y} width={rect.width} height={rect.height}/>";
         }
 
         #endregion
@@ -219,7 +217,7 @@ namespace CustomUnity
         #region StringBuilder Extention
 
         static readonly Lazy<StringBuilder> sb = new Lazy<StringBuilder>();
-        public static StringBuilder Sb { get { return sb.Value; } }
+        public static StringBuilder Sb { get => sb.Value; }
 
         public static StringBuilder Clear(this StringBuilder sb)
         {
