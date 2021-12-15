@@ -5,13 +5,13 @@ using UnityEngine;
 namespace CustomUnity
 {
     /// <summary>
-    /// Rich text.
+    /// Unity's Rich text.
     /// </summary>
     /// <code>
     /// Example :
-    /// Debug.Log(RichText.Sb.Bold(sb => sb.Red("blahblah")).Ln().Small(sb => sb.Grey("foobar").Space().Color(0x443322FF, "hogehoge")), gameObject);
-    /// or
     /// Debug.Log("blahblah".Red().Bold() + "\n" + ("foobar".Grey() + " " + "hogehoge".Color(0x443322FF)).Small(), gameObject);
+    /// or
+    /// Debug.Log(RichText.Sb.Bold(sb => sb.Red("blahblah")).Ln().Small(sb => sb.Grey("foobar").Space().Color(0x443322FF, "hogehoge")), gameObject);
     /// both generate a same string like below :
     /// \<b\>\<color=red\>blahblah\</color\>\</b\>
     /// \<size=9\>\<color=grey\>foobar\</color\> \<color=#443322FF\>hogehoge\</color\>\</size\>
@@ -245,9 +245,9 @@ namespace CustomUnity
             return sb.Append(", ");
         }
 
-        public static StringBuilder Action(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Insert(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            action(sb);
+            insert(sb);
             return sb;
         }
 
@@ -256,9 +256,9 @@ namespace CustomUnity
             return sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGBA(color)).Append(">").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Color(this StringBuilder sb, Color color, Action<StringBuilder> action)
+        public static StringBuilder Color(this StringBuilder sb, Color color, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGBA(color)).Append(">").Action(action).Append("</color>");
+            return sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGBA(color)).Append(">").Insert(insert).Append("</color>");
         }
 
         public static StringBuilder Color(this StringBuilder sb, Color32 color, object message)
@@ -266,9 +266,9 @@ namespace CustomUnity
             return sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGBA(color)).Append(">").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Color(this StringBuilder sb, Color32 color, Action<StringBuilder> action)
+        public static StringBuilder Color(this StringBuilder sb, Color32 color, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGBA(color)).Append(">").Action(action).Append("</color>");
+            return sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGBA(color)).Append(">").Insert(insert).Append("</color>");
         }
 
         public static StringBuilder Color(this StringBuilder sb, uint color, object message)
@@ -276,9 +276,9 @@ namespace CustomUnity
             return sb.Append("<color=#").Append(color.ToString("X8")).Append(">").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Color(this StringBuilder sb, uint color, Action<StringBuilder> action)
+        public static StringBuilder Color(this StringBuilder sb, uint color, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=#").Append(color.ToString("X8")).Append(">").Action(action).Append("</color>");
+            return sb.Append("<color=#").Append(color.ToString("X8")).Append(">").Insert(insert).Append("</color>");
         }
 
         public static StringBuilder Color(this StringBuilder sb, string color, object message)
@@ -286,9 +286,9 @@ namespace CustomUnity
             return sb.Append("<color=").Append(color).Append(">").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Color(this StringBuilder sb, string color, Action<StringBuilder> action)
+        public static StringBuilder Color(this StringBuilder sb, string color, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=").Append(color).Append(">").Action(action).Append("</color>");
+            return sb.Append("<color=").Append(color).Append(">").Insert(insert).Append("</color>");
         }
 
         // aqua (same as cyan)	#00ffffff
@@ -297,9 +297,9 @@ namespace CustomUnity
             return sb.Append("<color=aqua>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Aqua(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Aqua(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=aqua>").Action(action).Append("</color>");
+            return sb.Append("<color=aqua>").Insert(insert).Append("</color>");
         }
 
         // black	#000000ff
@@ -308,9 +308,9 @@ namespace CustomUnity
             return sb.Append("<color=black>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Black(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Black(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=black>").Action(action).Append("</color>");
+            return sb.Append("<color=black>").Insert(insert).Append("</color>");
         }
 
         // blue	#0000ffff
@@ -319,9 +319,9 @@ namespace CustomUnity
             return sb.Append("<color=blue>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Blue(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Blue(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=blue>").Action(action).Append("</color>");
+            return sb.Append("<color=blue>").Insert(insert).Append("</color>");
         }
 
         // brown	#a52a2aff
@@ -330,9 +330,9 @@ namespace CustomUnity
             return sb.Append("<color=brown>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Brown(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Brown(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=brown>").Action(action).Append("</color>");
+            return sb.Append("<color=brown>").Insert(insert).Append("</color>");
         }
 
         // cyan (same as aqua)	#00ffffff
@@ -341,9 +341,9 @@ namespace CustomUnity
             return sb.Append("<color=cyan>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Cyan(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Cyan(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=cyan>").Action(action).Append("</color>");
+            return sb.Append("<color=cyan>").Insert(insert).Append("</color>");
         }
 
         // darkblue	#0000a0ff
@@ -352,9 +352,9 @@ namespace CustomUnity
             return sb.Append("<color=darkblue>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder DarkBlue(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder DarkBlue(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=darkblue>").Action(action).Append("</color>");
+            return sb.Append("<color=darkblue>").Insert(insert).Append("</color>");
         }
 
         // fuchsia (same as magenta)	#ff00ffff
@@ -363,9 +363,9 @@ namespace CustomUnity
             return sb.Append("<color=fuchsia>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Fuchsia(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Fuchsia(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=fuchsia>").Action(action).Append("</color>");
+            return sb.Append("<color=fuchsia>").Insert(insert).Append("</color>");
         }
 
         // green	#008000ff
@@ -374,9 +374,9 @@ namespace CustomUnity
             return sb.Append("<color=green>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Green(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Green(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=green>").Action(action).Append("</color>");
+            return sb.Append("<color=green>").Insert(insert).Append("</color>");
         }
 
         // grey	#808080ff
@@ -385,9 +385,9 @@ namespace CustomUnity
             return sb.Append("<color=grey>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Grey(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Grey(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=grey>").Action(action).Append("</color>");
+            return sb.Append("<color=grey>").Insert(insert).Append("</color>");
         }
 
         // lightblue	#add8e6ff
@@ -396,9 +396,9 @@ namespace CustomUnity
             return sb.Append("<color=lightblue>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder LightBlue(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder LightBlue(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=lightblue>").Action(action).Append("</color>");
+            return sb.Append("<color=lightblue>").Insert(insert).Append("</color>");
         }
 
         // lime	#00ff00ff
@@ -407,9 +407,9 @@ namespace CustomUnity
             return sb.Append("<color=lime>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Lime(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Lime(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=lime>").Action(action).Append("</color>");
+            return sb.Append("<color=lime>").Insert(insert).Append("</color>");
         }
 
         // magenta (same as fuchsia)	#ff00ffff	
@@ -418,9 +418,9 @@ namespace CustomUnity
             return sb.Append("<color=magenta>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Magenta(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Magenta(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=magenta>").Action(action).Append("</color>");
+            return sb.Append("<color=magenta>").Insert(insert).Append("</color>");
         }
 
         // maroon	#800000ff	
@@ -429,9 +429,9 @@ namespace CustomUnity
             return sb.Append("<color=maroon>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Maroon(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Maroon(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=maroon>").Action(action).Append("</color>");
+            return sb.Append("<color=maroon>").Insert(insert).Append("</color>");
         }
 
         // navy	#000080ff	
@@ -440,9 +440,9 @@ namespace CustomUnity
             return sb.Append("<color=navy>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Navy(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Navy(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=navy>").Action(action).Append("</color>");
+            return sb.Append("<color=navy>").Insert(insert).Append("</color>");
         }
 
         // olive	#808000ff
@@ -451,9 +451,9 @@ namespace CustomUnity
             return sb.Append("<color=olive>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Olive(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Olive(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=olive>").Action(action).Append("</color>");
+            return sb.Append("<color=olive>").Insert(insert).Append("</color>");
         }
 
         // orange	#ffa500ff
@@ -462,9 +462,9 @@ namespace CustomUnity
             return sb.Append("<color=orange>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Orange(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Orange(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=orange>").Action(action).Append("</color>");
+            return sb.Append("<color=orange>").Insert(insert).Append("</color>");
         }
 
         // purple	#800080ff
@@ -473,9 +473,9 @@ namespace CustomUnity
             return sb.Append("<color=purple>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Purple(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Purple(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=purple>").Action(action).Append("</color>");
+            return sb.Append("<color=purple>").Insert(insert).Append("</color>");
         }
 
         // red	#ff0000ff
@@ -484,9 +484,9 @@ namespace CustomUnity
             return sb.Append("<color=red>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Red(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Red(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=red>").Action(action).Append("</color>");
+            return sb.Append("<color=red>").Insert(insert).Append("</color>");
         }
 
         // silver	#c0c0c0ff
@@ -495,9 +495,9 @@ namespace CustomUnity
             return sb.Append("<color=silver>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Silver(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Silver(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=silver>").Action(action).Append("</color>");
+            return sb.Append("<color=silver>").Insert(insert).Append("</color>");
         }
 
         // teal	#008080ff
@@ -506,9 +506,9 @@ namespace CustomUnity
             return sb.Append("<color=teal>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Teal(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Teal(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=teal>").Action(action).Append("</color>");
+            return sb.Append("<color=teal>").Insert(insert).Append("</color>");
         }
 
         // white	#ffffffff
@@ -517,9 +517,9 @@ namespace CustomUnity
             return sb.Append("<color=white>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder White(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder White(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=white>").Action(action).Append("</color>");
+            return sb.Append("<color=white>").Insert(insert).Append("</color>");
         }
 
         // yellow	#ffff00ff
@@ -528,9 +528,9 @@ namespace CustomUnity
             return sb.Append("<color=yellow>").Append(message).Append("</color>");
         }
 
-        public static StringBuilder Yellow(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Yellow(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<color=yellow>").Action(action).Append("</color>");
+            return sb.Append("<color=yellow>").Insert(insert).Append("</color>");
         }
 
         public static StringBuilder Size(this StringBuilder sb, int size, object message)
@@ -538,9 +538,9 @@ namespace CustomUnity
             return sb.Append("<size=").Append(size).Append(">").Append(message).Append("</size>");
         }
 
-        public static StringBuilder Size(this StringBuilder sb, int size, Action<StringBuilder> action)
+        public static StringBuilder Size(this StringBuilder sb, int size, Action<StringBuilder> insert)
         {
-            return sb.Append("<size=").Append(size).Append(">").Action(action).Append("</size>");
+            return sb.Append("<size=").Append(size).Append(">").Insert(insert).Append("</size>");
         }
 
         public static StringBuilder Small(this StringBuilder sb, object message)
@@ -548,9 +548,9 @@ namespace CustomUnity
             return sb.Size(9, message);
         }
 
-        public static StringBuilder Small(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Small(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Size(9, action);
+            return sb.Size(9, insert);
         }
 
         public static StringBuilder Big(this StringBuilder sb, object message)
@@ -558,9 +558,9 @@ namespace CustomUnity
             return sb.Size(16, message);
         }
 
-        public static StringBuilder Big(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Big(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Size(16, action);
+            return sb.Size(16, insert);
         }
 
         public static StringBuilder Bold(this StringBuilder sb, object message)
@@ -568,9 +568,9 @@ namespace CustomUnity
             return sb.Append("<b>").Append(message).Append("</b>");
         }
 
-        public static StringBuilder Bold(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Bold(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<b>").Action(action).Append("</b>");
+            return sb.Append("<b>").Insert(insert).Append("</b>");
         }
 
         public static StringBuilder Italic(this StringBuilder sb, object message)
@@ -578,9 +578,9 @@ namespace CustomUnity
             return sb.Append("<i>").Append(message).Append("</i>");
         }
 
-        public static StringBuilder Italic(this StringBuilder sb, Action<StringBuilder> action)
+        public static StringBuilder Italic(this StringBuilder sb, Action<StringBuilder> insert)
         {
-            return sb.Append("<i>").Action(action).Append("</i>");
+            return sb.Append("<i>").Insert(insert).Append("</i>");
         }
 
         public static StringBuilder Material(this StringBuilder sb, int index, object message)
@@ -588,9 +588,9 @@ namespace CustomUnity
             return sb.Append("<material=").Append(index).Append(">").Append(message).Append("</material>");
         }
 
-        public static StringBuilder Material(this StringBuilder sb, int index, Action<StringBuilder> action)
+        public static StringBuilder Material(this StringBuilder sb, int index, Action<StringBuilder> insert)
         {
-            return sb.Append("<material=").Append(index).Append(">").Action(action).Append("</material>");
+            return sb.Append("<material=").Append(index).Append(">").Insert(insert).Append("</material>");
         }
 
         public static StringBuilder Quad(this StringBuilder sb, int material, int size, float x, float y, float width, float height)
