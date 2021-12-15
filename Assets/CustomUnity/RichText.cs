@@ -31,7 +31,7 @@ namespace CustomUnity
 
         public static string Color(this string str, uint color)
         {
-            return $"<color=#{color.ToString("X8")}>{str}</color>";
+            return $"<color=#{color:X8}>{str}</color>";
         }
 
         public static string Color(this string str, string color)

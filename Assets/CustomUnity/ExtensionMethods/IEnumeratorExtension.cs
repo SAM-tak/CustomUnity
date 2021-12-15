@@ -11,7 +11,7 @@ namespace CustomUnity
         /// <returns></returns>
         public static bool MoveNextRecursively(this IEnumerator enumerator)
         {
-            return enumerator.Current is IEnumerator && MoveNextRecursively(enumerator.Current as IEnumerator) ? true : enumerator.MoveNext();
+            return enumerator.Current is IEnumerator && MoveNextRecursively(enumerator.Current as IEnumerator) || enumerator.MoveNext();
         }
     }
 }
