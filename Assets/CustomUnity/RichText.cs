@@ -9,7 +9,7 @@ namespace CustomUnity
     /// </summary>
     /// <code>
     /// Example :
-    /// Debug.Log(RichText.sb.Bold(sb => sb.Red("blahblah")).Ln().Small(sb => sb.Grey("foobar").Space().Color(0x443322FF, "hogehoge")), gameObject);
+    /// Debug.Log(RichText.Sb.Bold(sb => sb.Red("blahblah")).Ln().Small(sb => sb.Grey("foobar").Space().Color(0x443322FF, "hogehoge")), gameObject);
     /// or
     /// Debug.Log("blahblah".Red().Bold() + "\n" + ("foobar".Grey() + " " + "hogehoge".Color(0x443322FF)).Small(), gameObject);
     /// both generate a same string like below :
@@ -218,14 +218,8 @@ namespace CustomUnity
 
         #region StringBuilder Extention
 
-        static StringBuilder sb;
-        public static StringBuilder SB {
-            get {
-                if(sb == null) sb = new StringBuilder();
-                sb.Clear();
-                return sb;
-            }
-        }
+        static readonly Lazy<StringBuilder> sb = new Lazy<StringBuilder>();
+        public static StringBuilder Sb { get { return sb.Value; } }
 
         public static StringBuilder Clear(this StringBuilder sb)
         {
