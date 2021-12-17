@@ -262,6 +262,8 @@ __pycache__/
 
 # Unity Project
 Library/
+UserSettings/
+Logs/
 Temp/
 Assembly-CSharp.csproj
 Assembly-CSharp-Editor.csproj
