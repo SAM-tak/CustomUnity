@@ -11,7 +11,7 @@ namespace CustomUnity
     {
         string newClipName;
 
-        Vector2 scrollPosition = new Vector2(0, 0);
+        Vector2 scrollPosition = Vector2.zero;
 
         public void DrawGUI(Object target, System.Action<AnimationClip, AnimationClip> replaceReference)
         {

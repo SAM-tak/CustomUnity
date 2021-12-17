@@ -117,7 +117,6 @@ namespace CustomUnity
                 while(property.Next(true)) {
                     // プロパティの種類がオブジェクト（アセット）への参照で、
                     // その参照がnullなのにもかかわらず、参照先インスタンスIDが0でないものはMissing状態！
-                    if(property.name == "component" || property.name == "m_Script") Log.Info($"script? {asset} {property.objectReferenceValue} {property.propertyType}");
                     if(property.propertyType == SerializedPropertyType.ObjectReference
                        && (componentOnly ? property.name == "component" || property.name == "m_Script" : property.name != "component" && property.name != "m_Script")
                        && property.objectReferenceValue == null
