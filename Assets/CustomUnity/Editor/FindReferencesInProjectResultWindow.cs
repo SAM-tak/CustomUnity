@@ -1,3 +1,5 @@
+
+#if ____DONT_USE_____ // use https://github.com/ina-amagami/unity-reference-viewer instead 
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -8,7 +10,7 @@ namespace CustomUnity
 {
     public class FindReferencesInProjectResultWindow : FindAssetResultWindow
     {
-        static readonly string[] extensions = { ".scene", ".prefab", ".mat", ".controller", ".shader", ".mask", ".asset" };
+        static readonly string[] extensions = { ".prefab", ".mat", ".controller", ".overrideController", ".shader", ".mask", ".asset" };
 
         private const string MenuItemText = "Assets/Find References In Project";
 
@@ -58,6 +60,21 @@ namespace CustomUnity
             return false;
         }
 
+        static void ProcessProperty(SerializedProperty property, Object mainAsset, string path, string findee, List<Entry> referencerList)
+        {
+            if(property.propertyType == SerializedPropertyType.ObjectReference
+                && property.objectReferenceValue != null
+                && AssetDatabase.GetAssetPath(property.objectReferenceValue) == findee) {
+                referencerList.Add(new Entry {
+                    asset = mainAsset,
+                    path = path,
+                    propertyName = property.name,
+                    propertyPath = property.propertyPath,
+                    instanceID = property.objectReferenceInstanceIDValue
+                });
+            }
+        }
+
         /// <summary>
         /// 指定アセットに指定のアセットを参照しているプロパティがあれば、それをreferencerListに追加する
         /// </summary>
@@ -66,10 +83,10 @@ namespace CustomUnity
         static void FindReference(string path, string findee, List<Entry> referencerList)
         {
             // 指定パスのアセットを全て取得
-            var assets = AssetDatabase.LoadAllAssetsAtPath(path);
+            var mainAsset = AssetDatabase.LoadMainAssetAtPath(path);
 
             // 各アセットについて、指定のアセットを参照しているプロパティがあるかチェック
-            foreach(var asset in assets) {
+            foreach(var asset in AssetDatabase.LoadAllAssetsAtPath(path)) {
                 if(asset == null || asset.name == "Deprecated EditorExtensionImpl") continue;
 
                 // SerializedObjectを通してアセットのプロパティを取得する
@@ -77,19 +94,18 @@ namespace CustomUnity
                 var property = serializedObject.GetIterator();
 
                 while(property.Next(true)) {
-                    if(property.propertyType == SerializedPropertyType.ObjectReference
-                        && property.objectReferenceValue != null
-                        && AssetDatabase.GetAssetPath(property.objectReferenceValue) == findee) {
-                        referencerList.Add(new Entry {
-                            asset = asset,
-                            path = path,
-                            propertyName = property.name,
-                            propertyPath = property.propertyPath,
-                            instanceID = property.objectReferenceInstanceIDValue
-                        });
+                    if(property.isArray) {
+                        for(int i = 0; i < property.arraySize; ++i) {
+                            var elementProperty = property.GetArrayElementAtIndex(i);
+                            ProcessProperty(elementProperty, mainAsset, path, findee, referencerList);
+                        }
+                    }
+                    else {
+                        ProcessProperty(property, mainAsset, path, findee, referencerList);
                     }
                 }
             }
         }
     }
 }
+#endif
