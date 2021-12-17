@@ -112,17 +112,17 @@ namespace CustomUnity
                     localIP = "localhost";
                 }
                 EditorPrefs.SetString(AssetBundleLoader.kLocalAssetBundleServerURL, "http://" + localIP + ":7888/");
-                Log.Info("Started AssetBundleServer : http://{0}:7888/", localIP);
+                Log.Info($"Started AssetBundleServer : http://{localIP}:7888/");
 
                 if(startInfo.RedirectStandardOutput) {
                     launchProcess.OutputDataReceived += (sender, eventArgs) => {
-                        if(eventArgs.Data != null) Log.Info("<color=grey>[AssetBundleServer]</color>{0}", eventArgs.Data);
+                        if(eventArgs.Data != null) Log.Info($"<color=grey>[AssetBundleServer]</color>{eventArgs.Data}");
                     };
                     launchProcess.BeginOutputReadLine();
                 }
                 if(startInfo.RedirectStandardError) {
                     launchProcess.ErrorDataReceived += (sender, eventArgs) => {
-                        if(eventArgs.Data != null) Log.Error("<color=grey>[AssetBundleServer]</color>{0}", eventArgs.Data);
+                        if(eventArgs.Data != null) Log.Error($"<color=grey>[AssetBundleServer]</color>{eventArgs.Data}");
                     };
                     launchProcess.BeginErrorReadLine();
                 }

@@ -74,45 +74,6 @@ namespace CustomUnity
         //
         // 概要:
         //     ///
-        //     Logs a formatted message to the Unity Console.
-        //     ///
-        //
-        // パラメーター:
-        //   format:
-        //     A composite format string.
-        //
-        //   args:
-        //     Format arguments.
-        //
-        //   context:
-        //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Info(Object context, string format, params object[] args)
-        {
-            UnityEngine.Debug.LogFormat(context, format, args);
-        }
-
-        //
-        // 概要:
-        //     ///
-        //     Logs a formatted message to the Unity Console.
-        //     ///
-        //
-        // パラメーター:
-        //   format:
-        //     A composite format string.
-        //
-        //   args:
-        //     Format arguments.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Info(string format, params object[] args)
-        {
-            UnityEngine.Debug.LogFormat(format, args);
-        }
-
-        //
-        // 概要:
-        //     ///
         //     A variant of Debug.Log that logs an error message to the console.
         //     ///
         //
@@ -174,45 +135,6 @@ namespace CustomUnity
         public static void Error(Object context, string message)
         {
             UnityEngine.Debug.LogError(message, context);
-        }
-
-        //
-        // 概要:
-        //     ///
-        //     Logs a formatted error message to the Unity console.
-        //     ///
-        //
-        // パラメーター:
-        //   format:
-        //     A composite format string.
-        //
-        //   args:
-        //     Format arguments.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Error(string format, params object[] args)
-        {
-            UnityEngine.Debug.LogErrorFormat(format, args);
-        }
-
-        //
-        // 概要:
-        //     ///
-        //     Logs a formatted error message to the Unity console.
-        //     ///
-        //
-        // パラメーター:
-        //   format:
-        //     A composite format string.
-        //
-        //   args:
-        //     Format arguments.
-        //
-        //   context:
-        //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Error(Object context, string format, params object[] args)
-        {
-            UnityEngine.Debug.LogErrorFormat(context, format, args);
         }
 
         //
@@ -317,45 +239,6 @@ namespace CustomUnity
         //
         // 概要:
         //     ///
-        //     Logs a formatted warning message to the Unity Console.
-        //     ///
-        //
-        // パラメーター:
-        //   format:
-        //     A composite format string.
-        //
-        //   args:
-        //     Format arguments.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Warning(string format, params object[] args)
-        {
-            UnityEngine.Debug.LogWarningFormat(format, args);
-        }
-
-        //
-        // 概要:
-        //     ///
-        //     Logs a formatted warning message to the Unity Console.
-        //     ///
-        //
-        // パラメーター:
-        //   format:
-        //     A composite format string.
-        //
-        //   args:
-        //     Format arguments.
-        //
-        //   context:
-        //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Warning(Object context, string format, params object[] args)
-        {
-            UnityEngine.Debug.LogWarningFormat(context, format, args);
-        }
-
-        //
-        // 概要:
-        //     ///
         //     Logs a trace message to the Unity Console.
         //     ///
         //
@@ -363,7 +246,7 @@ namespace CustomUnity
         public static void Trace()
         {
             var callerFrame = new StackFrame(1, true);
-            UnityEngine.Debug.LogFormat("Pass {2} (at {0}:{1})", callerFrame.GetFileName(), callerFrame.GetFileLineNumber(), callerFrame.GetMethod().Name);
+            UnityEngine.Debug.Log($"Pass {callerFrame.GetMethod().Name} (at {callerFrame.GetFileName()}:{callerFrame.GetFileLineNumber()})");
         }
 
         //
@@ -380,7 +263,7 @@ namespace CustomUnity
         {
             var callerFrame = new StackFrame(1, true);
             var callerMethod = callerFrame.GetMethod();
-            UnityEngine.Debug.LogFormat(context, "Pass {2}.{3} (at {0}:{1})", callerFrame.GetFileName(), callerFrame.GetFileLineNumber(), callerMethod.DeclaringType.Name, callerMethod.Name);
+            UnityEngine.Debug.Log($"Pass {callerMethod.DeclaringType.Name}.{callerMethod.Name} (at {callerFrame.GetFileName()}:{callerFrame.GetFileLineNumber()})", context);
         }
     }
 }
