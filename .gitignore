@@ -90,6 +90,9 @@ ipch/
 *.vspx
 *.sap
 
+# Visual Studio config
+.vsconfig
+
 # TFS 2012 Local Workspace
 $tf/
 
@@ -270,9 +273,8 @@ Logs/
 Temp/
 Assembly-CSharp.csproj
 Assembly-CSharp-Editor.csproj
-CustomUnity.sln
-CustomUnity.csproj
-CustomUnity.Editor.csproj
+/*.sln
+/*.csproj
 !Packages/manifest.json
 Tests.csproj
 CustomUnityEditor.csproj
