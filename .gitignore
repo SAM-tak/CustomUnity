@@ -260,6 +260,9 @@ paket-files/
 __pycache__/
 *.pyc
 
+# Visual Studio Code
+.vscode/
+
 # Unity Project
 Library/
 UserSettings/
