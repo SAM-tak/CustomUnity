@@ -17,12 +17,6 @@ namespace CustomUnity
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void LogInfo(string format, params object[] args)
-        {
-            UnityEngine.Debug.LogFormat(this, format, args);
-        }
-
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogWarning(object message)
         {
             UnityEngine.Debug.LogWarning(message, this);
@@ -35,12 +29,6 @@ namespace CustomUnity
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void LogWarning(string format, params object[] args)
-        {
-            UnityEngine.Debug.LogWarningFormat(this, format, args);
-        }
-
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         protected void LogError(object message)
         {
             UnityEngine.Debug.LogError(message, this);
@@ -50,12 +38,6 @@ namespace CustomUnity
         protected void LogError(string message)
         {
             UnityEngine.Debug.LogError(message, this);
-        }
-
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        protected void LogError(string format, params object[] args)
-        {
-            UnityEngine.Debug.LogErrorFormat(this, format, args);
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
