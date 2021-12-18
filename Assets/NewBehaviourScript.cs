@@ -1,4 +1,4 @@
-﻿using CustomUnity;
+using CustomUnity;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,7 +10,7 @@ namespace YourProjectNamespace
 
         public void SpawnObject(SpawnObjectParameter parameter)
         {
-            Log.Info("SpawnObject " + parameter.ToStringFields());
+            Log.Info($"SpawnObject {parameter.ToStringFields()}");
             gameObjectPools?.Spawn(transform, parameter);
             //DebugBreak();
         }
@@ -21,15 +21,15 @@ namespace YourProjectNamespace
         }
         
         public UnityEvent event1;
-        void FireEvent1()
+        public void FireEvent1()
         {
             event1.Invoke();
         }
 
         public UnityEvent<int> event2;
-        void FireEvent2(int i)
+        public void FireEvent2(int i)
         {
-            LogInfo("FireEvent2 {0}", i);
+            LogInfo($"FireEvent2 {i}");
             if(event2 != null) event2.Invoke(i);
         }
         
@@ -50,11 +50,8 @@ namespace YourProjectNamespace
         {
             gameObjectPools?.InactivateAll();
             LogInfo("Start");
-            Log.Info(this, "ssss");
-            Log.Info(this, "ssss {0}", 1);
-            Log.Info("ssss {0}", 2);
-            LogInfo("Start {0}", 1);
-            LogInfo("Start {0} {1}", 1, 2);
+            LogInfo($"{"blahblah".Red().Bold()}\n{$"{"foobar".Grey()} {"hogehoge".Color(0x443322FF)}".Small()}");
+            LogInfo(RichText.Sb.Bold(sb => sb.Red("blahblah")).Ln().Small(sb => sb.Grey("foobar").Space().Color(0x443322FF, "hogehoge")));
         }
 
         // Update is called once per frame

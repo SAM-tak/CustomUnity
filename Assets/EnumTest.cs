@@ -1,5 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace CustomUnity
@@ -9,9 +10,11 @@ namespace CustomUnity
         // Use this for initialization
         void Start()
         {
+            var sb = new StringBuilder();
             foreach(var i in transform.EnumChildrenRecursive()) {
-                LogInfo(i);
+                sb.AppendLine(i.ToString());
             }
+            LogInfo(sb.ToString());
         }
 
         // Update is called once per frame
