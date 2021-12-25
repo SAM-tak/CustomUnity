@@ -4,7 +4,7 @@
 * text=auto
 
 * export-ignore
-Assets/CustomUnity -export-ignore
+Assets/CustomUnity/ -export-ignore
 
 ###############################################################################
 # Set default behavior for command prompt diff.
