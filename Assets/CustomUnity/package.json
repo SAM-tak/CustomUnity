@@ -1,0 +1,15 @@
+{
+    "name": "sam-tak.customunity",
+    "displayName": "CustomUnity",
+    "unity": "2021.2",
+    "description": "Some Reusable staffs for Unity.",
+    "author": {
+        "name": "SAM-tak",
+        "url": "https://github.com/SAM-tak"
+    },
+    "keywords": [
+        "utility",
+        "script library"
+    ],
+    "dependencies": {}
+}

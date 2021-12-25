@@ -37,10 +37,7 @@ namespace CustomUnity
 
             public override int GetHashCode()
             {
-                var hashCode = -981410904;
-                hashCode = hashCode * -1521134295 + EqualityComparer<GameObject>.Default.GetHashCode(cell);
-                hashCode = hashCode * -1521134295 + index.GetHashCode();
-                return hashCode;
+                return HashCode.Combine(cell, index);
             }
         }
 

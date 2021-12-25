@@ -27,10 +27,7 @@ namespace CustomUnity
 
             public override int GetHashCode()
             {
-                var hashCode = 1804577526;
-                hashCode = hashCode * -1521134295 + position.GetHashCode();
-                hashCode = hashCode * -1521134295 + size.GetHashCode();
-                return hashCode;
+                return HashCode.Combine(position, size);
             }
         }
 

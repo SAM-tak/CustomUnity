@@ -218,10 +218,7 @@ namespace CustomUnity
 
         public override int GetHashCode()
         {
-            var hashCode = -1259268631;
-            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store1);
-            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store2);
-            return hashCode;
+            return HashCode.Combine(store1, store2);
         }
     }
 
@@ -272,11 +269,7 @@ namespace CustomUnity
 
         public override int GetHashCode()
         {
-            var hashCode = 1225588984;
-            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store1);
-            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store2);
-            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store3);
-            return hashCode;
+            return HashCode.Combine(store1, store2, store3);
         }
     }
 
@@ -330,12 +323,7 @@ namespace CustomUnity
 
         public override int GetHashCode()
         {
-            var hashCode = -91448154;
-            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store1);
-            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store2);
-            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store3);
-            hashCode = hashCode * -1521134295 + EqualityComparer<BitArray32>.Default.GetHashCode(store4);
-            return hashCode;
+            return HashCode.Combine(store1, store2, store3, store4);
         }
     }
 }

@@ -11,8 +11,8 @@ namespace CustomUnity
         public Animator[] animators;
         public UnityEvent @event;
 
-        public readonly Dictionary<Object, bool> signals = new Dictionary<Object, bool>();
-        readonly List<Object> keyCache = new List<Object>(10);
+        public readonly Dictionary<Object, bool> signals = new ();
+        readonly List<Object> keyCache = new (10);
 
         void OnEnable()
         {

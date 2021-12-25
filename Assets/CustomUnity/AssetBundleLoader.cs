@@ -115,16 +115,16 @@ namespace CustomUnity
         static bool dirty = false;
 #endif
         
-        static readonly Dictionary<string, LoadedAssetBundle> loadedAssetBundles = new Dictionary<string, LoadedAssetBundle>();
-        static readonly Dictionary<string, string[]> dependencies = new Dictionary<string, string[]>();
-        static readonly Dictionary<string, int> downloadingBundles = new Dictionary<string, int>(); // downloading name & refcount (start from 0)
-        static readonly Dictionary<string, string> downloadingErrors = new Dictionary<string, string>();
-        static readonly List<AssetBundleLoadOperation> inProgressOperations = new List<AssetBundleLoadOperation>();
+        static readonly Dictionary<string, LoadedAssetBundle> loadedAssetBundles = new();
+        static readonly Dictionary<string, string[]> dependencies = new();
+        static readonly Dictionary<string, int> downloadingBundles = new (); // downloading name & refcount (start from 0)
+        static readonly Dictionary<string, string> downloadingErrors = new ();
+        static readonly List<AssetBundleLoadOperation> inProgressOperations = new ();
 
-        public static ReadOnlyDictionary<string, LoadedAssetBundle> LoadedAssetBundles { get; } = new ReadOnlyDictionary<string, LoadedAssetBundle>(loadedAssetBundles);
-        public static ReadOnlyDictionary<string, string[]> Dependencies { get; } = new ReadOnlyDictionary<string, string[]>(dependencies);
-        public static ReadOnlyDictionary<string, string> DownloadingErrors { get; } = new ReadOnlyDictionary<string, string>(downloadingErrors);
-        public static ReadOnlyCollection<AssetBundleLoadOperation> InProgressOperations { get; } = new ReadOnlyCollection<AssetBundleLoadOperation>(inProgressOperations);
+        public static ReadOnlyDictionary<string, LoadedAssetBundle> LoadedAssetBundles { get; } = new (loadedAssetBundles);
+        public static ReadOnlyDictionary<string, string[]> Dependencies { get; } = new (dependencies);
+        public static ReadOnlyDictionary<string, string> DownloadingErrors { get; } = new (downloadingErrors);
+        public static ReadOnlyCollection<AssetBundleLoadOperation> InProgressOperations { get; } = new (inProgressOperations);
 
         /// <summary>
         /// The base downloading url which is used to generate the full
@@ -578,7 +578,7 @@ namespace CustomUnity
 
         void ProcessFinishedOperation(AssetBundleLoadOperation operation)
         {
-            if(!(operation is AssetBundleDownloadOperation download)) return;
+            if(operation is not AssetBundleDownloadOperation download) return;
 
             if(string.IsNullOrEmpty(download.Error)) {
                 if(downloadingBundles.ContainsKey(download.AssetBundleName)) {
@@ -683,9 +683,7 @@ namespace CustomUnity
 
             public override int GetHashCode()
             {
-                var hashCode = 1897678323;
-                hashCode = hashCode * -1521134295 + EqualityComparer<AssetBundleLoadAssetOperation>.Default.GetHashCode(Operation);
-                return hashCode;
+                return HashCode.Combine(Operation);
             }
         }
 

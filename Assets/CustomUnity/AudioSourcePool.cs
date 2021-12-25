@@ -55,7 +55,7 @@ namespace CustomUnity
             return false;
         }
 
-        readonly List<PlayHandle> activePlayHandles = new List<PlayHandle>(64);
+        readonly List<PlayHandle> activePlayHandles = new (64);
 
         void ExpirePlayHandle(AudioSource audioSource)
         {

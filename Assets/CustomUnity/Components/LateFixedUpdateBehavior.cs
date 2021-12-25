@@ -16,7 +16,7 @@ namespace CustomUnity
         }
 
         Coroutine lateFixedUpdate;
-        static readonly WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
+        static readonly WaitForFixedUpdate waitForFixedUpdate = new ();
 
         IEnumerator RunLateFixedUpdate()
         {

@@ -6,7 +6,7 @@ namespace CustomUnity
     [ExecuteInEditMode]
 	public class FixAspectRatio : MonoBehaviour
 	{
-		public Vector2 aspectRatio = new Vector2(16, 9);
+		public Vector2 aspectRatio = new (16, 9);
 		Camera _camera = null;
 
 		void Start()

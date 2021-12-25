@@ -84,10 +84,7 @@ namespace CustomUnity
 
             public override int GetHashCode()
             {
-                var hashCode = 1958101098;
-                hashCode = hashCode * -1521134295 + index.GetHashCode();
-                hashCode = hashCode * -1521134295 + EqualityComparer<Rect>.Default.GetHashCode(rect);
-                return hashCode;
+                return HashCode.Combine(index, rect);
             }
         }
 

@@ -217,8 +217,8 @@ namespace CustomUnity
         #region StringBuilder Extention
 
         [ThreadStatic]
-        static readonly Lazy<StringBuilder> sb = new Lazy<StringBuilder>(false);
-        public static StringBuilder Sb { get => sb.Value; }
+        static readonly Lazy<StringBuilder> sb = new (false);
+        public static StringBuilder Sb => sb.Value;
 
         public static StringBuilder Clear(this StringBuilder sb)
         {

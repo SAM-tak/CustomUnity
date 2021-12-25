@@ -9,12 +9,12 @@ namespace CustomUnity
     public struct ProfileSampler : IDisposable, IEquatable<ProfileSampler>
     {
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && PROFILING
-        static readonly Dictionary<string, CustomSampler> samplerCache = new Dictionary<string, CustomSampler>(256);
-        static readonly List<CustomSampler> samplerStack = new List<CustomSampler>(256);
+        static readonly Dictionary<string, CustomSampler> samplerCache = new (256);
+        static readonly List<CustomSampler> samplerStack = new (256);
 
         static CustomSampler PeekLast()
         {
-            if(samplerStack.Count > 0) return samplerStack[samplerStack.Count - 1];
+            if(samplerStack.Count > 0) return samplerStack[^1];
             return null;
         }
 
@@ -129,10 +129,7 @@ namespace CustomUnity
 
         public override int GetHashCode()
         {
-            var hashCode = -1897699739;
-            hashCode = hashCode * -1521134295 + EqualityComparer<CustomSampler>.Default.GetHashCode(customSampler);
-            hashCode = hashCode * -1521134295 + index.GetHashCode();
-            return hashCode;
+            return HashCode.Combine(customSampler, index);
         }
 #else
         public bool Equals(ProfileSampler other) => false;

@@ -22,10 +22,7 @@ namespace CustomUnity
 
             public override int GetHashCode()
             {
-                var hashCode = -1359831577;
-                hashCode = hashCode * -1521134295 + EqualityComparer<GameObject>.Default.GetHashCode(go);
-                hashCode = hashCode * -1521134295 + time.GetHashCode();
-                return hashCode;
+                return HashCode.Combine(go, time);
             }
         }
 

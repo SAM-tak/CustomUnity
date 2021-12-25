@@ -38,7 +38,7 @@ namespace CustomUnity
 
         // use coroutine for avoid depend to external library (via. UniTask)
         internal class DelayedInactivationHandler : MonoBehaviour { }
-        static readonly WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
+        static readonly WaitForEndOfFrame waitForEndOfFrame = new ();
         IEnumerator InactiveOnEndOfFrame(Animator animator)
         {
             yield return waitForEndOfFrame;

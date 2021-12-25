@@ -7,7 +7,7 @@ namespace CustomUnity
     public sealed class GameObjectPoolSet
     {
         public GameObjectPool[] pools;
-        public readonly Dictionary<string, GameObjectPool> index = new Dictionary<string, GameObjectPool>();
+        public readonly Dictionary<string, GameObjectPool> index = new ();
 
         public void SetUp(Transform parent, System.Action<GameObject> setUpProcPerObject = null)
         {
