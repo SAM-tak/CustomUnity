@@ -288,34 +288,32 @@ namespace CustomUnity
             {
                 string toBeHashed = "s\0\0\0" + t.Namespace + t.Name;
 
-                using(HashAlgorithm hash = new MD4()) {
-                    byte[] hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
+                using HashAlgorithm hash = new MD4();
+                byte[] hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
 
-                    int result = 0;
+                int result = 0;
 
-                    for(int i = 3; i >= 0; --i) {
-                        result <<= 8;
-                        result |= hashed[i];
-                    }
-
-                    return result;
+                for(int i = 3; i >= 0; --i) {
+                    result <<= 8;
+                    result |= hashed[i];
                 }
+
+                return result;
             }
 
             public static int Compute(string toBeHashed)
             {
-                using(HashAlgorithm hash = new MD4()) {
-                    byte[] hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
+                using HashAlgorithm hash = new MD4();
+                byte[] hashed = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(toBeHashed));
 
-                    int result = 0;
+                int result = 0;
 
-                    for(int i = 3; i >= 0; --i) {
-                        result <<= 8;
-                        result |= hashed[i];
-                    }
-
-                    return result;
+                for(int i = 3; i >= 0; --i) {
+                    result <<= 8;
+                    result |= hashed[i];
                 }
+
+                return result;
             }
         }
         #endregion

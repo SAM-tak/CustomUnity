@@ -12,8 +12,7 @@ namespace CustomUnity
         public UnityEvent @event;
 
         public readonly Dictionary<Object, bool> signals = new Dictionary<Object, bool>();
-
-        List<Object> keyCache = new List<Object>(10);
+        readonly List<Object> keyCache = new List<Object>(10);
 
         void OnEnable()
         {

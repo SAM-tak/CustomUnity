@@ -15,7 +15,7 @@ namespace CustomUnity
 
         public Transform GetOriginNode(Transform root)
         {
-            return string.IsNullOrEmpty(originPath) ? root : (root?.Find(originPath) ?? root);
+            return string.IsNullOrEmpty(originPath) ? root : (root ? root.Find(originPath) : root);
         }
 
         public Vector3 GetPosition(Transform origin)

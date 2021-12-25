@@ -46,7 +46,7 @@ namespace CustomUnity
             float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
             if(Mathf.Abs(scrollWheel) > 0.0f) {
                 enableTargetPosition = false;
-                transform.position += transform.forward * scrollWheel * wheelSpeed;
+                transform.position += scrollWheel * wheelSpeed * transform.forward;
             }
 
             if(Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2)) {
@@ -82,7 +82,7 @@ namespace CustomUnity
                 }
                 else {
                     if(diff.magnitude > Vector3.kEpsilon) {
-                        var swing = new Vector2(-diff.y, diff.x) * rotateSpeed * Time.unscaledDeltaTime;
+                        var swing = rotateSpeed * Time.unscaledDeltaTime * new Vector2(-diff.y, diff.x);
                         transform.RotateAround(transform.position, transform.right, swing.x);
                         transform.RotateAround(transform.position, Vector3.up, swing.y);
                     }

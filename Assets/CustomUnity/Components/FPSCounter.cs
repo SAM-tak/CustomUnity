@@ -29,9 +29,12 @@ namespace CustomUnity
         // Use this for initialization
         void Start()
         {
-            digits[0] = transform.Find("Digit100")?.gameObject.GetComponent<Image>();
-            digits[1] = transform.Find("Digit010")?.gameObject.GetComponent<Image>();
-            digits[2] = transform.Find("Digit001")?.gameObject.GetComponent<Image>();
+            var trs = transform.Find("Digit100");
+            if(trs) digits[0] = trs.gameObject.GetComponent<Image>();
+            trs = transform.Find("Digit010");
+            if(trs) digits[1] = trs.gameObject.GetComponent<Image>();
+            trs = transform.Find("Digit001");
+            if(trs) digits[2] = trs.gameObject.GetComponent<Image>();
             lastLapForFps = lastLapFrameCount = 0;
         }
 
@@ -61,8 +64,8 @@ namespace CustomUnity
         {
             var pf = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/FPSCounter.prefab");
             if(pf) {
-                var parent = (Selection.activeObject ?? menuCommand.context) as GameObject;
-                var go = Instantiate(pf, parent?.transform);
+                var parent = (Selection.activeObject ? Selection.activeObject : menuCommand.context) as GameObject;
+                var go = Instantiate(pf, parent ? parent.transform : null);
                 go.UniqueName(pf.name);
                 // Register the creation in the undo system
                 Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);

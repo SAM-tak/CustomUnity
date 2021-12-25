@@ -500,7 +500,7 @@ namespace CustomUnity
             Vector2 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
                 Vector2 omega = Reciprocal(Vector4.Max(EpsilonVector2, Times(halfLife, halfLife)));
-                Vector2 a = 0.5f * omega * deltaTime * deltaTime;
+                Vector2 a = 0.5f * deltaTime * deltaTime * omega;
                 Vector2 a2 = a * a;
                 return current + delta * Clamp01(omega * deltaTime * (Vector2.one + a + 0.48f * a2 + 0.235f * a2 * a));
             }
@@ -520,7 +520,7 @@ namespace CustomUnity
             Vector3 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
                 Vector3 omega = Reciprocal(Vector4.Max(EpsilonVector3, Times(halfLife, halfLife)));
-                Vector3 a = 0.5f * omega * deltaTime * deltaTime;
+                Vector3 a = 0.5f * deltaTime * deltaTime * omega;
                 Vector3 a2 = Times(a, a);
                 Vector3 k = Vector3.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
                 return current + Times(delta, Clamp01(Times(omega * deltaTime, k)));
@@ -541,7 +541,7 @@ namespace CustomUnity
             Vector4 delta = target - current;
             if(delta.sqrMagnitude > float.Epsilon) {
                 Vector4 omega = Reciprocal(Vector4.Max(EpsilonVector4, Times(halfLife, halfLife)));
-                Vector4 a = 0.5f * omega * deltaTime * deltaTime;
+                Vector4 a = 0.5f * deltaTime * deltaTime * omega;
                 Vector4 a2 = Times(a, a);
                 Vector4 k = Vector4.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
                 return current + Times(delta, Clamp01(Times(omega * deltaTime, k)));
@@ -564,7 +564,7 @@ namespace CustomUnity
             if(delta.sqrMagnitude > float.Epsilon) {
                 Vector2 halfLife = new Vector2(delta.x >= 0 ? increaseHalfLife.x : decreaseHalfLife.x, delta.y >= 0 ? increaseHalfLife.y : decreaseHalfLife.y);
                 Vector2 omega = Reciprocal(Vector4.Max(EpsilonVector2, halfLife));
-                Vector2 a = 0.5f * omega * deltaTime * deltaTime;
+                Vector2 a = 0.5f * deltaTime * deltaTime * omega;
                 Vector2 a2 = a * a;
                 return current + delta * Clamp01(omega * deltaTime * (Vector2.one + a + 0.48f * a2 + 0.235f * a2 * a));
             }
@@ -589,7 +589,7 @@ namespace CustomUnity
                     delta.y >= 0 ? increaseHalfLife.y : decreaseHalfLife.y,
                     delta.z >= 0 ? increaseHalfLife.z : decreaseHalfLife.z);
                 Vector3 omega = Reciprocal(Vector4.Max(EpsilonVector3, halfLife));
-                Vector3 a = 0.5f * omega * deltaTime * deltaTime;
+                Vector3 a = 0.5f * deltaTime * deltaTime * omega;
                 Vector3 a2 = Times(a, a);
                 Vector3 k = Vector3.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
                 return current + Times(delta, Clamp01(Times(omega * deltaTime, k)));
@@ -616,7 +616,7 @@ namespace CustomUnity
                     delta.z >= 0 ? increaseHalfLife.z : decreaseHalfLife.z,
                     delta.w >= 0 ? increaseHalfLife.w : decreaseHalfLife.w);
                 Vector4 omega = Reciprocal(Vector4.Max(EpsilonVector4, halfLife));
-                Vector4 a = 0.5f * omega * deltaTime * deltaTime;
+                Vector4 a = 0.5f * deltaTime * deltaTime * omega;
                 Vector4 a2 = Times(a, a);
                 Vector4 k = Vector4.one + a + 0.48f * a2 + 0.235f * Times(a2, a);
                 return current + Times(delta, Clamp01(Times(omega * deltaTime, k)));

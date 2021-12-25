@@ -14,7 +14,9 @@ namespace CustomUnity
             index.Clear();
             foreach(var i in pools) {
                 i.SetUp(parent);
-                if(setUpProcPerObject != null) i.ForEachObjects(setUpProcPerObject);
+                if(setUpProcPerObject != null) {
+                    foreach(var j in i.AllGameObjects) setUpProcPerObject(j);
+                }
                 index.Add(i.Name, i);
             }
         }
@@ -24,7 +26,9 @@ namespace CustomUnity
             index.Clear();
             foreach(var i in pools) {
                 i.SetUp(parent);
-                i.ForEachObjects(x => setUpProcPerObject(i, x));
+                if(setUpProcPerObject != null) {
+                    foreach(var j in i.AllGameObjects) setUpProcPerObject(i, j);
+                }
                 index.Add(i.Name, i);
             }
         }

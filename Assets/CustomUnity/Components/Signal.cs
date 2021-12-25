@@ -9,12 +9,12 @@ namespace CustomUnity
 
         void Start()
         {
-            @event?.DefineSignal(this);
+            if(@event) @event.DefineSignal(this);
         }
 
         public void Emit()
         {
-            @event?.EmitSignal(this);
+            if(@event) @event.EmitSignal(this);
         }
     }
 }

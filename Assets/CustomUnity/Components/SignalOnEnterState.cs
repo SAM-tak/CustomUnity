@@ -10,7 +10,10 @@ namespace CustomUnity
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if(layer < 0 || layerIndex == layer) animator.GetComponent<SumAllSignalsEvent>()?.EmitSignal(this);
+            if(layer < 0 || layerIndex == layer) {
+                var sumAllSignalsEvent = animator.GetComponent<SumAllSignalsEvent>();
+                if(sumAllSignalsEvent) sumAllSignalsEvent.EmitSignal(this);
+            }
         }
     }
 }

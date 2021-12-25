@@ -15,12 +15,12 @@ namespace CustomUnity
 
         void Start()
         {
-            @event?.DefineSignal(this);
+            if(@event) @event.DefineSignal(this);
         }
 
         void OnParticleSystemStopped()
         {
-            @event?.EmitSignal(this);
+            if(@event) @event.EmitSignal(this);
         }
     }
 }

@@ -9,7 +9,8 @@ namespace CustomUnity
         // OnStateMachineExit is called when exiting a statemachine via its Exit Node
         override public void OnStateMachineExit(Animator animator, int stateMachinePathHash)
         {
-            animator.GetComponent<SumSomeFlagsEvent>()?.SetFlag(flag);
+            var sumSomeFlagsEvent = animator.GetComponent<SumSomeFlagsEvent>();
+            if(sumSomeFlagsEvent) sumSomeFlagsEvent.SetFlag(flag);
         }
     }
 }

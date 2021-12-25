@@ -67,13 +67,10 @@ namespace CustomUnity
                 curRowWidth += columnWidth;
                 if(i + 1 == totalCount) contentSize += curRowHeight;
             }
-            switch(orientaion) {
-            default:
-            case Orientaion.Vertical:
-                return new Vector2(rowWidth, contentSize);
-            case Orientaion.Horizontal:
-                return new Vector2(contentSize, rowWidth);
-            }
+            return orientaion switch {
+                Orientaion.Horizontal => new Vector2(contentSize, rowWidth),
+                _ => new Vector2(rowWidth, contentSize),
+            };
         }
         
         struct LookAheadedCellSize : IEquatable<LookAheadedCellSize>

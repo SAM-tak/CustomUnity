@@ -29,65 +29,58 @@ namespace CustomUnity
             }
         }
 
-        Entry[] objs;
+        Entry[] entries;
 
-        public string Name { get { return prefab ? prefab.name : null; } }
-        public int ActiveCount { get { return objs.Count(i => i.go.activeInHierarchy); } }
+        public string Name => prefab ? prefab.name : string.Empty;
+        public int ActiveCount => entries?.Count(i => i.go.activeInHierarchy) ?? 0;
 
         public void SetUp(Transform parent = null)
         {
             if(prefab) {
-                objs = new Entry[quantity];
+                entries = new Entry[quantity];
                 for(int i = 0; i < quantity; i++) {
-                    objs[i] = new Entry {
+                    entries[i] = new Entry {
                         go = UnityEngine.Object.Instantiate(prefab),
                         time = 0
                     };
-                    objs[i].go.transform.parent = parent;
-                    objs[i].go.SetActive(false);
+                    entries[i].go.transform.parent = parent;
+                    entries[i].go.SetActive(false);
                 }
             }
         }
         
         public void InactivateAll()
         {
-            foreach(var i in objs) {
+            foreach(var i in entries) {
                 i.go.SetActive(false);
                 i.go.transform.parent = null;
             }
         }
 
-        public void ForEachActiveObjects(Action<GameObject> action)
-        {
-            foreach(var i in objs) if(i.go.activeInHierarchy) action(i.go);
-        }
+        public IEnumerable<GameObject> AllGameObjects => entries.Select(x => x.go);
 
-        public void ForEachObjects(Action<GameObject> action)
-        {
-            foreach(var i in objs) action(i.go);
-        }
-        
+        public IEnumerable<GameObject> ActiveGameObjects => entries.Where(x => x.go.activeInHierarchy).Select(x => x.go);
+
         public GameObject Spawn(Vector3 position, Quaternion rotation)
         {
             float oldestTime = float.MaxValue;
             int retIndex = 0;
-            for(int i = 0; i < objs.Length; i++) {
-                if(!objs[i].go.activeInHierarchy) {
+            for(int i = 0; i < entries.Length; i++) {
+                if(!entries[i].go.activeInHierarchy) {
                     retIndex = i;
                     break;
                 }
-                if(objs[i].time < oldestTime) {
-                    oldestTime = objs[i].time;
+                if(entries[i].time < oldestTime) {
+                    oldestTime = entries[i].time;
                     retIndex = i;
                 }
             }
-            var ret = objs[retIndex];
+            var ret = entries[retIndex];
             ret.time = Time.timeSinceLevelLoad;
             ret.go.SetActive(false);
-            ret.go.transform.position = position;
-            ret.go.transform.rotation = rotation;
+            ret.go.transform.SetPositionAndRotation(position, rotation);
             ret.go.SetActive(true);
-            objs[retIndex] = ret;
+            entries[retIndex] = ret;
             return ret.go;
         }
 

@@ -7,12 +7,6 @@ namespace CustomUnity
     //[CanEditMultipleObjects]
     public class TableContentInspector : Editor
     {
-        void OnEnable()
-        {
-            // TODO: find properties we want to work with
-            //serializedObject.FindProperty();
-        }
-
         public override void OnInspectorGUI()
         {
             // Update the serializedProperty - always do this in the beginning of OnInspectorGUI.

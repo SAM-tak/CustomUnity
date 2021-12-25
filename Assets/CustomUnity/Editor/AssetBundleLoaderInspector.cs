@@ -32,7 +32,7 @@ namespace CustomUnity
 
             if(AssetBundleLoader.SimulatesAssetBundleInEditor) return;
 
-            EditorGUILayout.LabelField("BaseDownloadingURL : " + AssetBundleLoader.BaseDownloadingURL);
+            EditorGUILayout.LabelField($"BaseDownloadingURL : {AssetBundleLoader.BaseDownloadingURL}");
 
             if(AssetBundleLoader.Manifest) {
                 foldoutManifest.isExpanded = CustomEditorUI.Foldout(foldoutManifest.isExpanded, "Manifests");
@@ -78,7 +78,7 @@ namespace CustomUnity
                 EditorGUI.indentLevel++;
                 foreach(var i in AssetBundleLoader.InProgressOperations) {
                     if(i is AssetBundleLoadAssetOperationFull op) {
-                        EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(), op.Progress(), op.AssetBundleName + "/" + op.AssetName);
+                        EditorGUI.ProgressBar(EditorGUILayout.GetControlRect(), op.Progress(), $"{op.AssetBundleName}/{op.AssetName}");
                     }
                 }
                 EditorGUI.indentLevel--;

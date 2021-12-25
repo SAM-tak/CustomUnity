@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace CustomUnity
 {
@@ -9,7 +9,8 @@ namespace CustomUnity
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            animator.GetComponent<SumSomeFlagsEvent>()?.SetFlag(flag);
+            var component = animator.GetComponent<SumSomeFlagsEvent>();
+            if(component) component.SetFlag(flag);
         }
     }
 }

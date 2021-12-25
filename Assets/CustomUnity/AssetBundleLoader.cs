@@ -747,56 +747,40 @@ namespace CustomUnity
 #if UNITY_EDITOR
         static string GetPlatformForAssetBundles(BuildTarget target)
         {
-            switch(target) {
-            case BuildTarget.Android:
-                return "Android";
-            case BuildTarget.iOS:
-                return "iOS";
+            return target switch {
+                BuildTarget.Android => "Android",
+                BuildTarget.iOS => "iOS",
 #if UNITY_TVOS
-            case BuildTarget.tvOS:
-                return "tvOS";
+                BuildTarget.tvOS => "tvOS",
 #endif
-            case BuildTarget.WebGL:
-                return "WebGL";
-            case BuildTarget.StandaloneWindows:
-            case BuildTarget.StandaloneWindows64:
-                return "StandaloneWindows";
-            case BuildTarget.StandaloneOSX:
-                return "StandaloneOSX";
-            case BuildTarget.StandaloneLinux64:
-                return "StandaloneLinux";
-            // Add more build targets for your own.
-            // If you add more targets, don't forget to add the same platforms to GetPlatformForAssetBundles(RuntimePlatform) function.
-            default:
-                return null;
-            }
+                BuildTarget.WebGL => "WebGL",
+                BuildTarget.StandaloneWindows => "StandaloneWindows",
+                BuildTarget.StandaloneWindows64 => "StandaloneWindows",
+                BuildTarget.StandaloneOSX => "StandaloneOSX",
+                BuildTarget.StandaloneLinux64 => "StandaloneLinux",
+                // Add more build targets for your own.
+                // If you add more targets, don't forget to add the same platforms to GetPlatformForAssetBundles(RuntimePlatform) function.
+                _ => null
+            };
         }
-#endif
-
+#else
         static string GetPlatformForAssetBundles(RuntimePlatform platform)
         {
-            switch(platform) {
-            case RuntimePlatform.Android:
-                return "Android";
-            case RuntimePlatform.IPhonePlayer:
-                return "iOS";
+            return platform switch {
+                RuntimePlatform.Android => "Android",
+                RuntimePlatform.IPhonePlayer => "iOS",
 #if UNITY_TVOS
-            case RuntimePlatform.tvOS:
-                return "tvOS";
+                RuntimePlatform.tvOS => "tvOS",
 #endif
-            case RuntimePlatform.WebGLPlayer:
-                return "WebGL";
-            case RuntimePlatform.WindowsPlayer:
-                return "StandaloneWindows";
-            case RuntimePlatform.OSXPlayer:
-                return "StandaloneOSX";
-            case RuntimePlatform.LinuxPlayer:
-                return "StandaloneLinux";
-            // Add more build targets for your own.
-            // If you add more targets, don't forget to add the same platforms to GetPlatformForAssetBundles(RuntimePlatform) function.
-            default:
-                return null;
-            }
+                RuntimePlatform.WebGLPlayer => "WebGL",
+                RuntimePlatform.WindowsPlayer => "StandaloneWindows",
+                RuntimePlatform.OSXPlayer => "StandaloneOSX",
+                RuntimePlatform.LinuxPlayer => "StandaloneLinux",
+                // Add more build targets for your own.
+                // If you add more targets, don't forget to add the same platforms to GetPlatformForAssetBundles(RuntimePlatform) function.
+                _ => null,
+            };
         }
+#endif
     } // End of AssetBundleManager.
 }

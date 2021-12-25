@@ -44,13 +44,10 @@ namespace CustomUnity
             for(int i = 0; i < totalCount; ++i) {
                 contentSize += dataSource.CellSize(i);
             }
-            switch(orientaion) {
-            default:
-            case Orientaion.Vertical:
-                return new Vector2(ScrollRect.viewport.rect.width, contentSize);
-            case Orientaion.Horizontal:
-                return new Vector2(contentSize, ScrollRect.viewport.rect.height);
-            }
+            return orientaion switch {
+                Orientaion.Horizontal => new Vector2(contentSize, ScrollRect.viewport.rect.height),
+                _ => new Vector2(ScrollRect.viewport.rect.width, contentSize),
+            };
         }
         
         protected override void Start()
