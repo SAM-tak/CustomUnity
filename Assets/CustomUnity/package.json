@@ -1,6 +1,7 @@
 {
-    "name": "sam-tak.customunity",
+    "name": "net.sam-tak.customunity",
     "displayName": "CustomUnity",
+    "version": "1.0.2",
     "unity": "2021.2",
     "description": "Some Reusable staffs for Unity.",
     "author": {

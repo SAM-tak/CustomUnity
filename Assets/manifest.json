@@ -1,6 +1,5 @@
 {
     "dependencies": {
-        "net.sam-tak.customunity100": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.0?path=Assets/CustomUnity",
-        "net.sam-tak.customunity101": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity#v1.0.1?path=Assets/CustomUnity"
+        "net.sam-tak.customunity": "https://github.com/SAM-tak/CustomUnity.git?path=Assets/CustomUnity?path=Assets/CustomUnity"
     }
 }
