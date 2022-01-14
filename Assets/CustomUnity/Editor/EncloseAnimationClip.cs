@@ -150,7 +150,7 @@ namespace CustomUnity
         Object target;
         const string menuString = "Assets/Enclose AnimationClip";
         const int priority = 51;
-        readonly EncloseAnimationClip encloseAnimationClip = new EncloseAnimationClip();
+        readonly EncloseAnimationClip encloseAnimationClip = new ();
 
         [MenuItem(menuString, priority = priority)]
         static public void Open()
@@ -182,7 +182,7 @@ namespace CustomUnity
     [CustomEditor(typeof(AnimatorController))]
     public class AnimatorControllerCustomInspector : Editor
     {
-        readonly EncloseAnimationClip encloseAnimationClip = new EncloseAnimationClip();
+        readonly EncloseAnimationClip encloseAnimationClip = new ();
 
         public override void OnInspectorGUI()
         {

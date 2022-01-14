@@ -7,11 +7,11 @@ namespace CustomUnity
     //[CanEditMultipleObjects]
     public class JaggedTableContentInspector : Editor
     {
-        void OnEnable()
-        {
-            // TODO: find properties we want to work with
-            //serializedObject.FindProperty();
-        }
+        // void OnEnable()
+        // {
+        //     // TODO: find properties we want to work with
+        //     //serializedObject.FindProperty();
+        // }
 
         public override void OnInspectorGUI()
         {

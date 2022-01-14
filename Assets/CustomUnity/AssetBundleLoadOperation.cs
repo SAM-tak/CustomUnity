@@ -70,12 +70,9 @@ namespace CustomUnity
             request = OnDemandResources.PreloadAsync(new string[] { assetBundleName.Replace('/', '>') });
         }
 
-        protected override bool DownloadIsDone { get { return (request == null) || request.isDone; } }
+        protected override bool DownloadIsDone => (request == null) || request.isDone;
 
-        public override string GetSourceURL()
-        {
-            return "odr://" + AssetBundleName;
-        }
+        public override string GetSourceURL() => "odr://" + AssetBundleName;
 
         protected override void FinishDownload()
         {
@@ -99,10 +96,7 @@ namespace CustomUnity
             request = null;
         }
 
-        public override float Progress()
-        {
-            return IsDone() ? 1.0f : request.progress;
-        }
+        public override float Progress() => IsDone() ? 1.0f : request.progress;
     }
 #endif
 
@@ -118,14 +112,11 @@ namespace CustomUnity
             else AssetBundle = new LoadedAssetBundle(bundle, IsImplicit);
         }
 
-        protected override bool DownloadIsDone { get { return true; } }
+        protected override bool DownloadIsDone => true;
 
         protected override void FinishDownload() { }
 
-        public override string GetSourceURL()
-        {
-            return "res://" + AssetBundleName;
-        }
+        public override string GetSourceURL() => "res://" + AssetBundleName;
     }
 #endif
 
