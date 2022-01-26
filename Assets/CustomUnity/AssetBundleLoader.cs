@@ -443,16 +443,16 @@ namespace CustomUnity
 
             if(bundleBaseDownloadingURL.ToLower().StartsWith("odr://")) {
 #if ENABLE_IOS_ON_DEMAND_RESOURCES
-                if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundleLoader] Requesting bundle {assetBundleName} through ODR");
-                InProgressOperations.Add(new AssetBundleDownloadFromODROperation(assetBundleName));
+                if(LogMode == LogFlags.All) Log.Info($"[AssetBundleLoader] Requesting bundle {assetBundleName} through ODR");
+                inProgressOperations.Add(new AssetBundleDownloadFromODROperation(assetBundleName, isLoadingAsDependency));
 #else
                 new ApplicationException($"Can't load bundle {assetBundleName} through ODR: this Unity version or build target doesn't support it.");
 #endif
             }
             else if(bundleBaseDownloadingURL.ToLower().StartsWith("res://")) {
 #if ENABLE_IOS_APP_SLICING
-                if(CurrentLogMode == LogMode.All) Log.Info($"[AssetBundleLoader] Requesting bundle {assetBundleName} through asset catalog");
-                InProgressOperations.Add(new AssetBundleOpenFromAssetCatalogOperation(assetBundleName));
+                if(LogMode == LogFlags.All) Log.Info($"[AssetBundleLoader] Requesting bundle {assetBundleName} through asset catalog");
+                inProgressOperations.Add(new AssetBundleOpenFromAssetCatalogOperation(assetBundleName, isLoadingAsDependency));
 #else
                 new ApplicationException($"Can't load bundle {assetBundleName} through asset catalog: this Unity version or build target doesn't support it.");
 #endif
