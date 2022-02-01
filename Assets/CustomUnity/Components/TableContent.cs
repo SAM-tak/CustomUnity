@@ -40,32 +40,37 @@ namespace CustomUnity
         protected override void Start()
         {
             base.Start();
-            if(repeat) {
-                var contentRectLocalPosition = contentRectTransform.localPosition;
-                var viewSize = ScrollRect.viewport.rect.size;
-                switch(orientaion) {
-                case Orientaion.Vertical:
-                    var contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
-                    if(contentRectLocalPosition.y < contentMargin) {
-                        contentRectLocalPosition.y = contentMargin;
-                        contentRectTransform.localPosition = contentRectLocalPosition;
-                    }
-                    break;
-                case Orientaion.Horizontal:
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
-                    if(contentRectLocalPosition.x < contentMargin) {
-                        contentRectLocalPosition.x = contentMargin;
-                        contentRectTransform.localPosition = contentRectLocalPosition;
-                    }
-                    break;
+            if(repeat) SetPositionToTop();
+        }
+
+        void SetPositionToTop()
+        {
+            var contentRectLocalPosition = contentRectTransform.localPosition;
+            var viewSize = ScrollRect.viewport.rect.size;
+            switch(orientaion) {
+            case Orientaion.Vertical:
+                var contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
+                if(contentRectLocalPosition.y < contentMargin) {
+                    contentRectLocalPosition.y = contentMargin;
+                    contentRectTransform.localPosition = contentRectLocalPosition;
                 }
+                break;
+            case Orientaion.Horizontal:
+                contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
+                if(contentRectLocalPosition.x < contentMargin) {
+                    contentRectLocalPosition.x = contentMargin;
+                    contentRectTransform.localPosition = contentRectLocalPosition;
+                }
+                break;
             }
         }
 
         protected override void UpdateContent()
         {
             if(!ScrollRect) return;
-            
+
+            if(!NeedsUpdateContent && FrameCount < 2 && repeat) SetPositionToTop();
+
             var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
 
             int startIndex = 0;
@@ -133,14 +138,15 @@ namespace CustomUnity
 
             if(totalCount > 0 && endIndex - startIndex + 1 > 0) {
                 if(endIndex - startIndex + 1 > MaxCellsRequired) MaxCellsRequired = endIndex - startIndex + 1;
+
                 for(int i = startIndex; i <= endIndex; ++i) {
                     int wrappedIndex = Math.Wrap(i, ceillingTotalCount);
 
                     if(wrappedIndex >= totalCount || Math.Wrap(i, columnCount) < leftRadix || Math.Wrap(i, columnCount) > rightRadix) continue;
 
-                    var newCell = NewCell(i);
-                    if(newCell) {
-                        var rectTrans = newCell.GetComponent<RectTransform>();
+                    var cell = GetCell(i, out var @new);
+                    if(cell) {
+                        var rectTrans = cell.GetComponent<RectTransform>();
                         var localPosition = rectTrans.localPosition;
                         switch(orientaion) {
                         case Orientaion.Vertical:
@@ -158,8 +164,10 @@ namespace CustomUnity
                         }
                         rectTrans.sizeDelta = cellSize;
                         rectTrans.localPosition = localPosition;
-                        DataSource.SetUpCell(wrappedIndex, newCell);
-                        newCell.SetActive(true);
+                        if(@new) {
+                            DataSource.SetUpCell(wrappedIndex, cell);
+                            cell.SetActive(true);
+                        }
                     }
                 }
             }

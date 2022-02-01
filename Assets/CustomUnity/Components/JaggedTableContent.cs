@@ -124,9 +124,9 @@ namespace CustomUnity
                 if(endIndex - startIndex + 1 > MaxCellsRequired) MaxCellsRequired = endIndex - startIndex + 1;
                 for(int i = startIndex; i <= endIndex; ++i) {
                     int wrapedIndex = Math.Wrap(i, totalCount);
-                    var newCell = NewCell(i);
-                    if(newCell) {
-                        var rectTrans = newCell.GetComponent<RectTransform>();
+                    var cell = GetCell(i, out var @new);
+                    if(cell && !(i - startIndex < 0 || i - startIndex >= cellPositions.Length)) {
+                        var rectTrans = cell.GetComponent<RectTransform>();
                         var localPosition = rectTrans.localPosition;
                         var size = rectTrans.sizeDelta;
                         var cellPosition = cellPositions[i - startIndex];
@@ -142,8 +142,10 @@ namespace CustomUnity
                         }
                         rectTrans.sizeDelta = size;
                         rectTrans.localPosition = localPosition;
-                        DataSource.SetUpCell(wrapedIndex, newCell);
-                        newCell.SetActive(true);
+                        if(@new) {
+                            DataSource.SetUpCell(wrapedIndex, cell);
+                            cell.SetActive(true);
+                        }
                     }
                 }
             }

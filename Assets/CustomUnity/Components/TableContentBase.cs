@@ -43,16 +43,18 @@ namespace CustomUnity
 
         protected Cell[] cellPool;
 
-        protected GameObject NewCell(int index)
+        protected GameObject GetCell(int index, out bool @new)
         {
+            @new = false;
             int candidate = -1;
             for(int j = 0; j < cellPool.Length; ++j) {
                 if(cellPool[j].cell.activeSelf) {
-                    if(cellPool[j].index == index) return null;
+                    if(cellPool[j].index == index) return cellPool[j].cell;
                 }
                 else if(candidate < 0) candidate = j;
             }
             if(candidate >= 0) {
+                @new = true;
                 cellPool[candidate].index = index;
                 return cellPool[candidate].cell;
             }
@@ -70,7 +72,7 @@ namespace CustomUnity
             return !ScrollRect.viewport.rect.Overlaps(rect);
         }
 
-        protected bool needsUpdateContent = true;
+        public bool NeedsUpdateContent { get; private set; }  = true;
 
         /// <summary>
         /// To use for forcing to reset cells up.
@@ -78,7 +80,7 @@ namespace CustomUnity
         public void Refresh()
         {
             foreach(var i in cellPool) i.cell.SetActive(false);
-            needsUpdateContent = true;
+            NeedsUpdateContent = true;
         }
 
         protected virtual void Start()
@@ -92,21 +94,31 @@ namespace CustomUnity
                 go.SetActive(false);
                 cellPool[i].cell = go;
             }
-            ScrollRect.onValueChanged.AddListener(_ => UpdateContent());
-            frameCount = 0;
+            ScrollRect.onValueChanged.AddListener(_ => {
+                if(!isUpdatingContent) {
+                    isUpdatingContent = true;
+                    UpdateContent();
+                    isUpdatingContent = false;
+                }
+            });
+            FrameCount = 0;
         }
 
         // workaround for 2019.1 higher
-        int frameCount = 0;
+        protected int FrameCount { get; private set; } = 0;
+
+        bool isUpdatingContent;
 
         protected virtual void Update()
         {
             OnPreUpdate?.Invoke();
-            if(needsUpdateContent || frameCount < 2) {
+            if(NeedsUpdateContent || FrameCount < 2) {
+                isUpdatingContent = true;
                 UpdateContent();
-                needsUpdateContent = false;
+                isUpdatingContent = false;
+                NeedsUpdateContent = false;
             }
-            if(frameCount < int.MaxValue) frameCount++;
+            if(FrameCount < int.MaxValue) FrameCount++;
         }
 
         protected abstract void UpdateContent();
