@@ -70,11 +70,8 @@ namespace CustomUnity
         [MenuItem("GameObject/UI/FPSCounter")]
         static void CreateFPSCounter(MenuCommand menuCommand)
         {
-            var pf = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/FPSCounter.prefab");
-            if(!pf) {
-                AssetDatabase.CopyAsset("Packages/CustomUnity/Prefabs/FPSCounter.prefab", "Assets/CustomUnity/Prefabs/FPSCounter.prefab");
-                pf = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/FPSCounter.prefab");
-            }
+            var pf = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/CustomUnity/Prefabs/FPSCounter.prefab");
+            if(!pf) pf = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/FPSCounter.prefab");
             if(pf) {
                 var parent = (Selection.activeObject ? Selection.activeObject : menuCommand.context) as GameObject;
                 var go = Instantiate(pf, parent ? parent.transform : null);
