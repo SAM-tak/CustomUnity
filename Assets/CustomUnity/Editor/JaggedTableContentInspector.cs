@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 
 namespace CustomUnity
@@ -15,6 +16,13 @@ namespace CustomUnity
 
         public override void OnInspectorGUI()
         {
+            if(!Application.isPlaying) {
+                var tableContent = target as JaggedTableContent;
+                var layoutGroup = tableContent.GetComponent<LayoutGroup>();
+                if(layoutGroup != null && layoutGroup.enabled) {
+                    EditorGUILayout.HelpBox("Layout Group Component will be disabled automatically by this component in runtime.", MessageType.Warning);
+                }
+            }
             // Update the serializedProperty - always do this in the beginning of OnInspectorGUI.
             serializedObject.Update();
             // TODO: Draw UI here

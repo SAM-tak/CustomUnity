@@ -35,10 +35,7 @@ namespace CustomUnity
 
             public bool Equals(Cell other) => EqualityComparer<GameObject>.Default.Equals(cell, other.cell) && index == other.index;
 
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(cell, index);
-            }
+            public override int GetHashCode() => HashCode.Combine(cell, index);
         }
 
         protected Cell[] cellPool;
@@ -83,8 +80,12 @@ namespace CustomUnity
             NeedsUpdateContent = true;
         }
 
+        LayoutGroup layoutGroup;
+
         protected virtual void Start()
         {
+            layoutGroup = GetComponentInParent<LayoutGroup>();
+            if(layoutGroup != null) layoutGroup.enabled = false;
             ScrollRect = GetComponentInParent<ScrollRect>();
             Debug.Assert(ScrollRect);
             contentRectTransform = GetComponent<RectTransform>();
@@ -95,7 +96,8 @@ namespace CustomUnity
                 cellPool[i].cell = go;
             }
             ScrollRect.onValueChanged.AddListener(_ => {
-                if(!isUpdatingContent) {
+                if(isUpdatingContent) NeedsUpdateContent = true;
+                else {
                     isUpdatingContent = true;
                     UpdateContent();
                     isUpdatingContent = false;

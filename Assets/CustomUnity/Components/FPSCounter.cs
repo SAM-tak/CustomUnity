@@ -17,12 +17,20 @@ namespace CustomUnity
 #if UNITY_EDITOR
         void Reset()
         {
-            digitSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/CustomUnity/Sprites/fps counter digit.png")
+            digitSprites = AssetDatabase.LoadAllAssetsAtPath("Packages/CustomUnity/Sprites/fps counter digit.png")
                 .Where(x => x is Sprite)
                 .Select(x => x as Sprite)
                 .OrderBy(x => x.name)
                 .Take(10)
                 .ToArray();
+            if(digitSprites is not null && digitSprites.Length > 0) {
+                digitSprites = AssetDatabase.LoadAllAssetsAtPath("Assets/CustomUnity/Sprites/fps counter digit.png")
+                    .Where(x => x is Sprite)
+                    .Select(x => x as Sprite)
+                    .OrderBy(x => x.name)
+                    .Take(10)
+                    .ToArray();
+            }
         }
 #endif
 
@@ -63,6 +71,10 @@ namespace CustomUnity
         static void CreateFPSCounter(MenuCommand menuCommand)
         {
             var pf = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/FPSCounter.prefab");
+            if(!pf) {
+                AssetDatabase.CopyAsset("Packages/CustomUnity/Prefabs/FPSCounter.prefab", "Assets/CustomUnity/Prefabs/FPSCounter.prefab");
+                pf = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/FPSCounter.prefab");
+            }
             if(pf) {
                 var parent = (Selection.activeObject ? Selection.activeObject : menuCommand.context) as GameObject;
                 var go = Instantiate(pf, parent ? parent.transform : null);

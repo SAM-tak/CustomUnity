@@ -40,26 +40,30 @@ namespace CustomUnity
         protected override void Start()
         {
             base.Start();
-            if(repeat) SetPositionToTop();
+            if(repeat) SetPositionToFirst();
         }
 
-        void SetPositionToTop()
+        void SetPositionToFirst()
         {
             var contentRectLocalPosition = contentRectTransform.localPosition;
             var viewSize = ScrollRect.viewport.rect.size;
             switch(orientaion) {
             case Orientaion.Vertical:
-                var contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
-                if(contentRectLocalPosition.y < contentMargin) {
-                    contentRectLocalPosition.y = contentMargin;
-                    contentRectTransform.localPosition = contentRectLocalPosition;
+                {
+                    var contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
+                    if(contentRectLocalPosition.y < contentMargin) {
+                        contentRectLocalPosition.y = contentMargin;
+                        contentRectTransform.localPosition = contentRectLocalPosition;
+                    }
                 }
                 break;
             case Orientaion.Horizontal:
-                contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
-                if(contentRectLocalPosition.x < contentMargin) {
-                    contentRectLocalPosition.x = contentMargin;
-                    contentRectTransform.localPosition = contentRectLocalPosition;
+                {
+                    var contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
+                    if(contentRectLocalPosition.x < contentMargin) {
+                        contentRectLocalPosition.x = contentMargin;
+                        contentRectTransform.localPosition = contentRectLocalPosition;
+                    }
                 }
                 break;
             }
@@ -69,7 +73,7 @@ namespace CustomUnity
         {
             if(!ScrollRect) return;
 
-            if(!NeedsUpdateContent && FrameCount < 2 && repeat) SetPositionToTop();
+            if(!NeedsUpdateContent && FrameCount < 2 && repeat) SetPositionToFirst();
 
             var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
 
