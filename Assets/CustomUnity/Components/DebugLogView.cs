@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace CustomUnity
 {
@@ -27,5 +30,22 @@ namespace CustomUnity
             PlayerPrefs.SetInt(prefIncludeWarningKey, warningToggle.isOn ? 1 : 0);
             PlayerPrefs.SetInt(prefIncludeErrorKey, errorToggle.isOn ? 1 : 0);
         }
+
+#if UNITY_EDITOR
+        [MenuItem("GameObject/UI/Log View")]
+        static void CreateDebugLogView(MenuCommand menuCommand)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/CustomUnity/Prefabs/Debug Log View.prefab");
+            if(!prefab) prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/Debug Log View.prefab");
+            if(prefab) {
+                var parent = (Selection.activeObject ? Selection.activeObject : menuCommand.context) as GameObject;
+                var go = Instantiate(prefab, parent ? parent.transform : null);
+                go.UniqueName(prefab.name);
+                // Register the creation in the undo system
+                Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
+                Selection.activeObject = go;
+            }
+        }
+#endif
     }
 }
