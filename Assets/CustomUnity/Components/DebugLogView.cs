@@ -35,7 +35,7 @@ namespace CustomUnity
         [MenuItem("GameObject/UI/Log View")]
         static void CreateDebugLogView(MenuCommand menuCommand)
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/CustomUnity/Prefabs/Debug Log View.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/net.sam-tak.customunity/Prefabs/Debug Log View.prefab");
             if(!prefab) prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/Debug Log View.prefab");
             if(prefab) {
                 var parent = (Selection.activeObject ? Selection.activeObject : menuCommand.context) as GameObject;

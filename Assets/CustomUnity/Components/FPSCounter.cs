@@ -17,7 +17,7 @@ namespace CustomUnity
 #if UNITY_EDITOR
         void Reset()
         {
-            digitSprites = AssetDatabase.LoadAllAssetsAtPath("Packages/CustomUnity/Sprites/fps counter digit.png")
+            digitSprites = AssetDatabase.LoadAllAssetsAtPath("Packages/net.sam-tak.customunity/Sprites/fps counter digit.png")
                 .Where(x => x is Sprite)
                 .Select(x => x as Sprite)
                 .OrderBy(x => x.name)
@@ -70,7 +70,7 @@ namespace CustomUnity
         [MenuItem("GameObject/UI/FPSCounter")]
         static void CreateFPSCounter(MenuCommand menuCommand)
         {
-            var pf = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/CustomUnity/Prefabs/FPSCounter.prefab");
+            var pf = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/net.sam-tak.customunity/Prefabs/FPSCounter.prefab");
             if(!pf) pf = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CustomUnity/Prefabs/FPSCounter.prefab");
             if(pf) {
                 var parent = (Selection.activeObject ? Selection.activeObject : menuCommand.context) as GameObject;
