@@ -51,7 +51,7 @@ namespace CustomUnity
         {
             var callerFrame = new StackFrame(1, true);
             var callerMethod = callerFrame.GetMethod();
-            UnityEngine.Debug.LogFormat(this, "Pass {2}.{3} (at {0}:{1})", callerFrame.GetFileName(), callerFrame.GetFileLineNumber(), callerMethod.DeclaringType.Name, callerMethod.Name);
+            UnityEngine.Debug.Log($"Pass {callerMethod.DeclaringType.Name}.{callerMethod.Name} (at {callerFrame.GetFileName()}:{callerFrame.GetFileLineNumber()})", this);
         }
     }
 }

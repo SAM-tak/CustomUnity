@@ -19,60 +19,17 @@ namespace CustomUnity
         public IDataSource DataSource { get; set; }
 
         Rect[] cellRects;
-        
-        public Vector2 GetContentSize(IDataSource dataSource)
+
+        public override float GetScrollAmountForBottomOfLastItem()
         {
-            var totalCount = dataSource.TotalCount;
-
-            float rowWidth = 0f;
-            switch(orientaion) {
-            case Orientaion.Vertical:
-                rowWidth = ScrollRect.viewport.rect.height;
-                break;
-            case Orientaion.Horizontal:
-                rowWidth = ScrollRect.viewport.rect.width;
-                break;
-            }
-
-            var contentSize = 0f;
-            float curRowWidth = 0f;
-            float curRowHeight = 0f;
-            for(int i = 0; i < totalCount; ++i) {
-                var cellSize = dataSource.CellSize(i);
-                float rowHeight = 0;
-                float columnWidth = 0;
-
-                switch(orientaion) {
-                case Orientaion.Vertical:
-                    rowHeight = cellSize.y;
-                    columnWidth = cellSize.x;
-                    break;
-                case Orientaion.Horizontal:
-                    rowHeight = cellSize.x;
-                    columnWidth = cellSize.y;
-                    break;
-                }
-
-                if(curRowWidth + columnWidth > rowWidth || i + 1 == totalCount) {
-                    if(i > 0) {
-                        contentSize += curRowHeight;
-                        curRowHeight = rowHeight;
-                        curRowWidth = 0;
-                    }
-                }
-                else {
-                    if(curRowHeight < rowHeight) curRowHeight = rowHeight;
-                }
-
-                curRowWidth += columnWidth;
-                if(i + 1 == totalCount) contentSize += curRowHeight;
-            }
             return orientaion switch {
-                Orientaion.Horizontal => new Vector2(contentSize, rowWidth),
-                _ => new Vector2(rowWidth, contentSize),
+                Orientaion.Horizontal => GetComponent<RectTransform>().rect.width,
+                _ => GetComponent<RectTransform>().rect.height,
             };
         }
-        
+
+        public override int DataSourceTotalCount => DataSource.TotalCount;
+
         struct LookAheadedCellSize : IEquatable<LookAheadedCellSize>
         {
             public int index;
@@ -114,7 +71,7 @@ namespace CustomUnity
                 break;
             }
 
-            OnPreUpdate?.Invoke();
+            PreUpdate();
 
             var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
 

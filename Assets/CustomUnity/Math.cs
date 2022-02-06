@@ -43,12 +43,58 @@ namespace CustomUnity
         }
 
         /// <summary>
+        /// Ceiling value / alignment.
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <param name="alignment">Positive Alignment Value</param>
+        /// <returns>Wraped Value</returns>
+        public static long CeilDiv(long value, long alignment)
+        {
+            Debug.Assert(alignment > 0);
+            return value < 0 ? (value - alignment + 1) / alignment + 1 : (value + alignment - 1) / alignment;
+        }
+
+        /// <summary>
+        /// Ceiling value / alignment.
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <param name="alignment">Alignment Value</param>
+        /// <returns>Wraped Value</returns>
+        public static uint CeilDiv(uint value, uint alignment)
+        {
+            return (value + alignment - 1) / alignment;
+        }
+
+        /// <summary>
+        /// Ceiling value / alignment.
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <param name="alignment">Alignment Value</param>
+        /// <returns>Wraped Value</returns>
+        public static ulong CeilDiv(ulong value, ulong alignment)
+        {
+            return (value + alignment - 1) / alignment;
+        }
+
+        /// <summary>
         /// Flooring value / alignment.
         /// </summary>
         /// <param name="value">Value</param>
         /// <param name="alignment">Positive Alignment Value</param>
         /// <returns>Wraped Value</returns>
         public static int FloorDiv(int value, int alignment)
+        {
+            Debug.Assert(alignment > 0);
+            return value < 0 ? (value + 1) / alignment - 1 : value / alignment;
+        }
+
+        /// <summary>
+        /// Flooring value / alignment.
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <param name="alignment">Positive Alignment Value</param>
+        /// <returns>Wraped Value</returns>
+        public static long FloorDiv(long value, long alignment)
         {
             Debug.Assert(alignment > 0);
             return value < 0 ? (value + 1) / alignment - 1 : value / alignment;

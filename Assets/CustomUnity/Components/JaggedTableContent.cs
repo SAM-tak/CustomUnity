@@ -33,20 +33,16 @@ namespace CustomUnity
 
         CellPosition[] cellPositions;
         
-        public Vector2 GetContentSize(IDataSource dataSource)
+        public override float GetScrollAmountForBottomOfLastItem()
         {
-            var totalCount = dataSource.TotalCount;
-
-            var contentSize = 0f;
-            for(int i = 0; i < totalCount; ++i) {
-                contentSize += dataSource.CellSize(i);
-            }
             return orientaion switch {
-                Orientaion.Horizontal => new Vector2(contentSize, ScrollRect.viewport.rect.height),
-                _ => new Vector2(ScrollRect.viewport.rect.width, contentSize),
+                Orientaion.Horizontal => GetComponent<RectTransform>().rect.width,
+                _ => GetComponent<RectTransform>().rect.height,
             };
         }
-        
+
+        public override int DataSourceTotalCount => DataSource.TotalCount;
+
         protected override void Start()
         {
             base.Start();
@@ -57,7 +53,7 @@ namespace CustomUnity
         {
             if(!ScrollRect) return;
 
-            var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
+            var totalCount = DataSource != null ? DataSource.TotalCount : 0;
             float viewLower = 0f;
             var contentRectLocalPosition = contentRectTransform.localPosition;
             switch(orientaion) {

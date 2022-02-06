@@ -34,7 +34,7 @@ namespace YourProjectNamespace
         }
         
         public UnityEvent animationExitEvent;
-        public void OnAnimationExit(Animator animator, int stateMachinePathHash)
+        public void OnAnimationExit(Animator _0, int _1)
         {
             LogInfo("OnAnimationExit".Aqua());
             animationExitEvent?.Invoke();
@@ -55,9 +55,9 @@ namespace YourProjectNamespace
         }
 
         // Update is called once per frame
-        void Update()
-        {
-            //LogInfo("Update");
-        }
+        // void Update()
+        // {
+        //     //LogInfo("Update");
+        // }
     }
 }

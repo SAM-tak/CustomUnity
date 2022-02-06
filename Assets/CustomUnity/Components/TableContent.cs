@@ -20,14 +20,16 @@ namespace CustomUnity
 
         public bool repeat;
         
-        public Vector2 GetContentSize(IDataSource dataSource)
+        public override float GetScrollAmountForBottomOfLastItem()
         {
-            var n = dataSource.TotalCount;
+            var n = DataSource.TotalCount;
             return orientaion switch {
-                Orientaion.Horizontal => new Vector2(n * cellSize.x / columnCount, n < columnCount ? n * cellSize.y : cellSize.y * columnCount),
-                _ => new Vector2(n < columnCount ? n * cellSize.x : cellSize.x * columnCount, n * cellSize.y / columnCount),
+                Orientaion.Horizontal => Math.CeilDiv(n, columnCount) * cellSize.x,
+                _ => Math.CeilDiv(n, columnCount) * cellSize.y,
             };
         }
+
+        public override int DataSourceTotalCount => DataSource.TotalCount;
 
         const int merginScaler = 2;
         const int minimumMergin = 400;

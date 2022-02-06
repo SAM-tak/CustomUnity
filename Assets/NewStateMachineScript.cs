@@ -41,7 +41,7 @@ namespace YourProjectNamespace
         override public void OnStateMachineExit(Animator animator, int stateMachinePathHash)
         {
             var behaviourScript = animator.GetComponent<NewBehaviourScript>();
-            behaviourScript?.OnAnimationExit(animator, stateMachinePathHash);
+            if(behaviourScript) behaviourScript.OnAnimationExit(animator, stateMachinePathHash);
         }
     }
 }

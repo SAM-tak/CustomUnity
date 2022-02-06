@@ -14,7 +14,7 @@ namespace CustomUnity
                 var tableContent = target as MultiColumnJaggedTableContent;
                 var layoutGroup = tableContent.GetComponent<LayoutGroup>();
                 if(layoutGroup != null && layoutGroup.enabled) {
-                    EditorGUILayout.HelpBox("Layout Group Component will be disabled automatically by this component in runtime.", MessageType.Warning);
+                    EditorGUILayout.HelpBox("Layout Group Component will corrupt table view or cause of glitch. Please disable it before save a prefab/scene or before play.", MessageType.Warning);
                 }
             }
             // Update the serializedProperty - always do this in the beginning of OnInspectorGUI.

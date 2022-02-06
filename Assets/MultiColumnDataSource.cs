@@ -34,11 +34,7 @@ namespace YourProjectNamespace
         public bool appendToFront;
         public bool appendToBack;
 
-        public int TotalCount {
-            get {
-                return (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
-            }
-        }
+        public int TotalCount => (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
 
         bool prevAppendToFront;
         bool prevAppendToBack;
