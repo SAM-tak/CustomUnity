@@ -32,17 +32,13 @@ namespace YourProjectNamespace
         public bool appendToFront;
         public bool appendToBack;
 
-        public int TotalCount {
-            get {
-                return (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
-            }
-        }
+        int TableContent.IDataSource.TotalCount => (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
 
         bool prevAppendToFront;
         bool prevAppendToBack;
         TableContent tableContent;
 
-        public void OnPreUpdate()
+        void TableContent.IDataSource.OnPreUpdate()
         {
             if(prevAppendToFront != appendToFront || prevAppendToBack != appendToBack) tableContent.Refresh();
 
@@ -51,20 +47,20 @@ namespace YourProjectNamespace
                 if(appendToFront) {
                     switch(tableContent.orientaion) {
                     case Orientaion.Vertical:
-                        pos.y += dataSource2.Length * tableContent.cellSize.y;
+                        pos.y += dataSource2.Length * tableContent.CellSize.y;
                         break;
                     case Orientaion.Horizontal:
-                        pos.x -= dataSource2.Length * tableContent.cellSize.x;
+                        pos.x -= dataSource2.Length * tableContent.CellSize.x;
                         break;
                     }
                 }
                 else {
                     switch(tableContent.orientaion) {
                     case Orientaion.Vertical:
-                        pos.y -= dataSource2.Length * tableContent.cellSize.y;
+                        pos.y -= dataSource2.Length * tableContent.CellSize.y;
                         break;
                     case Orientaion.Horizontal:
-                        pos.x += dataSource2.Length * tableContent.cellSize.x;
+                        pos.x += dataSource2.Length * tableContent.CellSize.x;
                         break;
                     }
                 }
@@ -72,7 +68,7 @@ namespace YourProjectNamespace
             }
         }
         
-        public void SetUpCell(int index, GameObject cell)
+        void TableContent.IDataSource.SetUpCell(int index, GameObject cell)
         {
             var data = GetCellData(index);
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
@@ -100,8 +96,6 @@ namespace YourProjectNamespace
         void Awake()
         {
             tableContent = GetComponent<TableContent>();
-            tableContent.DataSource = this;
-            tableContent.OnPreUpdate += OnPreUpdate;
         }
 
         void Start()

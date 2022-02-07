@@ -100,7 +100,7 @@ namespace CustomUnity
 
         JaggedTableContent tableContent;
 
-        void OnPreUpdate()
+        void JaggedTableContent.IDataSource.OnPreUpdate()
         {
             if(prevTotalCount != TotalCount) {
                 tableContent.Refresh();
@@ -120,7 +120,7 @@ namespace CustomUnity
             preferredHeightCache.Clear();
         }
 
-        public float CellSize(int index)
+        float JaggedTableContent.IDataSource.CellSize(int index)
         {
             if(index < 0 || logRecords.Value.logs.Count(i => Includes(i)) <= index) return minHeight;
 
@@ -148,7 +148,7 @@ namespace CustomUnity
             return EstimateHeight(lineCount);
         }
 
-        public void SetUpCell(int index, GameObject cell)
+        void JaggedTableContent.IDataSource.SetUpCell(int index, GameObject cell)
         {
             var data = logRecords.Value.logs.Where(i => Includes(i)).ElementAt(index);
             cell.transform.Find("DateTime").GetComponent<Text>().text = data.dateTime.ToString("u");
@@ -176,34 +176,38 @@ namespace CustomUnity
             cell.transform.Find("AltBackground").gameObject.SetActive(index % 2 == 0);
         }
 
-        void Awake()
-        {
-            tableContent = GetComponent<JaggedTableContent>();
-            tableContent.DataSource = this;
-            tableContent.OnPreUpdate += OnPreUpdate;
-            StartLogging();
-            OnLogCleared += ClearPreferredHeightCache;
-        }
-
-        void OnDestroy()
-        {
-            if(tableContent) tableContent.OnPreUpdate -= OnPreUpdate;
-            OnLogCleared -= ClearPreferredHeightCache;
-        }
-
-        public float minHeight = 34f;
-        public int wrapColumnCount = 0;
-
+        float minHeight;
+        int wrapColumnCount;
         int fontSize;
         float lineSpacing;
         float mergin;
 
-        void Start()
+        void Awake()
         {
-            var text = transform.GetChild(0).Find("Message").GetComponent<Text>();
-            mergin  = Mathf.Abs(text.rectTransform.sizeDelta.y / 2);
+            tableContent = GetComponent<JaggedTableContent>();
+            StartLogging();
+            OnLogCleared += ClearPreferredHeightCache;
+
+            var firstChild = transform.GetChild(0);
+
+            minHeight = tableContent.orientaion switch {
+                Orientaion.Horizontal => firstChild.GetComponent<RectTransform>().rect.width,
+                _ => firstChild.GetComponent<RectTransform>().rect.height
+            };
+
+            var text = firstChild.Find("Message").GetComponent<Text>();
+            mergin = tableContent.orientaion switch {
+                Orientaion.Horizontal => Mathf.Abs(text.rectTransform.sizeDelta.x / 2),
+                _ => Mathf.Abs(text.rectTransform.sizeDelta.y / 2)
+            };
             fontSize = text.fontSize;
             lineSpacing = text.lineSpacing;
+            wrapColumnCount = Mathf.RoundToInt(text.rectTransform.rect.width / (fontSize + 1));
+        }
+
+        void OnDestroy()
+        {
+            OnLogCleared -= ClearPreferredHeightCache;
         }
     }
 }

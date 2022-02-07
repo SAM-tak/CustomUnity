@@ -10,11 +10,12 @@ namespace CustomUnity
         public interface IDataSource
         {
             int TotalCount { get; }
-            float CellSize(int index);
             void SetUpCell(int index, GameObject cell);
+            void OnPreUpdate();
+            float CellSize(int index);
         }
-        
-        public IDataSource DataSource { get; set; }
+
+        public IDataSource DataSource { get; private set; }
         
         struct CellPosition : IEquatable<CellPosition>
         {
@@ -25,10 +26,7 @@ namespace CustomUnity
 
             public bool Equals(CellPosition other) => position == other.position && size == other.size;
 
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(position, size);
-            }
+            public override int GetHashCode() => HashCode.Combine(position, size);
         }
 
         CellPosition[] cellPositions;
@@ -42,6 +40,13 @@ namespace CustomUnity
         }
 
         public override int DataSourceTotalCount => DataSource.TotalCount;
+
+        protected override void PreUpdate() => DataSource?.OnPreUpdate();
+
+        protected virtual void Awake()
+        {
+            DataSource = GetComponent<IDataSource>();
+        }
 
         protected override void Start()
         {

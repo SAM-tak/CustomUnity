@@ -44,7 +44,7 @@ namespace YourProjectNamespace
         bool prevAppendToBack;
         JaggedTableContent tableContent;
 
-        public void OnPreUpdate()
+        void JaggedTableContent.IDataSource.OnPreUpdate()
         {
             if(prevAppendToFront != appendToFront || prevAppendToBack != appendToBack) tableContent.Refresh();
 
@@ -75,12 +75,12 @@ namespace YourProjectNamespace
             }
         }
         
-        public float CellSize(int index)
+        float JaggedTableContent.IDataSource.CellSize(int index)
         {
             return GetCellData(index).size;
         }
 
-        public void SetUpCell(int index, GameObject cell)
+        void JaggedTableContent.IDataSource.SetUpCell(int index, GameObject cell)
         {
             var data = GetCellData(index);
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
@@ -130,8 +130,6 @@ namespace YourProjectNamespace
         void Awake()
         {
             tableContent = GetComponent<JaggedTableContent>();
-            tableContent.DataSource = this;
-            tableContent.OnPreUpdate += OnPreUpdate;
         }
 
         void Start()

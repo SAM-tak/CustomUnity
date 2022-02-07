@@ -24,9 +24,7 @@ namespace CustomUnity
 
         protected RectTransform contentRectTransform;
 
-        public event Action OnPreUpdate;
-
-        protected void PreUpdate() => OnPreUpdate();
+        protected abstract void PreUpdate();
 
         protected struct Cell : IEquatable<Cell>
         {

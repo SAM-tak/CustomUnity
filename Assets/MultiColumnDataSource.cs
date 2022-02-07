@@ -160,8 +160,6 @@ namespace YourProjectNamespace
         void Awake()
         {
             tableContent = GetComponent<MultiColumnJaggedTableContent>();
-            tableContent.DataSource = this;
-            tableContent.OnPreUpdate += OnPreUpdate;
         }
 
         void Start()

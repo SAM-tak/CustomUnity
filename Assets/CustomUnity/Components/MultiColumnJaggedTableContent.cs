@@ -12,11 +12,12 @@ namespace CustomUnity
         public interface IDataSource
         {
             int TotalCount { get; }
-            Vector2 CellSize(int index);
             void SetUpCell(int index, GameObject cell);
+            void OnPreUpdate();
+            Vector2 CellSize(int index);
         }
-        
-        public IDataSource DataSource { get; set; }
+
+        public IDataSource DataSource { get; private set; }
 
         Rect[] cellRects;
 
@@ -30,6 +31,8 @@ namespace CustomUnity
 
         public override int DataSourceTotalCount => DataSource.TotalCount;
 
+        protected override void PreUpdate() => DataSource?.OnPreUpdate();
+
         struct LookAheadedCellSize : IEquatable<LookAheadedCellSize>
         {
             public int index;
@@ -39,13 +42,15 @@ namespace CustomUnity
 
             public bool Equals(LookAheadedCellSize other) => index == other.index && rect.Equals(other.rect);
 
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(index, rect);
-            }
+            public override int GetHashCode() => HashCode.Combine(index, rect);
         }
 
         List<LookAheadedCellSize> LookAheadedCellSizes { get; } = new List<LookAheadedCellSize>(10);
+
+        protected virtual void Awake()
+        {
+            DataSource = GetComponent<IDataSource>();
+        }
 
         protected override void Start()
         {
