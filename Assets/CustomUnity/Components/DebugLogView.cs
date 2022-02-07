@@ -8,10 +8,9 @@ namespace CustomUnity
 {
     public class DebugLogView : MonoBehaviour
     {
-        const string prefKeyPrefix = "customunity.debuglogview.";
-        const string prefIncludeInfoKey = prefKeyPrefix + "includeinfo";
-        const string prefIncludeWarningKey = prefKeyPrefix + "includewaring";
-        const string prefIncludeErrorKey = prefKeyPrefix + "includeerror";
+        const string kIncludeInfo = nameof(DebugLogView) + ".includeinfo";
+        const string kIncludeWarning = nameof(DebugLogView) + ".includewaring";
+        const string kIncludeError = nameof(DebugLogView) + ".includeerror";
 
         public Toggle infoToggle;
         public Toggle warningToggle;
@@ -19,16 +18,16 @@ namespace CustomUnity
 
         void OnEnable()
         {
-            infoToggle.isOn = PlayerPrefs.GetInt(prefIncludeInfoKey, 1) > 0;
-            warningToggle.isOn = PlayerPrefs.GetInt(prefIncludeWarningKey, 1) > 0;
-            errorToggle.isOn = PlayerPrefs.GetInt(prefIncludeErrorKey, 1) > 0;
+            infoToggle.isOn = PlayerPrefs.Get(kIncludeInfo, true);
+            warningToggle.isOn = PlayerPrefs.Get(kIncludeWarning, true);
+            errorToggle.isOn = PlayerPrefs.Get(kIncludeError, true);
         }
 
         void OnDisable()
         {
-            PlayerPrefs.SetInt(prefIncludeInfoKey, infoToggle.isOn ? 1 : 0);
-            PlayerPrefs.SetInt(prefIncludeWarningKey, warningToggle.isOn ? 1 : 0);
-            PlayerPrefs.SetInt(prefIncludeErrorKey, errorToggle.isOn ? 1 : 0);
+            PlayerPrefs.Set(kIncludeInfo, infoToggle.isOn);
+            PlayerPrefs.Set(kIncludeWarning, warningToggle.isOn);
+            PlayerPrefs.Set(kIncludeError, errorToggle.isOn);
         }
 
 #if UNITY_EDITOR

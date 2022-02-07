@@ -13,7 +13,7 @@ namespace CustomUnity
     public static class MakeLinkXMLFromAB
     {
         static string latestSelectedPath;
-        const string kLatestSelectedPath = "MakeLinkXMLFromAB.LatestSelectedPath";
+        const string kLatestSelectedPath = nameof(MakeLinkXMLFromAB) + ".LatestSelectedPath";
 
         /// <summary>
         /// Latest selected folder. will save to EditorPrefs.
@@ -21,14 +21,14 @@ namespace CustomUnity
         public static string LatestSelectedPath {
             get {
                 if(latestSelectedPath == null) {
-                    latestSelectedPath = EditorPrefs.GetString(kLatestSelectedPath, Path.Combine("AssetBundles", AssetBundleLoader.GetPlatformName()));
+                    latestSelectedPath = EditorPrefs.Get(kLatestSelectedPath, Path.Combine("AssetBundles", AssetBundleLoader.GetPlatformName()));
                 }
                 return latestSelectedPath;
             }
             set {
                 if(latestSelectedPath != value) {
                     latestSelectedPath = value;
-                    EditorPrefs.SetString(kLatestSelectedPath, value);
+                    EditorPrefs.Set(kLatestSelectedPath, value);
                 }
             }
         }

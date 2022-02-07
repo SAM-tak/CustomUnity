@@ -73,7 +73,7 @@ namespace CustomUnity
 #endif
 #if UNITY_EDITOR
         static bool? simulatesAssetBundleInEditor;
-        const string kSimulatesAssetBundles = "SimulatesAssetBundles";
+        const string kSimulatesAssetBundles = nameof(AssetBundleLoader) + ".SimulatesAssetBundles";
         const string menuStringSimulationMode = "Assets/AssetBundles/Simulation Mode";
 
         [MenuItem(menuStringSimulationMode)]
@@ -89,7 +89,7 @@ namespace CustomUnity
             return true;
         }
 
-        public const string kLocalAssetBundleServerURL = "LocalAssetBundleServerURL";
+        public const string kLocalAssetBundleServerURL = nameof(AssetBundleLoader) + ".LocalAssetBundleServerURL";
         /// <summary>
         /// Flag to indicate if we want to simulate assetBundles in Editor without building them actually.
         /// </summary>
