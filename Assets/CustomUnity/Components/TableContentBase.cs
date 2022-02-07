@@ -18,7 +18,7 @@ namespace CustomUnity
 
         public ScrollRect ScrollRect { get; protected set; }
 
-        public int MaxCells { get => cellPool != null ? cellPool.Length : 0; }
+        public int MaxCells => cellPool != null ? cellPool.Length : 0;
 
         public int MaxCellsRequired { get; protected set; }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CustomUnity
 {
-    public class InactivateOnExit : StateMachineBehaviour
+    public class DeactivateOnExit : StateMachineBehaviour
     {
         public bool allowDelayedInactivation = false;
 
@@ -29,17 +29,17 @@ namespace CustomUnity
             }
 #endif
             if(allowDelayedInactivation) {
-                var delayedInactivationHandler = animator.GetComponent<DelayedInactivationHandler>();
-                if(!delayedInactivationHandler) delayedInactivationHandler = animator.gameObject.AddComponent<DelayedInactivationHandler>();
-                delayedInactivationHandler.StartCoroutine(InactiveOnEndOfFrame(animator));
+                var delayedDeactivationHandler = animator.GetComponent<DelayedDeactivationHandler>();
+                if(!delayedDeactivationHandler) delayedDeactivationHandler = animator.gameObject.AddComponent<DelayedDeactivationHandler>();
+                delayedDeactivationHandler.StartCoroutine(DeactivateOnEndOfFrame(animator));
             }
             else animator.gameObject.SetActive(false);
         }
 
         // use coroutine for avoid depend to external library (via. UniTask)
-        internal class DelayedInactivationHandler : MonoBehaviour { }
+        internal class DelayedDeactivationHandler : MonoBehaviour { }
         static readonly WaitForEndOfFrame waitForEndOfFrame = new ();
-        IEnumerator InactiveOnEndOfFrame(Animator animator)
+        IEnumerator DeactivateOnEndOfFrame(Animator animator)
         {
             yield return waitForEndOfFrame;
             animator.gameObject.SetActive(false);

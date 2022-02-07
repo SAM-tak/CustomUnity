@@ -99,7 +99,7 @@ namespace CustomUnity
 
             if(!NeedsUpdateContent && FrameCount < 2 && repeat) SetPositionToFirst();
 
-            var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
+            var totalCount = DataSource?.TotalCount ?? 0;
 
             int startIndex = 0;
             int endIndex = 0;
