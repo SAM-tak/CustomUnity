@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// MonoBehaviour has 'LateFixedUpdate'.
+    /// </summary>
     public abstract class LateFixedUpdateBehaviour : MonoBehaviour
     {
         protected virtual void OnEnable()

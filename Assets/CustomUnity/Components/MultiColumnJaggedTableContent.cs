@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Various cell size multi column table view.
+    /// </summary>
     [RequireComponent(typeof(RectTransform))]
     public class MultiColumnJaggedTableContent : TableContentBase
     {

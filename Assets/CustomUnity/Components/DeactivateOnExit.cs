@@ -3,15 +3,18 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Deactivate own GameObject on StateMachine exit
+    /// </summary>
     public class DeactivateOnExit : StateMachineBehaviour
     {
-        public bool allowDelayedInactivation = false;
+        public bool allowDelayedDeactivation = false;
 
         // OnStateMachineExit is called when exiting a statemachine via its Exit Node
         override public void OnStateMachineExit(Animator animator, int stateMachinePathHash)
         {
 #if UNITY_EDITOR
-            if(!allowDelayedInactivation) {
+            if(!allowDelayedDeactivation) {
                 for(int layerno = 0; layerno < animator.layerCount; ++layerno) {
                     var stateInfo = animator.GetCurrentAnimatorStateInfo(layerno);
                     foreach(var i in animator.GetCurrentAnimatorClipInfo(layerno)) {
@@ -28,7 +31,7 @@ namespace CustomUnity
                 }
             }
 #endif
-            if(allowDelayedInactivation) {
+            if(allowDelayedDeactivation) {
                 var delayedDeactivationHandler = animator.GetComponent<DelayedDeactivationHandler>();
                 if(!delayedDeactivationHandler) delayedDeactivationHandler = animator.gameObject.AddComponent<DelayedDeactivationHandler>();
                 delayedDeactivationHandler.StartCoroutine(DeactivateOnEndOfFrame(animator));

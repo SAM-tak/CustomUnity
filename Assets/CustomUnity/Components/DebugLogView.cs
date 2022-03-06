@@ -6,6 +6,9 @@ using UnityEditor;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// DebugLog View Controller
+    /// </summary>
     public class DebugLogView : MonoBehaviour
     {
         const string kIncludeInfo = nameof(DebugLogView) + ".includeinfo";

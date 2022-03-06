@@ -5,6 +5,9 @@ using UnityEngine.Events;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Fire unityevent after all recognized signals fired.
+    /// </summary>
     [AddComponentMenu("CustomUnity/Signal/SumAllSignalsEvent")]
     public class SumAllSignalsEvent : MonoBehaviour
     {

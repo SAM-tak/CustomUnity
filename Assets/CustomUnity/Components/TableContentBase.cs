@@ -10,7 +10,10 @@ namespace CustomUnity
         Vertical,
         Horizontal
     }
-    
+
+    /// <summary>
+    /// Base class of TabelContent / JuggedTabelContent / MultiColumnJuggedTabelContent
+    /// </summary>
     public abstract class TableContentBase : MonoBehaviour
     {
         [ReadOnlyWhenPlaying]

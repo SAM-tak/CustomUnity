@@ -3,6 +3,9 @@ using UnityEngine.Events;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Fire unityevent after specified flags on.
+    /// </summary>
     [AddComponentMenu("CustomUnity/Flag/SumSomeFlagsEvent")]
     public class SumSomeFlagsEvent : MonoBehaviour
     {

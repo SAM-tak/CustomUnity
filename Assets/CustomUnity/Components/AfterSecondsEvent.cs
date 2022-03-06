@@ -3,6 +3,9 @@ using UnityEngine.Events;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Fire unity event after specified seconds later
+    /// </summary>
     [AddComponentMenu("CustomUnity/AfterSecondsEvent")]
     public class AfterSecondsEvent : LateFixedUpdateBehaviour
     {

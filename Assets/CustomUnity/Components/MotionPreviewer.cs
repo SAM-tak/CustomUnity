@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// seekable animation previewer
+    /// </summary>
     [ExecuteInEditMode]
     [RequireComponent(typeof(Animator))]
     public class MotionPreviewer : MonoBehaviour

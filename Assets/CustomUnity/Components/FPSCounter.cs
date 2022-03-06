@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Lightweight FPS Counter Controller
+    /// </summary>
     public class FPSCounter : MonoBehaviour
     {
         public Sprite[] digitSprites;

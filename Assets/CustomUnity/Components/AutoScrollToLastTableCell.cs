@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Track last item of table view.
+    /// </summary>
     [RequireComponent(typeof(ScrollRect))]
     public class AutoScrollToLastTableCell : ScrollToItemBase
     {

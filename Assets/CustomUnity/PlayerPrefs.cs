@@ -1,5 +1,9 @@
 namespace CustomUnity
 {
+    /// <summary>
+    /// extend PlayerPref<br/>
+    /// Get / Set and Bool
+    /// </summary>
     public static class PlayerPrefs
     {
         public static int GetInt(string key, int @default = 0) => UnityEngine.PlayerPrefs.GetInt(key, @default);

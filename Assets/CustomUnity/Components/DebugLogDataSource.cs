@@ -7,6 +7,9 @@ using System.Diagnostics;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// DebugLog ViewModel
+    /// </summary>
     [RequireComponent(typeof(JaggedTableContent))]
     public class DebugLogDataSource : MonoBehaviour, JaggedTableContent.IDataSource
     {

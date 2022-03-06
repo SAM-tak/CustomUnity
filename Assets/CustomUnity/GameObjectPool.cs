@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Game Object Pool
+    /// </summary>
     [Serializable]
     public sealed class GameObjectPool
     {
@@ -20,10 +23,7 @@ namespace CustomUnity
 
             public bool Equals(Entry other) => EqualityComparer<GameObject>.Default.Equals(go, other.go) && time == other.time;
 
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(go, time);
-            }
+            public override int GetHashCode() => HashCode.Combine(go, time);
         }
 
         Entry[] entries;
@@ -46,7 +46,7 @@ namespace CustomUnity
             }
         }
         
-        public void InactivateAll()
+        public void DeactivateAll()
         {
             foreach(var i in entries) {
                 i.go.SetActive(false);

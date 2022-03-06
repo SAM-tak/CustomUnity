@@ -297,7 +297,7 @@ namespace CustomUnity
 
     public abstract class AssetBundleLoadAssetOperation : AssetBundleLoadOperation
     {
-        public abstract Object Asset { get; }
+        public abstract Object Result { get; }
     }
 
     public class AssetBundleLoadAssetOperationSimulation : AssetBundleLoadAssetOperation
@@ -309,7 +309,7 @@ namespace CustomUnity
             this.simulatedObject = simulatedObject;
         }
 
-        public override Object Asset => simulatedObject;
+        public override Object Result => simulatedObject;
 
         public override bool Update() => false;
 
@@ -331,7 +331,7 @@ namespace CustomUnity
             Type = type;
         }
 
-        public override Object Asset => request?.isDone ?? false ? request?.asset : null;
+        public override Object Result => request?.isDone ?? false ? request?.asset : null;
 
         // Returns true if more Update calls are required.
         public override bool Update()
@@ -372,7 +372,7 @@ namespace CustomUnity
             base.Update();
 
             if(request != null && request.isDone) {
-                AssetBundleLoader.Manifest = Asset as AssetBundleManifest;
+                AssetBundleLoader.Manifest = Result as AssetBundleManifest;
                 return false;
             }
             return true;

@@ -13,7 +13,7 @@ namespace CustomUnity
 
         public bool Equals(Bit2 other) => Value == other.Value;
 
-        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit3 : IBit<int>, IEquatable<Bit3>
@@ -24,7 +24,7 @@ namespace CustomUnity
 
         public bool Equals(Bit3 other) => Value == other.Value;
 
-        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit4 : IBit<int>, IEquatable<Bit4>
@@ -35,7 +35,7 @@ namespace CustomUnity
 
         public bool Equals(Bit4 other) => Value == other.Value;
 
-        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit5 : IBit<int>, IEquatable<Bit5>
@@ -46,7 +46,7 @@ namespace CustomUnity
 
         public bool Equals(Bit5 other) => Value == other.Value;
 
-        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit6 : IBit<int>, IEquatable<Bit6>
@@ -57,7 +57,7 @@ namespace CustomUnity
 
         public bool Equals(Bit6 other) => Value == other.Value;
 
-        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit7 : IBit<int>, IEquatable<Bit7>
@@ -68,7 +68,7 @@ namespace CustomUnity
 
         public bool Equals(Bit7 other) => Value == other.Value;
 
-        public override int GetHashCode() => -1937169414 + Value.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct NBitArray<N> : IEquatable<NBitArray<N>> where N : struct, IBit<int>
@@ -120,12 +120,8 @@ namespace CustomUnity
         public override int GetHashCode() => 383674718 + EqualityComparer<int[]>.Default.GetHashCode(store);
 
         public byte this[int index] {
-            get {
-                return Get(index);
-            }
-            set {
-                Set(index, value);
-            }
+            get => Get(index);
+            set => Set(index, value);
         }
     }
 
@@ -134,12 +130,8 @@ namespace CustomUnity
         public uint store;
 
         public bool this[int i] {
-            get {
-                return (store & (1 << i)) > 0;
-            }
-            set {
-                store = (store & (uint)~(1 << i)) | (value ? (uint)(1 << i) : 0);
-            }
+            get => (store & (1 << i)) > 0;
+            set => store = (store & (uint)~(1 << i)) | (value ? (uint)(1 << i) : 0);
         }
 
         public static BitArray32 operator&(BitArray32 lhs, BitArray32 rhs)
@@ -216,10 +208,7 @@ namespace CustomUnity
 
         public bool Equals(BitArray64 other) => store1.Equals(other.store1) && store2.Equals(other.store2);
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(store1, store2);
-        }
+        public override int GetHashCode() => HashCode.Combine(store1, store2);
     }
 
     public struct BitArray96 : IEquatable<BitArray96>
@@ -267,10 +256,7 @@ namespace CustomUnity
 
         public bool Equals(BitArray96 other) => store1.Equals(other.store1) && store2.Equals(other.store2) && store3.Equals(other.store3);
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(store1, store2, store3);
-        }
+        public override int GetHashCode() => HashCode.Combine(store1, store2, store3);
     }
 
     public struct BitArray128 : IEquatable<BitArray128>
@@ -321,9 +307,6 @@ namespace CustomUnity
 
         public bool Equals(BitArray128 other) => store1.Equals(other.store1) && store2.Equals(other.store2) && store3.Equals(other.store3) && store4.Equals(other.store4);
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(store1, store2, store3, store4);
-        }
+        public override int GetHashCode() => HashCode.Combine(store1, store2, store3, store4);
     }
 }

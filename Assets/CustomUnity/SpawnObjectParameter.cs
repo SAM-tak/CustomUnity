@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// ScriptableObject of spawn setting for GameObjectPoolSet
+    /// </summary>
     [CreateAssetMenu(menuName = "Custom Unity/Spawn Object Parameter")]
     public class SpawnObjectParameter : ScriptableObject
     {

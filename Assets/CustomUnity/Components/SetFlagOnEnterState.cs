@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Call SumSomeFlagsEvent.SetFlag when StateMachine enter 'enter' state.
+    /// </summary>
     public class SetFlasgOnEnterState : StateMachineBehaviour
     {
         public SumSomeFlagsEvent.Flags flag;

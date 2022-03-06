@@ -2,6 +2,9 @@ using UnityEngine.Networking;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Utilities for UnityWebRequest
+    /// </summary>
     public static class WebRequest
     {
         public static UnityWebRequest PostJson(string uri, string json)

@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Generic circular buffer.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class CircularBuffer<T> : IEnumerable<T>
     {
         T[] buffer;

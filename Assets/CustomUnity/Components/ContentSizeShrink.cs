@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// limit rect size into parent size.
+    /// </summary>
     [ExecuteInEditMode]
     [RequireComponent(typeof(RectTransform))]
     public class ContentSizeShrink : UIBehaviour, ILayoutSelfController

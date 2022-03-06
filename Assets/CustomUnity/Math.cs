@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Math utilities
+    /// </summary>
     public static class Math
     {
         /// <summary>

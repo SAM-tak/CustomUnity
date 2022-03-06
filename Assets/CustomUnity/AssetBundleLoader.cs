@@ -667,7 +667,7 @@ namespace CustomUnity
             
             public AssetBundleLoadAssetOperation Operation { get; private set; }
 
-            public T Asset => Operation?.Asset as T;
+            public T Asset => Operation?.Result as T;
 
             public object Current => Operation?.Current;
 
@@ -681,10 +681,7 @@ namespace CustomUnity
 
             public bool Equals(AssetLoadOperation<T> other) => EqualityComparer<AssetBundleLoadAssetOperation>.Default.Equals(Operation, other.Operation);
 
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(Operation);
-            }
+            public override int GetHashCode() => HashCode.Combine(Operation);
         }
 
         /// <summary>

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Set of GameObject Pools
+    /// </summary>
     [System.Serializable]
     public sealed class GameObjectPoolSet
     {
@@ -43,9 +46,9 @@ namespace CustomUnity
             SetUp(null, setUpProcPerObject);
         }
 
-        public void InactivateAll()
+        public void DeactivateAll()
         {
-            foreach(var i in pools) i.InactivateAll();
+            foreach(var i in pools) i.DeactivateAll();
         }
 
         public GameObject Spawn(string name, Vector3 position, Quaternion rotation)

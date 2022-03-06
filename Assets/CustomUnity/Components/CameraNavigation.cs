@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// move camera by player input in runtime.
+    /// </summary>
     [RequireComponent(typeof(Camera))]
     public class CameraNavigation : MonoBehaviour
     {

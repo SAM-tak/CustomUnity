@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// ScriptableObject for setting GameObjectPoolSet
+    /// </summary>
     [CreateAssetMenu(menuName = "Custom Unity/GameObject Pool Setting")]
     public class GameObjectPoolSetSetting : ScriptableObject
     {

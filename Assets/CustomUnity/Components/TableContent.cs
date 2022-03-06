@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Fixed cell size table view.
+    /// </summary>
     [RequireComponent(typeof(RectTransform))]
     public class TableContent : TableContentBase
     {

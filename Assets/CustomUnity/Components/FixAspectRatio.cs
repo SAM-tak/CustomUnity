@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Correct camera's aspect ratio by specified aspect ratio.
+    /// </summary>
 	[RequireComponent(typeof(Camera))]
     [ExecuteInEditMode]
 	public class FixAspectRatio : MonoBehaviour

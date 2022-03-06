@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// A signal for SumAllSignalsEvent.
+    /// </summary>
     [AddComponentMenu("CustomUnity/Signal/SignalParticleSystemStopped"), RequireComponent(typeof(ParticleSystem))]
     public class SignalParticleSystemStopped : MonoBehaviour
     {

@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// A signal for SumAllSignalsEvent. StateMachineBehaviour variation.
+    /// </summary>
     public class SignalOnEnterState : StateMachineBehaviour
     {
         [Tooltip("Specify layer no. If set less than 0, it means ignore layer no.")]

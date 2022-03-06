@@ -4,6 +4,9 @@ using UnityEngine.Events;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// map string to unityevent, and fire by AnimationEvent or other.
+    /// </summary>
     [AddComponentMenu("CustomUnity/Named Event")]
     public class NamedEvent : MonoBehaviour
     {

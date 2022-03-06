@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Various size cell table view.
+    /// </summary>
     [RequireComponent(typeof(RectTransform))]
     public class JaggedTableContent : TableContentBase
     {

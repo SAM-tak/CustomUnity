@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// A signal for SumAllSignalsEvent
+    /// </summary>
     [AddComponentMenu("CustomUnity/Signal/Signal")]
     public class Signal : MonoBehaviour
     {

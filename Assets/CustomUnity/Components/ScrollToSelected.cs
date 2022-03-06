@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
+    /// <summary>
+    /// Scroll to ui item focused by event system.
+    /// </summary>
     [RequireComponent(typeof(ScrollRect))]
     public class ScrollToSelected : ScrollToItemBase, IScrollHandler
     {
