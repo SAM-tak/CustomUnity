@@ -45,8 +45,9 @@ namespace CustomUnity
             if(columnCount < 1) columnCount = 1;
         }
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             DataSource = GetComponent<IDataSource>();
             var firstChild = transform.GetChild(0);
             if(firstChild) {

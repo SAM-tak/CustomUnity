@@ -50,8 +50,9 @@ namespace CustomUnity
 
         List<LookAheadedCellSize> LookAheadedCellSizes { get; } = new List<LookAheadedCellSize>(10);
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             DataSource = GetComponent<IDataSource>();
         }
 

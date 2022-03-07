@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using CustomUnity;
 using Bogus;
 using Random = UnityEngine.Random;
-using UnityEngine.Networking;
-using System.Collections;
 
 namespace YourProjectNamespace
 {

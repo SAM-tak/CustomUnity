@@ -1,5 +1,7 @@
 using System.Diagnostics;
-using UnityEngine;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("CustomUnity.Editor.Log")]
 
 namespace CustomUnity
 {
@@ -17,6 +19,7 @@ namespace CustomUnity
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         static public void Info(object message)
         {
+            if(!PassFilter(message)) return;
             UnityEngine.Debug.Log(message);
         }
 
@@ -32,6 +35,7 @@ namespace CustomUnity
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         static public void Info(string message)
         {
+            if(!PassFilter(message)) return;
             UnityEngine.Debug.Log(message);
         }
 
@@ -48,8 +52,9 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Info(Object context, object message)
+        static public void Info(UnityEngine.Object context, object message)
         {
+            if(!PassFilter(context, message)) return;
             UnityEngine.Debug.Log(message, context);
         }
 
@@ -66,8 +71,9 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        static public void Info(Object context, string message)
+        static public void Info(UnityEngine.Object context, string message)
         {
+            if(!PassFilter(context, message)) return;
             UnityEngine.Debug.Log(message, context);
         }
 
@@ -83,6 +89,7 @@ namespace CustomUnity
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Error(object message)
         {
+            if(!PassFilter(message)) return;
             UnityEngine.Debug.LogError(message);
         }
 
@@ -98,6 +105,7 @@ namespace CustomUnity
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Error(string message)
         {
+            if(!PassFilter(message)) return;
             UnityEngine.Debug.LogError(message);
         }
 
@@ -114,8 +122,9 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Error(Object context, object message)
+        public static void Error(UnityEngine.Object context, object message)
         {
+            if(!PassFilter(context, message)) return;
             UnityEngine.Debug.LogError(message, context);
         }
 
@@ -132,8 +141,9 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Error(Object context, string message)
+        public static void Error(UnityEngine.Object context, string message)
         {
+            if(!PassFilter(message)) return;
             UnityEngine.Debug.LogError(message, context);
         }
 
@@ -146,7 +156,6 @@ namespace CustomUnity
         // パラメーター:
         //   exception:
         //     Runtime Exception.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Exception(System.Exception exception)
         {
             UnityEngine.Debug.LogException(exception);
@@ -164,8 +173,7 @@ namespace CustomUnity
         //
         //   exception:
         //     Runtime Exception.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Exception(Object context, System.Exception exception)
+        public static void Exception(UnityEngine.Object context, System.Exception exception)
         {
             UnityEngine.Debug.LogException(exception, context);
         }
@@ -182,6 +190,7 @@ namespace CustomUnity
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Warning(object message)
         {
+            if(!PassFilter(message)) return;
             UnityEngine.Debug.LogWarning(message);
         }
 
@@ -197,6 +206,7 @@ namespace CustomUnity
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Warning(string message)
         {
+            if(!PassFilter(message)) return;
             UnityEngine.Debug.LogWarning(message);
         }
 
@@ -213,8 +223,9 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Warning(Object context, object message)
+        public static void Warning(UnityEngine.Object context, object message)
         {
+            if(!PassFilter(context, message)) return;
             UnityEngine.Debug.LogWarning(message, context);
         }
 
@@ -231,8 +242,9 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Warning(Object context, string message)
+        public static void Warning(UnityEngine.Object context, string message)
         {
+            if(!PassFilter(context, message)) return;
             UnityEngine.Debug.LogWarning(message, context);
         }
 
@@ -246,7 +258,9 @@ namespace CustomUnity
         public static void Trace()
         {
             var callerFrame = new StackFrame(1, true);
-            UnityEngine.Debug.Log($"Pass {callerFrame.GetMethod().Name} (at {callerFrame.GetFileName()}:{callerFrame.GetFileLineNumber()})");
+            var callerMethod = callerFrame.GetMethod();
+            if(!PassFilter(callerFrame)) return;
+            UnityEngine.Debug.Log($"Pass {callerMethod.DeclaringType.Name}.{callerMethod.Name} (at {callerFrame.GetFileName()}:{callerFrame.GetFileLineNumber()})");
         }
 
         //
@@ -259,11 +273,36 @@ namespace CustomUnity
         //   context:
         //     Object to which the message applies.
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void Trace(Object context)
+        public static void Trace(UnityEngine.Object context)
         {
             var callerFrame = new StackFrame(1, true);
             var callerMethod = callerFrame.GetMethod();
+            if(!PassFilter(context, callerFrame)) return;
             UnityEngine.Debug.Log($"Pass {callerMethod.DeclaringType.Name}.{callerMethod.Name} (at {callerFrame.GetFileName()}:{callerFrame.GetFileLineNumber()})", context);
         }
+
+        internal static bool PassFilter(object message)
+            => (FilterByMessage == null || FilterByMessage(message.ToString()))
+            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)));
+        internal static bool PassFilter(string message)
+            => (FilterByMessage == null || FilterByMessage(message))
+            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)));
+        internal static bool PassFilter(UnityEngine.Object context, object message)
+            => (FilterByObject == null || FilterByObject(context))
+            && (FilterByMessage == null || FilterByMessage(message.ToString()))
+            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)));
+        internal static bool PassFilter(UnityEngine.Object context, string message)
+            => (FilterByObject == null || FilterByObject(context))
+            && (FilterByMessage == null || FilterByMessage(message.ToString()))
+            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)));
+        internal static bool PassFilter(StackFrame stackFrame)
+            => FilterByCaller == null || !FilterByCaller(stackFrame);
+        internal static bool PassFilter(UnityEngine.Object context, StackFrame stackFrame)
+            => (FilterByObject == null || FilterByObject(context))
+            && (FilterByCaller == null || FilterByCaller(stackFrame));
+
+        public static event System.Func<UnityEngine.Object, bool> FilterByObject;
+        public static event System.Func<string, bool> FilterByMessage;
+        public static event System.Func<StackFrame, bool> FilterByCaller;
     }
 }

@@ -46,8 +46,9 @@ namespace CustomUnity
 
         protected override void PreUpdate() => DataSource?.OnPreUpdate();
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             DataSource = GetComponent<IDataSource>();
         }
 

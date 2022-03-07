@@ -19,8 +19,6 @@ namespace CustomUnity
         [ReadOnlyWhenPlaying]
         public Orientaion orientaion;
 
-        public ScrollRect ScrollRect { get; protected set; }
-
         public int MaxCells => cellPool != null ? cellPool.Length : 0;
 
         public int MaxCellsRequired { get; protected set; }
@@ -110,9 +108,23 @@ namespace CustomUnity
             NeedsUpdateContent = true;
         }
 
+        public ScrollRect ScrollRect { get; protected set; }
+
+        public Canvas Canvas { get; protected set; }
+        bool OriginalCanvasOverridePixelPerfect;
+        bool OriginalCanvasPixelPerfect;
+        Vector2 previousScrollRectPosition;
+
+        protected virtual void Awake()
+        {
+            Canvas = GetComponentInParent<Canvas>();
+            OriginalCanvasOverridePixelPerfect = Canvas.overridePixelPerfect;
+            OriginalCanvasPixelPerfect = Canvas.pixelPerfect;
+            ScrollRect = GetComponentInParent<ScrollRect>();
+        }
+
         protected virtual void Start()
         {
-            ScrollRect = GetComponentInParent<ScrollRect>();
             Debug.Assert(ScrollRect);
             var layoutGroup = GetComponentInParent<LayoutGroup>();
             if(layoutGroup != null && layoutGroup.enabled) {
@@ -125,13 +137,25 @@ namespace CustomUnity
                 go.SetActive(false);
                 cellPool[i].cell = go;
             }
-            ScrollRect.onValueChanged.AddListener(_ => {
+            previousScrollRectPosition = ScrollRect.normalizedPosition;
+            ScrollRect.onValueChanged.AddListener(position => {
                 if(isUpdatingContent) NeedsUpdateContent = true;
                 else {
                     isUpdatingContent = true;
                     UpdateContent();
                     isUpdatingContent = false;
                 }
+
+                if((ScrollRect.content.rect.size * previousScrollRectPosition - ScrollRect.content.rect.size * position).magnitude > 0.01f) {
+                    Canvas.overridePixelPerfect = true;
+                    Canvas.pixelPerfect = false;
+                }
+                else {
+                    ScrollRect.StopMovement();
+                    Canvas.overridePixelPerfect = OriginalCanvasOverridePixelPerfect;
+                    Canvas.pixelPerfect = OriginalCanvasPixelPerfect;
+                }
+                previousScrollRectPosition = position;
             });
             FrameCount = 0;
         }
@@ -152,7 +176,7 @@ namespace CustomUnity
                 UpdateContent();
                 isUpdatingContent = false;
             }
-            if(FrameCount < int.MaxValue) FrameCount++;
+            if(FrameCount < int.MaxValue) ++FrameCount;
         }
 
         protected abstract void UpdateContent();
