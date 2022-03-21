@@ -48,16 +48,16 @@ namespace YourProjectNamespace
         // Use this for initialization
         void Start()
         {
-            gameObjectPools?.InactivateAll();
+            gameObjectPools?.DeactivateAll();
             LogInfo("Start");
             LogInfo($"{"blahblah".Red().Bold()}\n{$"{"foobar".Grey()} {"hogehoge".Color(0x443322FF)}".Small()}");
             LogInfo(RichText.Sb.Bold(sb => sb.Red("blahblah")).Ln().Small(sb => sb.Grey("foobar").Space().Color(0x443322FF, "hogehoge")));
         }
 
         // Update is called once per frame
-        // void Update()
-        // {
-        //     //LogInfo("Update");
-        // }
+        void Update()
+        {
+            gameObjectPools?.CollectInactives();
+        }
     }
 }

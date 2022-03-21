@@ -1,765 +1,2273 @@
 fileFormatVersion: 2
 guid: ae4ee40c27dd98a40b8e3c0ea027d465
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: Blender.cloth
-    100002: Blender.hair
-    100004: body
-    100006: metarig
-    100008: ORG-back_shoulder.L
-    100010: ORG-back_shoulder.L 1
-    100012: ORG-back_shoulder.R
-    100014: ORG-back_shoulder.R 1
-    100016: ORG-breast.01.L
-    100018: ORG-breast.01.L 1
-    100020: ORG-breast.01.R
-    100022: ORG-breast.01.R 1
-    100024: ORG-breast.02.L
-    100026: ORG-breast.02.L 1
-    100028: ORG-breast.02.R
-    100030: ORG-breast.02.R 1
-    100032: ORG-brow.B.L
-    100034: ORG-brow.B.L 1
-    100036: ORG-brow.B.L.001
-    100038: ORG-brow.B.L.001 1
-    100040: ORG-brow.B.L.002
-    100042: ORG-brow.B.L.002 1
-    100044: ORG-brow.B.L.003
-    100046: ORG-brow.B.L.003 1
-    100048: ORG-brow.B.R
-    100050: ORG-brow.B.R 1
-    100052: ORG-brow.B.R.001
-    100054: ORG-brow.B.R.001 1
-    100056: ORG-brow.B.R.002
-    100058: ORG-brow.B.R.002 1
-    100060: ORG-brow.B.R.003
-    100062: ORG-brow.B.R.003 1
-    100064: ORG-brow.T.L
-    100066: ORG-brow.T.L 1
-    100068: ORG-brow.T.L.001
-    100070: ORG-brow.T.L.001 1
-    100072: ORG-brow.T.L.002
-    100074: ORG-brow.T.L.002 1
-    100076: ORG-brow.T.L.003
-    100078: ORG-brow.T.L.003 1
-    100080: ORG-brow.T.R
-    100082: ORG-brow.T.R 1
-    100084: ORG-brow.T.R.001
-    100086: ORG-brow.T.R.001 1
-    100088: ORG-brow.T.R.002
-    100090: ORG-brow.T.R.002 1
-    100092: ORG-brow.T.R.003
-    100094: ORG-brow.T.R.003 1
-    100096: ORG-butt.L
-    100098: ORG-butt.L 1
-    100100: ORG-butt.R
-    100102: ORG-butt.R 1
-    100104: ORG-cheek.B.L
-    100106: ORG-cheek.B.L 1
-    100108: ORG-cheek.B.L.001
-    100110: ORG-cheek.B.L.001 1
-    100112: ORG-cheek.B.R
-    100114: ORG-cheek.B.R 1
-    100116: ORG-cheek.B.R.001
-    100118: ORG-cheek.B.R.001 1
-    100120: ORG-cheek.T.L
-    100122: ORG-cheek.T.L 1
-    100124: ORG-cheek.T.L.001
-    100126: ORG-cheek.T.L.001 1
-    100128: ORG-cheek.T.R
-    100130: ORG-cheek.T.R 1
-    100132: ORG-cheek.T.R.001
-    100134: ORG-cheek.T.R.001 1
-    100136: ORG-chest
-    100138: ORG-chest 1
-    100140: ORG-chin
-    100142: ORG-chin 1
-    100144: ORG-chin.001
-    100146: ORG-chin.001 1
-    100148: ORG-chin.L
-    100150: ORG-chin.L 1
-    100152: ORG-chin.R
-    100154: ORG-chin.R 1
-    100156: ORG-ear.L
-    100158: ORG-ear.L 1
-    100160: ORG-ear.L.001
-    100162: ORG-ear.L.001 1
-    100164: ORG-ear.L.002
-    100166: ORG-ear.L.002 1
-    100168: ORG-ear.L.003
-    100170: ORG-ear.L.003 1
-    100172: ORG-ear.R
-    100174: ORG-ear.R 1
-    100176: ORG-ear.R.001
-    100178: ORG-ear.R.001 1
-    100180: ORG-ear.R.002
-    100182: ORG-ear.R.002 1
-    100184: ORG-ear.R.003
-    100186: ORG-ear.R.003 1
-    100188: ORG-elbow.L
-    100190: ORG-elbow.L 1
-    100192: ORG-elbow.R
-    100194: ORG-elbow.R 1
-    100196: ORG-eye.L
-    100198: ORG-eye.L 1
-    100200: ORG-eye.R
-    100202: ORG-eye.R 1
-    100204: ORG-f_index.01.L
-    100206: ORG-f_index.01.L 1
-    100208: ORG-f_index.01.R
-    100210: ORG-f_index.01.R 1
-    100212: ORG-f_index.02.L
-    100214: ORG-f_index.02.L 1
-    100216: ORG-f_index.02.R
-    100218: ORG-f_index.02.R 1
-    100220: ORG-f_index.03.L
-    100222: ORG-f_index.03.L 1
-    100224: ORG-f_index.03.R
-    100226: ORG-f_index.03.R 1
-    100228: ORG-f_middle.01.L
-    100230: ORG-f_middle.01.L 1
-    100232: ORG-f_middle.01.R
-    100234: ORG-f_middle.01.R 1
-    100236: ORG-f_middle.02.L
-    100238: ORG-f_middle.02.L 1
-    100240: ORG-f_middle.02.R
-    100242: ORG-f_middle.02.R 1
-    100244: ORG-f_middle.03.L
-    100246: ORG-f_middle.03.L 1
-    100248: ORG-f_middle.03.R
-    100250: ORG-f_middle.03.R 1
-    100252: ORG-f_pinky.01.L
-    100254: ORG-f_pinky.01.L 1
-    100256: ORG-f_pinky.01.R
-    100258: ORG-f_pinky.01.R 1
-    100260: ORG-f_pinky.02.L
-    100262: ORG-f_pinky.02.L 1
-    100264: ORG-f_pinky.02.R
-    100266: ORG-f_pinky.02.R 1
-    100268: ORG-f_pinky.03.L
-    100270: ORG-f_pinky.03.L 1
-    100272: ORG-f_pinky.03.R
-    100274: ORG-f_pinky.03.R 1
-    100276: ORG-f_ring.01.L
-    100278: ORG-f_ring.01.L 1
-    100280: ORG-f_ring.01.R
-    100282: ORG-f_ring.01.R 1
-    100284: ORG-f_ring.02.L
-    100286: ORG-f_ring.02.L 1
-    100288: ORG-f_ring.02.R
-    100290: ORG-f_ring.02.R 1
-    100292: ORG-f_ring.03.L
-    100294: ORG-f_ring.03.L 1
-    100296: ORG-f_ring.03.R
-    100298: ORG-f_ring.03.R 1
-    100300: ORG-foot.L
-    100302: ORG-foot.L 1
-    100304: ORG-foot.R
-    100306: ORG-foot.R 1
-    100308: ORG-forearm.L
-    100310: ORG-forearm.L 1
-    100312: ORG-forearm.R
-    100314: ORG-forearm.R 1
-    100316: ORG-forearm_twist.L
-    100318: ORG-forearm_twist.L 1
-    100320: ORG-forearm_twist.R
-    100322: ORG-forearm_twist.R 1
-    100324: ORG-hair_A
-    100326: ORG-hair_A 1
-    100328: ORG-hair_B
-    100330: ORG-hair_B 1
-    100332: ORG-hair_F
-    100334: ORG-hair_F 1
-    100336: ORG-hair_S.L
-    100338: ORG-hair_S.L 1
-    100340: ORG-hair_S.L.001
-    100342: ORG-hair_S.L.001 1
-    100344: ORG-hair_S.R
-    100346: ORG-hair_S.R 1
-    100348: ORG-hair_S.R.001
-    100350: ORG-hair_S.R.001 1
-    100352: ORG-hair_SB.L
-    100354: ORG-hair_SB.L 1
-    100356: ORG-hair_SB.L.001
-    100358: ORG-hair_SB.L.001 1
-    100360: ORG-hair_SB.R
-    100362: ORG-hair_SB.R 1
-    100364: ORG-hair_SB.R.001
-    100366: ORG-hair_SB.R.001 1
-    100368: ORG-hand.L
-    100370: ORG-hand.L 1
-    100372: ORG-hand.R
-    100374: ORG-hand.R 1
-    100376: ORG-head
-    100378: ORG-head 1
-    100380: ORG-hip.L
-    100382: ORG-hip.L 1
-    100384: ORG-hip.R
-    100386: ORG-hip.R 1
-    100388: ORG-hips
-    100390: ORG-hips 1
-    100392: ORG-inner_thigh.L
-    100394: ORG-inner_thigh.L 1
-    100396: ORG-inner_thigh.R
-    100398: ORG-inner_thigh.R 1
-    100400: ORG-jaw
-    100402: ORG-jaw 1
-    100404: ORG-jaw.L
-    100406: ORG-jaw.L 1
-    100408: ORG-jaw.L.001
-    100410: ORG-jaw.L.001 1
-    100412: ORG-jaw.R
-    100414: ORG-jaw.R 1
-    100416: ORG-jaw.R.001
-    100418: ORG-jaw.R.001 1
-    100420: ORG-knee.L
-    100422: ORG-knee.L 1
-    100424: ORG-knee.R
-    100426: ORG-knee.R 1
-    100428: ORG-lid.B.L
-    100430: ORG-lid.B.L 1
-    100432: ORG-lid.B.L.001
-    100434: ORG-lid.B.L.001 1
-    100436: ORG-lid.B.L.002
-    100438: ORG-lid.B.L.002 1
-    100440: ORG-lid.B.L.003
-    100442: ORG-lid.B.L.003 1
-    100444: ORG-lid.B.R
-    100446: ORG-lid.B.R 1
-    100448: ORG-lid.B.R.001
-    100450: ORG-lid.B.R.001 1
-    100452: ORG-lid.B.R.002
-    100454: ORG-lid.B.R.002 1
-    100456: ORG-lid.B.R.003
-    100458: ORG-lid.B.R.003 1
-    100460: ORG-lid.T.L
-    100462: ORG-lid.T.L 1
-    100464: ORG-lid.T.L.001
-    100466: ORG-lid.T.L.001 1
-    100468: ORG-lid.T.L.002
-    100470: ORG-lid.T.L.002 1
-    100472: ORG-lid.T.L.003
-    100474: ORG-lid.T.L.003 1
-    100476: ORG-lid.T.R
-    100478: ORG-lid.T.R 1
-    100480: ORG-lid.T.R.001
-    100482: ORG-lid.T.R.001 1
-    100484: ORG-lid.T.R.002
-    100486: ORG-lid.T.R.002 1
-    100488: ORG-lid.T.R.003
-    100490: ORG-lid.T.R.003 1
-    100492: ORG-lip.B.L
-    100494: ORG-lip.B.L 1
-    100496: ORG-lip.B.L.001
-    100498: ORG-lip.B.L.001 1
-    100500: ORG-lip.B.R
-    100502: ORG-lip.B.R 1
-    100504: ORG-lip.B.R.001
-    100506: ORG-lip.B.R.001 1
-    100508: ORG-lip.T.L
-    100510: ORG-lip.T.L 1
-    100512: ORG-lip.T.L.001
-    100514: ORG-lip.T.L.001 1
-    100516: ORG-lip.T.R
-    100518: ORG-lip.T.R 1
-    100520: ORG-lip.T.R.001
-    100522: ORG-lip.T.R.001 1
-    100524: ORG-neck
-    100526: ORG-neck 1
-    100528: ORG-nose
-    100530: ORG-nose 1
-    100532: ORG-nose.001
-    100534: ORG-nose.001 1
-    100536: ORG-nose.002
-    100538: ORG-nose.002 1
-    100540: ORG-nose.003
-    100542: ORG-nose.003 1
-    100544: ORG-nose.L
-    100546: ORG-nose.L 1
-    100548: ORG-nose.L.001
-    100550: ORG-nose.L.001 1
-    100552: ORG-nose.R
-    100554: ORG-nose.R 1
-    100556: ORG-nose.R.001
-    100558: ORG-nose.R.001 1
-    100560: ORG-palm.01.L
-    100562: ORG-palm.01.L 1
-    100564: ORG-palm.01.R
-    100566: ORG-palm.01.R 1
-    100568: ORG-palm.02.L
-    100570: ORG-palm.02.L 1
-    100572: ORG-palm.02.R
-    100574: ORG-palm.02.R 1
-    100576: ORG-palm.03.L
-    100578: ORG-palm.03.L 1
-    100580: ORG-palm.03.R
-    100582: ORG-palm.03.R 1
-    100584: ORG-palm.04.L
-    100586: ORG-palm.04.L 1
-    100588: ORG-palm.04.R
-    100590: ORG-palm.04.R 1
-    100592: ORG-pectoral.L
-    100594: ORG-pectoral.L 1
-    100596: ORG-pectoral.R
-    100598: ORG-pectoral.R 1
-    100600: ORG-shin.L
-    100602: ORG-shin.L 1
-    100604: ORG-shin.R
-    100606: ORG-shin.R 1
-    100608: ORG-shoulder.L
-    100610: ORG-shoulder.L 1
-    100612: ORG-shoulder.R
-    100614: ORG-shoulder.R 1
-    100616: ORG-temple.L
-    100618: ORG-temple.L 1
-    100620: ORG-temple.R
-    100622: ORG-temple.R 1
-    100624: ORG-thigh.L
-    100626: ORG-thigh.L 1
-    100628: ORG-thigh.R
-    100630: ORG-thigh.R 1
-    100632: ORG-thumb.01.L
-    100634: ORG-thumb.01.L 1
-    100636: ORG-thumb.01.R
-    100638: ORG-thumb.01.R 1
-    100640: ORG-thumb.02.L
-    100642: ORG-thumb.02.L 1
-    100644: ORG-thumb.02.R
-    100646: ORG-thumb.02.R 1
-    100648: ORG-thumb.03.L
-    100650: ORG-thumb.03.L 1
-    100652: ORG-thumb.03.R
-    100654: ORG-thumb.03.R 1
-    100656: ORG-toe.L
-    100658: ORG-toe.L 1
-    100660: ORG-toe.R
-    100662: ORG-toe.R 1
-    100664: ORG-tongue
-    100666: ORG-tongue 1
-    100668: ORG-tongue.001
-    100670: ORG-tongue.001 1
-    100672: ORG-tongue.002
-    100674: ORG-tongue.002 1
-    100676: ORG-upper_arm.L
-    100678: ORG-upper_arm.L 1
-    100680: ORG-upper_arm.R
-    100682: ORG-upper_arm.R 1
-    100684: ORG-upper_arm_twist.L
-    100686: ORG-upper_arm_twist.L 1
-    100688: ORG-upper_arm_twist.R
-    100690: ORG-upper_arm_twist.R 1
-    100692: ORG-upper_breast.L
-    100694: ORG-upper_breast.L 1
-    100696: ORG-upper_breast.R
-    100698: ORG-upper_breast.R 1
-    100700: ORG-upper_chest
-    100702: ORG-upper_chest 1
-    100704: ORG-upper_shoulder.L
-    100706: ORG-upper_shoulder.L 1
-    100708: ORG-upper_shoulder.R
-    100710: ORG-upper_shoulder.R 1
-    100712: ORG-upper_thigh.L
-    100714: ORG-upper_thigh.L 1
-    100716: ORG-upper_thigh.R
-    100718: ORG-upper_thigh.R 1
-    100720: ORG-waist
-    100722: ORG-waist 1
-    100724: ORG-wrist.L
-    100726: ORG-wrist.L 1
-    100728: ORG-wrist.R
-    100730: ORG-wrist.R 1
-    100732: rig
-    100734: Suzanne
-    100736: //RootNode
-    400000: Blender.cloth
-    400002: Blender.hair
-    400004: body
-    400006: metarig
-    400008: ORG-back_shoulder.L
-    400010: ORG-back_shoulder.L 1
-    400012: ORG-back_shoulder.R
-    400014: ORG-back_shoulder.R 1
-    400016: ORG-breast.01.L
-    400018: ORG-breast.01.L 1
-    400020: ORG-breast.01.R
-    400022: ORG-breast.01.R 1
-    400024: ORG-breast.02.L
-    400026: ORG-breast.02.L 1
-    400028: ORG-breast.02.R
-    400030: ORG-breast.02.R 1
-    400032: ORG-brow.B.L
-    400034: ORG-brow.B.L 1
-    400036: ORG-brow.B.L.001
-    400038: ORG-brow.B.L.001 1
-    400040: ORG-brow.B.L.002
-    400042: ORG-brow.B.L.002 1
-    400044: ORG-brow.B.L.003
-    400046: ORG-brow.B.L.003 1
-    400048: ORG-brow.B.R
-    400050: ORG-brow.B.R 1
-    400052: ORG-brow.B.R.001
-    400054: ORG-brow.B.R.001 1
-    400056: ORG-brow.B.R.002
-    400058: ORG-brow.B.R.002 1
-    400060: ORG-brow.B.R.003
-    400062: ORG-brow.B.R.003 1
-    400064: ORG-brow.T.L
-    400066: ORG-brow.T.L 1
-    400068: ORG-brow.T.L.001
-    400070: ORG-brow.T.L.001 1
-    400072: ORG-brow.T.L.002
-    400074: ORG-brow.T.L.002 1
-    400076: ORG-brow.T.L.003
-    400078: ORG-brow.T.L.003 1
-    400080: ORG-brow.T.R
-    400082: ORG-brow.T.R 1
-    400084: ORG-brow.T.R.001
-    400086: ORG-brow.T.R.001 1
-    400088: ORG-brow.T.R.002
-    400090: ORG-brow.T.R.002 1
-    400092: ORG-brow.T.R.003
-    400094: ORG-brow.T.R.003 1
-    400096: ORG-butt.L
-    400098: ORG-butt.L 1
-    400100: ORG-butt.R
-    400102: ORG-butt.R 1
-    400104: ORG-cheek.B.L
-    400106: ORG-cheek.B.L 1
-    400108: ORG-cheek.B.L.001
-    400110: ORG-cheek.B.L.001 1
-    400112: ORG-cheek.B.R
-    400114: ORG-cheek.B.R 1
-    400116: ORG-cheek.B.R.001
-    400118: ORG-cheek.B.R.001 1
-    400120: ORG-cheek.T.L
-    400122: ORG-cheek.T.L 1
-    400124: ORG-cheek.T.L.001
-    400126: ORG-cheek.T.L.001 1
-    400128: ORG-cheek.T.R
-    400130: ORG-cheek.T.R 1
-    400132: ORG-cheek.T.R.001
-    400134: ORG-cheek.T.R.001 1
-    400136: ORG-chest
-    400138: ORG-chest 1
-    400140: ORG-chin
-    400142: ORG-chin 1
-    400144: ORG-chin.001
-    400146: ORG-chin.001 1
-    400148: ORG-chin.L
-    400150: ORG-chin.L 1
-    400152: ORG-chin.R
-    400154: ORG-chin.R 1
-    400156: ORG-ear.L
-    400158: ORG-ear.L 1
-    400160: ORG-ear.L.001
-    400162: ORG-ear.L.001 1
-    400164: ORG-ear.L.002
-    400166: ORG-ear.L.002 1
-    400168: ORG-ear.L.003
-    400170: ORG-ear.L.003 1
-    400172: ORG-ear.R
-    400174: ORG-ear.R 1
-    400176: ORG-ear.R.001
-    400178: ORG-ear.R.001 1
-    400180: ORG-ear.R.002
-    400182: ORG-ear.R.002 1
-    400184: ORG-ear.R.003
-    400186: ORG-ear.R.003 1
-    400188: ORG-elbow.L
-    400190: ORG-elbow.L 1
-    400192: ORG-elbow.R
-    400194: ORG-elbow.R 1
-    400196: ORG-eye.L
-    400198: ORG-eye.L 1
-    400200: ORG-eye.R
-    400202: ORG-eye.R 1
-    400204: ORG-f_index.01.L
-    400206: ORG-f_index.01.L 1
-    400208: ORG-f_index.01.R
-    400210: ORG-f_index.01.R 1
-    400212: ORG-f_index.02.L
-    400214: ORG-f_index.02.L 1
-    400216: ORG-f_index.02.R
-    400218: ORG-f_index.02.R 1
-    400220: ORG-f_index.03.L
-    400222: ORG-f_index.03.L 1
-    400224: ORG-f_index.03.R
-    400226: ORG-f_index.03.R 1
-    400228: ORG-f_middle.01.L
-    400230: ORG-f_middle.01.L 1
-    400232: ORG-f_middle.01.R
-    400234: ORG-f_middle.01.R 1
-    400236: ORG-f_middle.02.L
-    400238: ORG-f_middle.02.L 1
-    400240: ORG-f_middle.02.R
-    400242: ORG-f_middle.02.R 1
-    400244: ORG-f_middle.03.L
-    400246: ORG-f_middle.03.L 1
-    400248: ORG-f_middle.03.R
-    400250: ORG-f_middle.03.R 1
-    400252: ORG-f_pinky.01.L
-    400254: ORG-f_pinky.01.L 1
-    400256: ORG-f_pinky.01.R
-    400258: ORG-f_pinky.01.R 1
-    400260: ORG-f_pinky.02.L
-    400262: ORG-f_pinky.02.L 1
-    400264: ORG-f_pinky.02.R
-    400266: ORG-f_pinky.02.R 1
-    400268: ORG-f_pinky.03.L
-    400270: ORG-f_pinky.03.L 1
-    400272: ORG-f_pinky.03.R
-    400274: ORG-f_pinky.03.R 1
-    400276: ORG-f_ring.01.L
-    400278: ORG-f_ring.01.L 1
-    400280: ORG-f_ring.01.R
-    400282: ORG-f_ring.01.R 1
-    400284: ORG-f_ring.02.L
-    400286: ORG-f_ring.02.L 1
-    400288: ORG-f_ring.02.R
-    400290: ORG-f_ring.02.R 1
-    400292: ORG-f_ring.03.L
-    400294: ORG-f_ring.03.L 1
-    400296: ORG-f_ring.03.R
-    400298: ORG-f_ring.03.R 1
-    400300: ORG-foot.L
-    400302: ORG-foot.L 1
-    400304: ORG-foot.R
-    400306: ORG-foot.R 1
-    400308: ORG-forearm.L
-    400310: ORG-forearm.L 1
-    400312: ORG-forearm.R
-    400314: ORG-forearm.R 1
-    400316: ORG-forearm_twist.L
-    400318: ORG-forearm_twist.L 1
-    400320: ORG-forearm_twist.R
-    400322: ORG-forearm_twist.R 1
-    400324: ORG-hair_A
-    400326: ORG-hair_A 1
-    400328: ORG-hair_B
-    400330: ORG-hair_B 1
-    400332: ORG-hair_F
-    400334: ORG-hair_F 1
-    400336: ORG-hair_S.L
-    400338: ORG-hair_S.L 1
-    400340: ORG-hair_S.L.001
-    400342: ORG-hair_S.L.001 1
-    400344: ORG-hair_S.R
-    400346: ORG-hair_S.R 1
-    400348: ORG-hair_S.R.001
-    400350: ORG-hair_S.R.001 1
-    400352: ORG-hair_SB.L
-    400354: ORG-hair_SB.L 1
-    400356: ORG-hair_SB.L.001
-    400358: ORG-hair_SB.L.001 1
-    400360: ORG-hair_SB.R
-    400362: ORG-hair_SB.R 1
-    400364: ORG-hair_SB.R.001
-    400366: ORG-hair_SB.R.001 1
-    400368: ORG-hand.L
-    400370: ORG-hand.L 1
-    400372: ORG-hand.R
-    400374: ORG-hand.R 1
-    400376: ORG-head
-    400378: ORG-head 1
-    400380: ORG-hip.L
-    400382: ORG-hip.L 1
-    400384: ORG-hip.R
-    400386: ORG-hip.R 1
-    400388: ORG-hips
-    400390: ORG-hips 1
-    400392: ORG-inner_thigh.L
-    400394: ORG-inner_thigh.L 1
-    400396: ORG-inner_thigh.R
-    400398: ORG-inner_thigh.R 1
-    400400: ORG-jaw
-    400402: ORG-jaw 1
-    400404: ORG-jaw.L
-    400406: ORG-jaw.L 1
-    400408: ORG-jaw.L.001
-    400410: ORG-jaw.L.001 1
-    400412: ORG-jaw.R
-    400414: ORG-jaw.R 1
-    400416: ORG-jaw.R.001
-    400418: ORG-jaw.R.001 1
-    400420: ORG-knee.L
-    400422: ORG-knee.L 1
-    400424: ORG-knee.R
-    400426: ORG-knee.R 1
-    400428: ORG-lid.B.L
-    400430: ORG-lid.B.L 1
-    400432: ORG-lid.B.L.001
-    400434: ORG-lid.B.L.001 1
-    400436: ORG-lid.B.L.002
-    400438: ORG-lid.B.L.002 1
-    400440: ORG-lid.B.L.003
-    400442: ORG-lid.B.L.003 1
-    400444: ORG-lid.B.R
-    400446: ORG-lid.B.R 1
-    400448: ORG-lid.B.R.001
-    400450: ORG-lid.B.R.001 1
-    400452: ORG-lid.B.R.002
-    400454: ORG-lid.B.R.002 1
-    400456: ORG-lid.B.R.003
-    400458: ORG-lid.B.R.003 1
-    400460: ORG-lid.T.L
-    400462: ORG-lid.T.L 1
-    400464: ORG-lid.T.L.001
-    400466: ORG-lid.T.L.001 1
-    400468: ORG-lid.T.L.002
-    400470: ORG-lid.T.L.002 1
-    400472: ORG-lid.T.L.003
-    400474: ORG-lid.T.L.003 1
-    400476: ORG-lid.T.R
-    400478: ORG-lid.T.R 1
-    400480: ORG-lid.T.R.001
-    400482: ORG-lid.T.R.001 1
-    400484: ORG-lid.T.R.002
-    400486: ORG-lid.T.R.002 1
-    400488: ORG-lid.T.R.003
-    400490: ORG-lid.T.R.003 1
-    400492: ORG-lip.B.L
-    400494: ORG-lip.B.L 1
-    400496: ORG-lip.B.L.001
-    400498: ORG-lip.B.L.001 1
-    400500: ORG-lip.B.R
-    400502: ORG-lip.B.R 1
-    400504: ORG-lip.B.R.001
-    400506: ORG-lip.B.R.001 1
-    400508: ORG-lip.T.L
-    400510: ORG-lip.T.L 1
-    400512: ORG-lip.T.L.001
-    400514: ORG-lip.T.L.001 1
-    400516: ORG-lip.T.R
-    400518: ORG-lip.T.R 1
-    400520: ORG-lip.T.R.001
-    400522: ORG-lip.T.R.001 1
-    400524: ORG-neck
-    400526: ORG-neck 1
-    400528: ORG-nose
-    400530: ORG-nose 1
-    400532: ORG-nose.001
-    400534: ORG-nose.001 1
-    400536: ORG-nose.002
-    400538: ORG-nose.002 1
-    400540: ORG-nose.003
-    400542: ORG-nose.003 1
-    400544: ORG-nose.L
-    400546: ORG-nose.L 1
-    400548: ORG-nose.L.001
-    400550: ORG-nose.L.001 1
-    400552: ORG-nose.R
-    400554: ORG-nose.R 1
-    400556: ORG-nose.R.001
-    400558: ORG-nose.R.001 1
-    400560: ORG-palm.01.L
-    400562: ORG-palm.01.L 1
-    400564: ORG-palm.01.R
-    400566: ORG-palm.01.R 1
-    400568: ORG-palm.02.L
-    400570: ORG-palm.02.L 1
-    400572: ORG-palm.02.R
-    400574: ORG-palm.02.R 1
-    400576: ORG-palm.03.L
-    400578: ORG-palm.03.L 1
-    400580: ORG-palm.03.R
-    400582: ORG-palm.03.R 1
-    400584: ORG-palm.04.L
-    400586: ORG-palm.04.L 1
-    400588: ORG-palm.04.R
-    400590: ORG-palm.04.R 1
-    400592: ORG-pectoral.L
-    400594: ORG-pectoral.L 1
-    400596: ORG-pectoral.R
-    400598: ORG-pectoral.R 1
-    400600: ORG-shin.L
-    400602: ORG-shin.L 1
-    400604: ORG-shin.R
-    400606: ORG-shin.R 1
-    400608: ORG-shoulder.L
-    400610: ORG-shoulder.L 1
-    400612: ORG-shoulder.R
-    400614: ORG-shoulder.R 1
-    400616: ORG-temple.L
-    400618: ORG-temple.L 1
-    400620: ORG-temple.R
-    400622: ORG-temple.R 1
-    400624: ORG-thigh.L
-    400626: ORG-thigh.L 1
-    400628: ORG-thigh.R
-    400630: ORG-thigh.R 1
-    400632: ORG-thumb.01.L
-    400634: ORG-thumb.01.L 1
-    400636: ORG-thumb.01.R
-    400638: ORG-thumb.01.R 1
-    400640: ORG-thumb.02.L
-    400642: ORG-thumb.02.L 1
-    400644: ORG-thumb.02.R
-    400646: ORG-thumb.02.R 1
-    400648: ORG-thumb.03.L
-    400650: ORG-thumb.03.L 1
-    400652: ORG-thumb.03.R
-    400654: ORG-thumb.03.R 1
-    400656: ORG-toe.L
-    400658: ORG-toe.L 1
-    400660: ORG-toe.R
-    400662: ORG-toe.R 1
-    400664: ORG-tongue
-    400666: ORG-tongue 1
-    400668: ORG-tongue.001
-    400670: ORG-tongue.001 1
-    400672: ORG-tongue.002
-    400674: ORG-tongue.002 1
-    400676: ORG-upper_arm.L
-    400678: ORG-upper_arm.L 1
-    400680: ORG-upper_arm.R
-    400682: ORG-upper_arm.R 1
-    400684: ORG-upper_arm_twist.L
-    400686: ORG-upper_arm_twist.L 1
-    400688: ORG-upper_arm_twist.R
-    400690: ORG-upper_arm_twist.R 1
-    400692: ORG-upper_breast.L
-    400694: ORG-upper_breast.L 1
-    400696: ORG-upper_breast.R
-    400698: ORG-upper_breast.R 1
-    400700: ORG-upper_chest
-    400702: ORG-upper_chest 1
-    400704: ORG-upper_shoulder.L
-    400706: ORG-upper_shoulder.L 1
-    400708: ORG-upper_shoulder.R
-    400710: ORG-upper_shoulder.R 1
-    400712: ORG-upper_thigh.L
-    400714: ORG-upper_thigh.L 1
-    400716: ORG-upper_thigh.R
-    400718: ORG-upper_thigh.R 1
-    400720: ORG-waist
-    400722: ORG-waist 1
-    400724: ORG-wrist.L
-    400726: ORG-wrist.L 1
-    400728: ORG-wrist.R
-    400730: ORG-wrist.R 1
-    400732: rig
-    400734: Suzanne
-    400736: //RootNode
-    2100000: Eye
-    2100002: Face
-    2100004: Hair
-    2100006: Cloth
-    2100008: Skin
-    4300000: Suzanne
-    4300002: Blender.hair
-    4300004: Blender.cloth
-    4300006: body
-    7400000: rig|rigAction
-    9500000: //RootNode
-    13700000: Blender.cloth
-    13700002: Blender.hair
-    13700004: body
-    13700006: Suzanne
-    2186277476908879412: ImportLogs
+  serializedVersion: 20101
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Blender.cloth
+  - first:
+      1: 100002
+    second: Blender.hair
+  - first:
+      1: 100004
+    second: body
+  - first:
+      1: 100006
+    second: metarig
+  - first:
+      1: 100008
+    second: ORG-back_shoulder.L
+  - first:
+      1: 100010
+    second: ORG-back_shoulder.L 1
+  - first:
+      1: 100012
+    second: ORG-back_shoulder.R
+  - first:
+      1: 100014
+    second: ORG-back_shoulder.R 1
+  - first:
+      1: 100016
+    second: ORG-breast.01.L
+  - first:
+      1: 100018
+    second: ORG-breast.01.L 1
+  - first:
+      1: 100020
+    second: ORG-breast.01.R
+  - first:
+      1: 100022
+    second: ORG-breast.01.R 1
+  - first:
+      1: 100024
+    second: ORG-breast.02.L
+  - first:
+      1: 100026
+    second: ORG-breast.02.L 1
+  - first:
+      1: 100028
+    second: ORG-breast.02.R
+  - first:
+      1: 100030
+    second: ORG-breast.02.R 1
+  - first:
+      1: 100032
+    second: ORG-brow.B.L
+  - first:
+      1: 100034
+    second: ORG-brow.B.L 1
+  - first:
+      1: 100036
+    second: ORG-brow.B.L.001
+  - first:
+      1: 100038
+    second: ORG-brow.B.L.001 1
+  - first:
+      1: 100040
+    second: ORG-brow.B.L.002
+  - first:
+      1: 100042
+    second: ORG-brow.B.L.002 1
+  - first:
+      1: 100044
+    second: ORG-brow.B.L.003
+  - first:
+      1: 100046
+    second: ORG-brow.B.L.003 1
+  - first:
+      1: 100048
+    second: ORG-brow.B.R
+  - first:
+      1: 100050
+    second: ORG-brow.B.R 1
+  - first:
+      1: 100052
+    second: ORG-brow.B.R.001
+  - first:
+      1: 100054
+    second: ORG-brow.B.R.001 1
+  - first:
+      1: 100056
+    second: ORG-brow.B.R.002
+  - first:
+      1: 100058
+    second: ORG-brow.B.R.002 1
+  - first:
+      1: 100060
+    second: ORG-brow.B.R.003
+  - first:
+      1: 100062
+    second: ORG-brow.B.R.003 1
+  - first:
+      1: 100064
+    second: ORG-brow.T.L
+  - first:
+      1: 100066
+    second: ORG-brow.T.L 1
+  - first:
+      1: 100068
+    second: ORG-brow.T.L.001
+  - first:
+      1: 100070
+    second: ORG-brow.T.L.001 1
+  - first:
+      1: 100072
+    second: ORG-brow.T.L.002
+  - first:
+      1: 100074
+    second: ORG-brow.T.L.002 1
+  - first:
+      1: 100076
+    second: ORG-brow.T.L.003
+  - first:
+      1: 100078
+    second: ORG-brow.T.L.003 1
+  - first:
+      1: 100080
+    second: ORG-brow.T.R
+  - first:
+      1: 100082
+    second: ORG-brow.T.R 1
+  - first:
+      1: 100084
+    second: ORG-brow.T.R.001
+  - first:
+      1: 100086
+    second: ORG-brow.T.R.001 1
+  - first:
+      1: 100088
+    second: ORG-brow.T.R.002
+  - first:
+      1: 100090
+    second: ORG-brow.T.R.002 1
+  - first:
+      1: 100092
+    second: ORG-brow.T.R.003
+  - first:
+      1: 100094
+    second: ORG-brow.T.R.003 1
+  - first:
+      1: 100096
+    second: ORG-butt.L
+  - first:
+      1: 100098
+    second: ORG-butt.L 1
+  - first:
+      1: 100100
+    second: ORG-butt.R
+  - first:
+      1: 100102
+    second: ORG-butt.R 1
+  - first:
+      1: 100104
+    second: ORG-cheek.B.L
+  - first:
+      1: 100106
+    second: ORG-cheek.B.L 1
+  - first:
+      1: 100108
+    second: ORG-cheek.B.L.001
+  - first:
+      1: 100110
+    second: ORG-cheek.B.L.001 1
+  - first:
+      1: 100112
+    second: ORG-cheek.B.R
+  - first:
+      1: 100114
+    second: ORG-cheek.B.R 1
+  - first:
+      1: 100116
+    second: ORG-cheek.B.R.001
+  - first:
+      1: 100118
+    second: ORG-cheek.B.R.001 1
+  - first:
+      1: 100120
+    second: ORG-cheek.T.L
+  - first:
+      1: 100122
+    second: ORG-cheek.T.L 1
+  - first:
+      1: 100124
+    second: ORG-cheek.T.L.001
+  - first:
+      1: 100126
+    second: ORG-cheek.T.L.001 1
+  - first:
+      1: 100128
+    second: ORG-cheek.T.R
+  - first:
+      1: 100130
+    second: ORG-cheek.T.R 1
+  - first:
+      1: 100132
+    second: ORG-cheek.T.R.001
+  - first:
+      1: 100134
+    second: ORG-cheek.T.R.001 1
+  - first:
+      1: 100136
+    second: ORG-chest
+  - first:
+      1: 100138
+    second: ORG-chest 1
+  - first:
+      1: 100140
+    second: ORG-chin
+  - first:
+      1: 100142
+    second: ORG-chin 1
+  - first:
+      1: 100144
+    second: ORG-chin.001
+  - first:
+      1: 100146
+    second: ORG-chin.001 1
+  - first:
+      1: 100148
+    second: ORG-chin.L
+  - first:
+      1: 100150
+    second: ORG-chin.L 1
+  - first:
+      1: 100152
+    second: ORG-chin.R
+  - first:
+      1: 100154
+    second: ORG-chin.R 1
+  - first:
+      1: 100156
+    second: ORG-ear.L
+  - first:
+      1: 100158
+    second: ORG-ear.L 1
+  - first:
+      1: 100160
+    second: ORG-ear.L.001
+  - first:
+      1: 100162
+    second: ORG-ear.L.001 1
+  - first:
+      1: 100164
+    second: ORG-ear.L.002
+  - first:
+      1: 100166
+    second: ORG-ear.L.002 1
+  - first:
+      1: 100168
+    second: ORG-ear.L.003
+  - first:
+      1: 100170
+    second: ORG-ear.L.003 1
+  - first:
+      1: 100172
+    second: ORG-ear.R
+  - first:
+      1: 100174
+    second: ORG-ear.R 1
+  - first:
+      1: 100176
+    second: ORG-ear.R.001
+  - first:
+      1: 100178
+    second: ORG-ear.R.001 1
+  - first:
+      1: 100180
+    second: ORG-ear.R.002
+  - first:
+      1: 100182
+    second: ORG-ear.R.002 1
+  - first:
+      1: 100184
+    second: ORG-ear.R.003
+  - first:
+      1: 100186
+    second: ORG-ear.R.003 1
+  - first:
+      1: 100188
+    second: ORG-elbow.L
+  - first:
+      1: 100190
+    second: ORG-elbow.L 1
+  - first:
+      1: 100192
+    second: ORG-elbow.R
+  - first:
+      1: 100194
+    second: ORG-elbow.R 1
+  - first:
+      1: 100196
+    second: ORG-eye.L
+  - first:
+      1: 100198
+    second: ORG-eye.L 1
+  - first:
+      1: 100200
+    second: ORG-eye.R
+  - first:
+      1: 100202
+    second: ORG-eye.R 1
+  - first:
+      1: 100204
+    second: ORG-f_index.01.L
+  - first:
+      1: 100206
+    second: ORG-f_index.01.L 1
+  - first:
+      1: 100208
+    second: ORG-f_index.01.R
+  - first:
+      1: 100210
+    second: ORG-f_index.01.R 1
+  - first:
+      1: 100212
+    second: ORG-f_index.02.L
+  - first:
+      1: 100214
+    second: ORG-f_index.02.L 1
+  - first:
+      1: 100216
+    second: ORG-f_index.02.R
+  - first:
+      1: 100218
+    second: ORG-f_index.02.R 1
+  - first:
+      1: 100220
+    second: ORG-f_index.03.L
+  - first:
+      1: 100222
+    second: ORG-f_index.03.L 1
+  - first:
+      1: 100224
+    second: ORG-f_index.03.R
+  - first:
+      1: 100226
+    second: ORG-f_index.03.R 1
+  - first:
+      1: 100228
+    second: ORG-f_middle.01.L
+  - first:
+      1: 100230
+    second: ORG-f_middle.01.L 1
+  - first:
+      1: 100232
+    second: ORG-f_middle.01.R
+  - first:
+      1: 100234
+    second: ORG-f_middle.01.R 1
+  - first:
+      1: 100236
+    second: ORG-f_middle.02.L
+  - first:
+      1: 100238
+    second: ORG-f_middle.02.L 1
+  - first:
+      1: 100240
+    second: ORG-f_middle.02.R
+  - first:
+      1: 100242
+    second: ORG-f_middle.02.R 1
+  - first:
+      1: 100244
+    second: ORG-f_middle.03.L
+  - first:
+      1: 100246
+    second: ORG-f_middle.03.L 1
+  - first:
+      1: 100248
+    second: ORG-f_middle.03.R
+  - first:
+      1: 100250
+    second: ORG-f_middle.03.R 1
+  - first:
+      1: 100252
+    second: ORG-f_pinky.01.L
+  - first:
+      1: 100254
+    second: ORG-f_pinky.01.L 1
+  - first:
+      1: 100256
+    second: ORG-f_pinky.01.R
+  - first:
+      1: 100258
+    second: ORG-f_pinky.01.R 1
+  - first:
+      1: 100260
+    second: ORG-f_pinky.02.L
+  - first:
+      1: 100262
+    second: ORG-f_pinky.02.L 1
+  - first:
+      1: 100264
+    second: ORG-f_pinky.02.R
+  - first:
+      1: 100266
+    second: ORG-f_pinky.02.R 1
+  - first:
+      1: 100268
+    second: ORG-f_pinky.03.L
+  - first:
+      1: 100270
+    second: ORG-f_pinky.03.L 1
+  - first:
+      1: 100272
+    second: ORG-f_pinky.03.R
+  - first:
+      1: 100274
+    second: ORG-f_pinky.03.R 1
+  - first:
+      1: 100276
+    second: ORG-f_ring.01.L
+  - first:
+      1: 100278
+    second: ORG-f_ring.01.L 1
+  - first:
+      1: 100280
+    second: ORG-f_ring.01.R
+  - first:
+      1: 100282
+    second: ORG-f_ring.01.R 1
+  - first:
+      1: 100284
+    second: ORG-f_ring.02.L
+  - first:
+      1: 100286
+    second: ORG-f_ring.02.L 1
+  - first:
+      1: 100288
+    second: ORG-f_ring.02.R
+  - first:
+      1: 100290
+    second: ORG-f_ring.02.R 1
+  - first:
+      1: 100292
+    second: ORG-f_ring.03.L
+  - first:
+      1: 100294
+    second: ORG-f_ring.03.L 1
+  - first:
+      1: 100296
+    second: ORG-f_ring.03.R
+  - first:
+      1: 100298
+    second: ORG-f_ring.03.R 1
+  - first:
+      1: 100300
+    second: ORG-foot.L
+  - first:
+      1: 100302
+    second: ORG-foot.L 1
+  - first:
+      1: 100304
+    second: ORG-foot.R
+  - first:
+      1: 100306
+    second: ORG-foot.R 1
+  - first:
+      1: 100308
+    second: ORG-forearm.L
+  - first:
+      1: 100310
+    second: ORG-forearm.L 1
+  - first:
+      1: 100312
+    second: ORG-forearm.R
+  - first:
+      1: 100314
+    second: ORG-forearm.R 1
+  - first:
+      1: 100316
+    second: ORG-forearm_twist.L
+  - first:
+      1: 100318
+    second: ORG-forearm_twist.L 1
+  - first:
+      1: 100320
+    second: ORG-forearm_twist.R
+  - first:
+      1: 100322
+    second: ORG-forearm_twist.R 1
+  - first:
+      1: 100324
+    second: ORG-hair_A
+  - first:
+      1: 100326
+    second: ORG-hair_A 1
+  - first:
+      1: 100328
+    second: ORG-hair_B
+  - first:
+      1: 100330
+    second: ORG-hair_B 1
+  - first:
+      1: 100332
+    second: ORG-hair_F
+  - first:
+      1: 100334
+    second: ORG-hair_F 1
+  - first:
+      1: 100336
+    second: ORG-hair_S.L
+  - first:
+      1: 100338
+    second: ORG-hair_S.L 1
+  - first:
+      1: 100340
+    second: ORG-hair_S.L.001
+  - first:
+      1: 100342
+    second: ORG-hair_S.L.001 1
+  - first:
+      1: 100344
+    second: ORG-hair_S.R
+  - first:
+      1: 100346
+    second: ORG-hair_S.R 1
+  - first:
+      1: 100348
+    second: ORG-hair_S.R.001
+  - first:
+      1: 100350
+    second: ORG-hair_S.R.001 1
+  - first:
+      1: 100352
+    second: ORG-hair_SB.L
+  - first:
+      1: 100354
+    second: ORG-hair_SB.L 1
+  - first:
+      1: 100356
+    second: ORG-hair_SB.L.001
+  - first:
+      1: 100358
+    second: ORG-hair_SB.L.001 1
+  - first:
+      1: 100360
+    second: ORG-hair_SB.R
+  - first:
+      1: 100362
+    second: ORG-hair_SB.R 1
+  - first:
+      1: 100364
+    second: ORG-hair_SB.R.001
+  - first:
+      1: 100366
+    second: ORG-hair_SB.R.001 1
+  - first:
+      1: 100368
+    second: ORG-hand.L
+  - first:
+      1: 100370
+    second: ORG-hand.L 1
+  - first:
+      1: 100372
+    second: ORG-hand.R
+  - first:
+      1: 100374
+    second: ORG-hand.R 1
+  - first:
+      1: 100376
+    second: ORG-head
+  - first:
+      1: 100378
+    second: ORG-head 1
+  - first:
+      1: 100380
+    second: ORG-hip.L
+  - first:
+      1: 100382
+    second: ORG-hip.L 1
+  - first:
+      1: 100384
+    second: ORG-hip.R
+  - first:
+      1: 100386
+    second: ORG-hip.R 1
+  - first:
+      1: 100388
+    second: ORG-hips
+  - first:
+      1: 100390
+    second: ORG-hips 1
+  - first:
+      1: 100392
+    second: ORG-inner_thigh.L
+  - first:
+      1: 100394
+    second: ORG-inner_thigh.L 1
+  - first:
+      1: 100396
+    second: ORG-inner_thigh.R
+  - first:
+      1: 100398
+    second: ORG-inner_thigh.R 1
+  - first:
+      1: 100400
+    second: ORG-jaw
+  - first:
+      1: 100402
+    second: ORG-jaw 1
+  - first:
+      1: 100404
+    second: ORG-jaw.L
+  - first:
+      1: 100406
+    second: ORG-jaw.L 1
+  - first:
+      1: 100408
+    second: ORG-jaw.L.001
+  - first:
+      1: 100410
+    second: ORG-jaw.L.001 1
+  - first:
+      1: 100412
+    second: ORG-jaw.R
+  - first:
+      1: 100414
+    second: ORG-jaw.R 1
+  - first:
+      1: 100416
+    second: ORG-jaw.R.001
+  - first:
+      1: 100418
+    second: ORG-jaw.R.001 1
+  - first:
+      1: 100420
+    second: ORG-knee.L
+  - first:
+      1: 100422
+    second: ORG-knee.L 1
+  - first:
+      1: 100424
+    second: ORG-knee.R
+  - first:
+      1: 100426
+    second: ORG-knee.R 1
+  - first:
+      1: 100428
+    second: ORG-lid.B.L
+  - first:
+      1: 100430
+    second: ORG-lid.B.L 1
+  - first:
+      1: 100432
+    second: ORG-lid.B.L.001
+  - first:
+      1: 100434
+    second: ORG-lid.B.L.001 1
+  - first:
+      1: 100436
+    second: ORG-lid.B.L.002
+  - first:
+      1: 100438
+    second: ORG-lid.B.L.002 1
+  - first:
+      1: 100440
+    second: ORG-lid.B.L.003
+  - first:
+      1: 100442
+    second: ORG-lid.B.L.003 1
+  - first:
+      1: 100444
+    second: ORG-lid.B.R
+  - first:
+      1: 100446
+    second: ORG-lid.B.R 1
+  - first:
+      1: 100448
+    second: ORG-lid.B.R.001
+  - first:
+      1: 100450
+    second: ORG-lid.B.R.001 1
+  - first:
+      1: 100452
+    second: ORG-lid.B.R.002
+  - first:
+      1: 100454
+    second: ORG-lid.B.R.002 1
+  - first:
+      1: 100456
+    second: ORG-lid.B.R.003
+  - first:
+      1: 100458
+    second: ORG-lid.B.R.003 1
+  - first:
+      1: 100460
+    second: ORG-lid.T.L
+  - first:
+      1: 100462
+    second: ORG-lid.T.L 1
+  - first:
+      1: 100464
+    second: ORG-lid.T.L.001
+  - first:
+      1: 100466
+    second: ORG-lid.T.L.001 1
+  - first:
+      1: 100468
+    second: ORG-lid.T.L.002
+  - first:
+      1: 100470
+    second: ORG-lid.T.L.002 1
+  - first:
+      1: 100472
+    second: ORG-lid.T.L.003
+  - first:
+      1: 100474
+    second: ORG-lid.T.L.003 1
+  - first:
+      1: 100476
+    second: ORG-lid.T.R
+  - first:
+      1: 100478
+    second: ORG-lid.T.R 1
+  - first:
+      1: 100480
+    second: ORG-lid.T.R.001
+  - first:
+      1: 100482
+    second: ORG-lid.T.R.001 1
+  - first:
+      1: 100484
+    second: ORG-lid.T.R.002
+  - first:
+      1: 100486
+    second: ORG-lid.T.R.002 1
+  - first:
+      1: 100488
+    second: ORG-lid.T.R.003
+  - first:
+      1: 100490
+    second: ORG-lid.T.R.003 1
+  - first:
+      1: 100492
+    second: ORG-lip.B.L
+  - first:
+      1: 100494
+    second: ORG-lip.B.L 1
+  - first:
+      1: 100496
+    second: ORG-lip.B.L.001
+  - first:
+      1: 100498
+    second: ORG-lip.B.L.001 1
+  - first:
+      1: 100500
+    second: ORG-lip.B.R
+  - first:
+      1: 100502
+    second: ORG-lip.B.R 1
+  - first:
+      1: 100504
+    second: ORG-lip.B.R.001
+  - first:
+      1: 100506
+    second: ORG-lip.B.R.001 1
+  - first:
+      1: 100508
+    second: ORG-lip.T.L
+  - first:
+      1: 100510
+    second: ORG-lip.T.L 1
+  - first:
+      1: 100512
+    second: ORG-lip.T.L.001
+  - first:
+      1: 100514
+    second: ORG-lip.T.L.001 1
+  - first:
+      1: 100516
+    second: ORG-lip.T.R
+  - first:
+      1: 100518
+    second: ORG-lip.T.R 1
+  - first:
+      1: 100520
+    second: ORG-lip.T.R.001
+  - first:
+      1: 100522
+    second: ORG-lip.T.R.001 1
+  - first:
+      1: 100524
+    second: ORG-neck
+  - first:
+      1: 100526
+    second: ORG-neck 1
+  - first:
+      1: 100528
+    second: ORG-nose
+  - first:
+      1: 100530
+    second: ORG-nose 1
+  - first:
+      1: 100532
+    second: ORG-nose.001
+  - first:
+      1: 100534
+    second: ORG-nose.001 1
+  - first:
+      1: 100536
+    second: ORG-nose.002
+  - first:
+      1: 100538
+    second: ORG-nose.002 1
+  - first:
+      1: 100540
+    second: ORG-nose.003
+  - first:
+      1: 100542
+    second: ORG-nose.003 1
+  - first:
+      1: 100544
+    second: ORG-nose.L
+  - first:
+      1: 100546
+    second: ORG-nose.L 1
+  - first:
+      1: 100548
+    second: ORG-nose.L.001
+  - first:
+      1: 100550
+    second: ORG-nose.L.001 1
+  - first:
+      1: 100552
+    second: ORG-nose.R
+  - first:
+      1: 100554
+    second: ORG-nose.R 1
+  - first:
+      1: 100556
+    second: ORG-nose.R.001
+  - first:
+      1: 100558
+    second: ORG-nose.R.001 1
+  - first:
+      1: 100560
+    second: ORG-palm.01.L
+  - first:
+      1: 100562
+    second: ORG-palm.01.L 1
+  - first:
+      1: 100564
+    second: ORG-palm.01.R
+  - first:
+      1: 100566
+    second: ORG-palm.01.R 1
+  - first:
+      1: 100568
+    second: ORG-palm.02.L
+  - first:
+      1: 100570
+    second: ORG-palm.02.L 1
+  - first:
+      1: 100572
+    second: ORG-palm.02.R
+  - first:
+      1: 100574
+    second: ORG-palm.02.R 1
+  - first:
+      1: 100576
+    second: ORG-palm.03.L
+  - first:
+      1: 100578
+    second: ORG-palm.03.L 1
+  - first:
+      1: 100580
+    second: ORG-palm.03.R
+  - first:
+      1: 100582
+    second: ORG-palm.03.R 1
+  - first:
+      1: 100584
+    second: ORG-palm.04.L
+  - first:
+      1: 100586
+    second: ORG-palm.04.L 1
+  - first:
+      1: 100588
+    second: ORG-palm.04.R
+  - first:
+      1: 100590
+    second: ORG-palm.04.R 1
+  - first:
+      1: 100592
+    second: ORG-pectoral.L
+  - first:
+      1: 100594
+    second: ORG-pectoral.L 1
+  - first:
+      1: 100596
+    second: ORG-pectoral.R
+  - first:
+      1: 100598
+    second: ORG-pectoral.R 1
+  - first:
+      1: 100600
+    second: ORG-shin.L
+  - first:
+      1: 100602
+    second: ORG-shin.L 1
+  - first:
+      1: 100604
+    second: ORG-shin.R
+  - first:
+      1: 100606
+    second: ORG-shin.R 1
+  - first:
+      1: 100608
+    second: ORG-shoulder.L
+  - first:
+      1: 100610
+    second: ORG-shoulder.L 1
+  - first:
+      1: 100612
+    second: ORG-shoulder.R
+  - first:
+      1: 100614
+    second: ORG-shoulder.R 1
+  - first:
+      1: 100616
+    second: ORG-temple.L
+  - first:
+      1: 100618
+    second: ORG-temple.L 1
+  - first:
+      1: 100620
+    second: ORG-temple.R
+  - first:
+      1: 100622
+    second: ORG-temple.R 1
+  - first:
+      1: 100624
+    second: ORG-thigh.L
+  - first:
+      1: 100626
+    second: ORG-thigh.L 1
+  - first:
+      1: 100628
+    second: ORG-thigh.R
+  - first:
+      1: 100630
+    second: ORG-thigh.R 1
+  - first:
+      1: 100632
+    second: ORG-thumb.01.L
+  - first:
+      1: 100634
+    second: ORG-thumb.01.L 1
+  - first:
+      1: 100636
+    second: ORG-thumb.01.R
+  - first:
+      1: 100638
+    second: ORG-thumb.01.R 1
+  - first:
+      1: 100640
+    second: ORG-thumb.02.L
+  - first:
+      1: 100642
+    second: ORG-thumb.02.L 1
+  - first:
+      1: 100644
+    second: ORG-thumb.02.R
+  - first:
+      1: 100646
+    second: ORG-thumb.02.R 1
+  - first:
+      1: 100648
+    second: ORG-thumb.03.L
+  - first:
+      1: 100650
+    second: ORG-thumb.03.L 1
+  - first:
+      1: 100652
+    second: ORG-thumb.03.R
+  - first:
+      1: 100654
+    second: ORG-thumb.03.R 1
+  - first:
+      1: 100656
+    second: ORG-toe.L
+  - first:
+      1: 100658
+    second: ORG-toe.L 1
+  - first:
+      1: 100660
+    second: ORG-toe.R
+  - first:
+      1: 100662
+    second: ORG-toe.R 1
+  - first:
+      1: 100664
+    second: ORG-tongue
+  - first:
+      1: 100666
+    second: ORG-tongue 1
+  - first:
+      1: 100668
+    second: ORG-tongue.001
+  - first:
+      1: 100670
+    second: ORG-tongue.001 1
+  - first:
+      1: 100672
+    second: ORG-tongue.002
+  - first:
+      1: 100674
+    second: ORG-tongue.002 1
+  - first:
+      1: 100676
+    second: ORG-upper_arm.L
+  - first:
+      1: 100678
+    second: ORG-upper_arm.L 1
+  - first:
+      1: 100680
+    second: ORG-upper_arm.R
+  - first:
+      1: 100682
+    second: ORG-upper_arm.R 1
+  - first:
+      1: 100684
+    second: ORG-upper_arm_twist.L
+  - first:
+      1: 100686
+    second: ORG-upper_arm_twist.L 1
+  - first:
+      1: 100688
+    second: ORG-upper_arm_twist.R
+  - first:
+      1: 100690
+    second: ORG-upper_arm_twist.R 1
+  - first:
+      1: 100692
+    second: ORG-upper_breast.L
+  - first:
+      1: 100694
+    second: ORG-upper_breast.L 1
+  - first:
+      1: 100696
+    second: ORG-upper_breast.R
+  - first:
+      1: 100698
+    second: ORG-upper_breast.R 1
+  - first:
+      1: 100700
+    second: ORG-upper_chest
+  - first:
+      1: 100702
+    second: ORG-upper_chest 1
+  - first:
+      1: 100704
+    second: ORG-upper_shoulder.L
+  - first:
+      1: 100706
+    second: ORG-upper_shoulder.L 1
+  - first:
+      1: 100708
+    second: ORG-upper_shoulder.R
+  - first:
+      1: 100710
+    second: ORG-upper_shoulder.R 1
+  - first:
+      1: 100712
+    second: ORG-upper_thigh.L
+  - first:
+      1: 100714
+    second: ORG-upper_thigh.L 1
+  - first:
+      1: 100716
+    second: ORG-upper_thigh.R
+  - first:
+      1: 100718
+    second: ORG-upper_thigh.R 1
+  - first:
+      1: 100720
+    second: ORG-waist
+  - first:
+      1: 100722
+    second: ORG-waist 1
+  - first:
+      1: 100724
+    second: ORG-wrist.L
+  - first:
+      1: 100726
+    second: ORG-wrist.L 1
+  - first:
+      1: 100728
+    second: ORG-wrist.R
+  - first:
+      1: 100730
+    second: ORG-wrist.R 1
+  - first:
+      1: 100732
+    second: rig
+  - first:
+      1: 100734
+    second: Suzanne
+  - first:
+      1: 100736
+    second: //RootNode
+  - first:
+      4: 400000
+    second: Blender.cloth
+  - first:
+      4: 400002
+    second: Blender.hair
+  - first:
+      4: 400004
+    second: body
+  - first:
+      4: 400006
+    second: metarig
+  - first:
+      4: 400008
+    second: ORG-back_shoulder.L
+  - first:
+      4: 400010
+    second: ORG-back_shoulder.L 1
+  - first:
+      4: 400012
+    second: ORG-back_shoulder.R
+  - first:
+      4: 400014
+    second: ORG-back_shoulder.R 1
+  - first:
+      4: 400016
+    second: ORG-breast.01.L
+  - first:
+      4: 400018
+    second: ORG-breast.01.L 1
+  - first:
+      4: 400020
+    second: ORG-breast.01.R
+  - first:
+      4: 400022
+    second: ORG-breast.01.R 1
+  - first:
+      4: 400024
+    second: ORG-breast.02.L
+  - first:
+      4: 400026
+    second: ORG-breast.02.L 1
+  - first:
+      4: 400028
+    second: ORG-breast.02.R
+  - first:
+      4: 400030
+    second: ORG-breast.02.R 1
+  - first:
+      4: 400032
+    second: ORG-brow.B.L
+  - first:
+      4: 400034
+    second: ORG-brow.B.L 1
+  - first:
+      4: 400036
+    second: ORG-brow.B.L.001
+  - first:
+      4: 400038
+    second: ORG-brow.B.L.001 1
+  - first:
+      4: 400040
+    second: ORG-brow.B.L.002
+  - first:
+      4: 400042
+    second: ORG-brow.B.L.002 1
+  - first:
+      4: 400044
+    second: ORG-brow.B.L.003
+  - first:
+      4: 400046
+    second: ORG-brow.B.L.003 1
+  - first:
+      4: 400048
+    second: ORG-brow.B.R
+  - first:
+      4: 400050
+    second: ORG-brow.B.R 1
+  - first:
+      4: 400052
+    second: ORG-brow.B.R.001
+  - first:
+      4: 400054
+    second: ORG-brow.B.R.001 1
+  - first:
+      4: 400056
+    second: ORG-brow.B.R.002
+  - first:
+      4: 400058
+    second: ORG-brow.B.R.002 1
+  - first:
+      4: 400060
+    second: ORG-brow.B.R.003
+  - first:
+      4: 400062
+    second: ORG-brow.B.R.003 1
+  - first:
+      4: 400064
+    second: ORG-brow.T.L
+  - first:
+      4: 400066
+    second: ORG-brow.T.L 1
+  - first:
+      4: 400068
+    second: ORG-brow.T.L.001
+  - first:
+      4: 400070
+    second: ORG-brow.T.L.001 1
+  - first:
+      4: 400072
+    second: ORG-brow.T.L.002
+  - first:
+      4: 400074
+    second: ORG-brow.T.L.002 1
+  - first:
+      4: 400076
+    second: ORG-brow.T.L.003
+  - first:
+      4: 400078
+    second: ORG-brow.T.L.003 1
+  - first:
+      4: 400080
+    second: ORG-brow.T.R
+  - first:
+      4: 400082
+    second: ORG-brow.T.R 1
+  - first:
+      4: 400084
+    second: ORG-brow.T.R.001
+  - first:
+      4: 400086
+    second: ORG-brow.T.R.001 1
+  - first:
+      4: 400088
+    second: ORG-brow.T.R.002
+  - first:
+      4: 400090
+    second: ORG-brow.T.R.002 1
+  - first:
+      4: 400092
+    second: ORG-brow.T.R.003
+  - first:
+      4: 400094
+    second: ORG-brow.T.R.003 1
+  - first:
+      4: 400096
+    second: ORG-butt.L
+  - first:
+      4: 400098
+    second: ORG-butt.L 1
+  - first:
+      4: 400100
+    second: ORG-butt.R
+  - first:
+      4: 400102
+    second: ORG-butt.R 1
+  - first:
+      4: 400104
+    second: ORG-cheek.B.L
+  - first:
+      4: 400106
+    second: ORG-cheek.B.L 1
+  - first:
+      4: 400108
+    second: ORG-cheek.B.L.001
+  - first:
+      4: 400110
+    second: ORG-cheek.B.L.001 1
+  - first:
+      4: 400112
+    second: ORG-cheek.B.R
+  - first:
+      4: 400114
+    second: ORG-cheek.B.R 1
+  - first:
+      4: 400116
+    second: ORG-cheek.B.R.001
+  - first:
+      4: 400118
+    second: ORG-cheek.B.R.001 1
+  - first:
+      4: 400120
+    second: ORG-cheek.T.L
+  - first:
+      4: 400122
+    second: ORG-cheek.T.L 1
+  - first:
+      4: 400124
+    second: ORG-cheek.T.L.001
+  - first:
+      4: 400126
+    second: ORG-cheek.T.L.001 1
+  - first:
+      4: 400128
+    second: ORG-cheek.T.R
+  - first:
+      4: 400130
+    second: ORG-cheek.T.R 1
+  - first:
+      4: 400132
+    second: ORG-cheek.T.R.001
+  - first:
+      4: 400134
+    second: ORG-cheek.T.R.001 1
+  - first:
+      4: 400136
+    second: ORG-chest
+  - first:
+      4: 400138
+    second: ORG-chest 1
+  - first:
+      4: 400140
+    second: ORG-chin
+  - first:
+      4: 400142
+    second: ORG-chin 1
+  - first:
+      4: 400144
+    second: ORG-chin.001
+  - first:
+      4: 400146
+    second: ORG-chin.001 1
+  - first:
+      4: 400148
+    second: ORG-chin.L
+  - first:
+      4: 400150
+    second: ORG-chin.L 1
+  - first:
+      4: 400152
+    second: ORG-chin.R
+  - first:
+      4: 400154
+    second: ORG-chin.R 1
+  - first:
+      4: 400156
+    second: ORG-ear.L
+  - first:
+      4: 400158
+    second: ORG-ear.L 1
+  - first:
+      4: 400160
+    second: ORG-ear.L.001
+  - first:
+      4: 400162
+    second: ORG-ear.L.001 1
+  - first:
+      4: 400164
+    second: ORG-ear.L.002
+  - first:
+      4: 400166
+    second: ORG-ear.L.002 1
+  - first:
+      4: 400168
+    second: ORG-ear.L.003
+  - first:
+      4: 400170
+    second: ORG-ear.L.003 1
+  - first:
+      4: 400172
+    second: ORG-ear.R
+  - first:
+      4: 400174
+    second: ORG-ear.R 1
+  - first:
+      4: 400176
+    second: ORG-ear.R.001
+  - first:
+      4: 400178
+    second: ORG-ear.R.001 1
+  - first:
+      4: 400180
+    second: ORG-ear.R.002
+  - first:
+      4: 400182
+    second: ORG-ear.R.002 1
+  - first:
+      4: 400184
+    second: ORG-ear.R.003
+  - first:
+      4: 400186
+    second: ORG-ear.R.003 1
+  - first:
+      4: 400188
+    second: ORG-elbow.L
+  - first:
+      4: 400190
+    second: ORG-elbow.L 1
+  - first:
+      4: 400192
+    second: ORG-elbow.R
+  - first:
+      4: 400194
+    second: ORG-elbow.R 1
+  - first:
+      4: 400196
+    second: ORG-eye.L
+  - first:
+      4: 400198
+    second: ORG-eye.L 1
+  - first:
+      4: 400200
+    second: ORG-eye.R
+  - first:
+      4: 400202
+    second: ORG-eye.R 1
+  - first:
+      4: 400204
+    second: ORG-f_index.01.L
+  - first:
+      4: 400206
+    second: ORG-f_index.01.L 1
+  - first:
+      4: 400208
+    second: ORG-f_index.01.R
+  - first:
+      4: 400210
+    second: ORG-f_index.01.R 1
+  - first:
+      4: 400212
+    second: ORG-f_index.02.L
+  - first:
+      4: 400214
+    second: ORG-f_index.02.L 1
+  - first:
+      4: 400216
+    second: ORG-f_index.02.R
+  - first:
+      4: 400218
+    second: ORG-f_index.02.R 1
+  - first:
+      4: 400220
+    second: ORG-f_index.03.L
+  - first:
+      4: 400222
+    second: ORG-f_index.03.L 1
+  - first:
+      4: 400224
+    second: ORG-f_index.03.R
+  - first:
+      4: 400226
+    second: ORG-f_index.03.R 1
+  - first:
+      4: 400228
+    second: ORG-f_middle.01.L
+  - first:
+      4: 400230
+    second: ORG-f_middle.01.L 1
+  - first:
+      4: 400232
+    second: ORG-f_middle.01.R
+  - first:
+      4: 400234
+    second: ORG-f_middle.01.R 1
+  - first:
+      4: 400236
+    second: ORG-f_middle.02.L
+  - first:
+      4: 400238
+    second: ORG-f_middle.02.L 1
+  - first:
+      4: 400240
+    second: ORG-f_middle.02.R
+  - first:
+      4: 400242
+    second: ORG-f_middle.02.R 1
+  - first:
+      4: 400244
+    second: ORG-f_middle.03.L
+  - first:
+      4: 400246
+    second: ORG-f_middle.03.L 1
+  - first:
+      4: 400248
+    second: ORG-f_middle.03.R
+  - first:
+      4: 400250
+    second: ORG-f_middle.03.R 1
+  - first:
+      4: 400252
+    second: ORG-f_pinky.01.L
+  - first:
+      4: 400254
+    second: ORG-f_pinky.01.L 1
+  - first:
+      4: 400256
+    second: ORG-f_pinky.01.R
+  - first:
+      4: 400258
+    second: ORG-f_pinky.01.R 1
+  - first:
+      4: 400260
+    second: ORG-f_pinky.02.L
+  - first:
+      4: 400262
+    second: ORG-f_pinky.02.L 1
+  - first:
+      4: 400264
+    second: ORG-f_pinky.02.R
+  - first:
+      4: 400266
+    second: ORG-f_pinky.02.R 1
+  - first:
+      4: 400268
+    second: ORG-f_pinky.03.L
+  - first:
+      4: 400270
+    second: ORG-f_pinky.03.L 1
+  - first:
+      4: 400272
+    second: ORG-f_pinky.03.R
+  - first:
+      4: 400274
+    second: ORG-f_pinky.03.R 1
+  - first:
+      4: 400276
+    second: ORG-f_ring.01.L
+  - first:
+      4: 400278
+    second: ORG-f_ring.01.L 1
+  - first:
+      4: 400280
+    second: ORG-f_ring.01.R
+  - first:
+      4: 400282
+    second: ORG-f_ring.01.R 1
+  - first:
+      4: 400284
+    second: ORG-f_ring.02.L
+  - first:
+      4: 400286
+    second: ORG-f_ring.02.L 1
+  - first:
+      4: 400288
+    second: ORG-f_ring.02.R
+  - first:
+      4: 400290
+    second: ORG-f_ring.02.R 1
+  - first:
+      4: 400292
+    second: ORG-f_ring.03.L
+  - first:
+      4: 400294
+    second: ORG-f_ring.03.L 1
+  - first:
+      4: 400296
+    second: ORG-f_ring.03.R
+  - first:
+      4: 400298
+    second: ORG-f_ring.03.R 1
+  - first:
+      4: 400300
+    second: ORG-foot.L
+  - first:
+      4: 400302
+    second: ORG-foot.L 1
+  - first:
+      4: 400304
+    second: ORG-foot.R
+  - first:
+      4: 400306
+    second: ORG-foot.R 1
+  - first:
+      4: 400308
+    second: ORG-forearm.L
+  - first:
+      4: 400310
+    second: ORG-forearm.L 1
+  - first:
+      4: 400312
+    second: ORG-forearm.R
+  - first:
+      4: 400314
+    second: ORG-forearm.R 1
+  - first:
+      4: 400316
+    second: ORG-forearm_twist.L
+  - first:
+      4: 400318
+    second: ORG-forearm_twist.L 1
+  - first:
+      4: 400320
+    second: ORG-forearm_twist.R
+  - first:
+      4: 400322
+    second: ORG-forearm_twist.R 1
+  - first:
+      4: 400324
+    second: ORG-hair_A
+  - first:
+      4: 400326
+    second: ORG-hair_A 1
+  - first:
+      4: 400328
+    second: ORG-hair_B
+  - first:
+      4: 400330
+    second: ORG-hair_B 1
+  - first:
+      4: 400332
+    second: ORG-hair_F
+  - first:
+      4: 400334
+    second: ORG-hair_F 1
+  - first:
+      4: 400336
+    second: ORG-hair_S.L
+  - first:
+      4: 400338
+    second: ORG-hair_S.L 1
+  - first:
+      4: 400340
+    second: ORG-hair_S.L.001
+  - first:
+      4: 400342
+    second: ORG-hair_S.L.001 1
+  - first:
+      4: 400344
+    second: ORG-hair_S.R
+  - first:
+      4: 400346
+    second: ORG-hair_S.R 1
+  - first:
+      4: 400348
+    second: ORG-hair_S.R.001
+  - first:
+      4: 400350
+    second: ORG-hair_S.R.001 1
+  - first:
+      4: 400352
+    second: ORG-hair_SB.L
+  - first:
+      4: 400354
+    second: ORG-hair_SB.L 1
+  - first:
+      4: 400356
+    second: ORG-hair_SB.L.001
+  - first:
+      4: 400358
+    second: ORG-hair_SB.L.001 1
+  - first:
+      4: 400360
+    second: ORG-hair_SB.R
+  - first:
+      4: 400362
+    second: ORG-hair_SB.R 1
+  - first:
+      4: 400364
+    second: ORG-hair_SB.R.001
+  - first:
+      4: 400366
+    second: ORG-hair_SB.R.001 1
+  - first:
+      4: 400368
+    second: ORG-hand.L
+  - first:
+      4: 400370
+    second: ORG-hand.L 1
+  - first:
+      4: 400372
+    second: ORG-hand.R
+  - first:
+      4: 400374
+    second: ORG-hand.R 1
+  - first:
+      4: 400376
+    second: ORG-head
+  - first:
+      4: 400378
+    second: ORG-head 1
+  - first:
+      4: 400380
+    second: ORG-hip.L
+  - first:
+      4: 400382
+    second: ORG-hip.L 1
+  - first:
+      4: 400384
+    second: ORG-hip.R
+  - first:
+      4: 400386
+    second: ORG-hip.R 1
+  - first:
+      4: 400388
+    second: ORG-hips
+  - first:
+      4: 400390
+    second: ORG-hips 1
+  - first:
+      4: 400392
+    second: ORG-inner_thigh.L
+  - first:
+      4: 400394
+    second: ORG-inner_thigh.L 1
+  - first:
+      4: 400396
+    second: ORG-inner_thigh.R
+  - first:
+      4: 400398
+    second: ORG-inner_thigh.R 1
+  - first:
+      4: 400400
+    second: ORG-jaw
+  - first:
+      4: 400402
+    second: ORG-jaw 1
+  - first:
+      4: 400404
+    second: ORG-jaw.L
+  - first:
+      4: 400406
+    second: ORG-jaw.L 1
+  - first:
+      4: 400408
+    second: ORG-jaw.L.001
+  - first:
+      4: 400410
+    second: ORG-jaw.L.001 1
+  - first:
+      4: 400412
+    second: ORG-jaw.R
+  - first:
+      4: 400414
+    second: ORG-jaw.R 1
+  - first:
+      4: 400416
+    second: ORG-jaw.R.001
+  - first:
+      4: 400418
+    second: ORG-jaw.R.001 1
+  - first:
+      4: 400420
+    second: ORG-knee.L
+  - first:
+      4: 400422
+    second: ORG-knee.L 1
+  - first:
+      4: 400424
+    second: ORG-knee.R
+  - first:
+      4: 400426
+    second: ORG-knee.R 1
+  - first:
+      4: 400428
+    second: ORG-lid.B.L
+  - first:
+      4: 400430
+    second: ORG-lid.B.L 1
+  - first:
+      4: 400432
+    second: ORG-lid.B.L.001
+  - first:
+      4: 400434
+    second: ORG-lid.B.L.001 1
+  - first:
+      4: 400436
+    second: ORG-lid.B.L.002
+  - first:
+      4: 400438
+    second: ORG-lid.B.L.002 1
+  - first:
+      4: 400440
+    second: ORG-lid.B.L.003
+  - first:
+      4: 400442
+    second: ORG-lid.B.L.003 1
+  - first:
+      4: 400444
+    second: ORG-lid.B.R
+  - first:
+      4: 400446
+    second: ORG-lid.B.R 1
+  - first:
+      4: 400448
+    second: ORG-lid.B.R.001
+  - first:
+      4: 400450
+    second: ORG-lid.B.R.001 1
+  - first:
+      4: 400452
+    second: ORG-lid.B.R.002
+  - first:
+      4: 400454
+    second: ORG-lid.B.R.002 1
+  - first:
+      4: 400456
+    second: ORG-lid.B.R.003
+  - first:
+      4: 400458
+    second: ORG-lid.B.R.003 1
+  - first:
+      4: 400460
+    second: ORG-lid.T.L
+  - first:
+      4: 400462
+    second: ORG-lid.T.L 1
+  - first:
+      4: 400464
+    second: ORG-lid.T.L.001
+  - first:
+      4: 400466
+    second: ORG-lid.T.L.001 1
+  - first:
+      4: 400468
+    second: ORG-lid.T.L.002
+  - first:
+      4: 400470
+    second: ORG-lid.T.L.002 1
+  - first:
+      4: 400472
+    second: ORG-lid.T.L.003
+  - first:
+      4: 400474
+    second: ORG-lid.T.L.003 1
+  - first:
+      4: 400476
+    second: ORG-lid.T.R
+  - first:
+      4: 400478
+    second: ORG-lid.T.R 1
+  - first:
+      4: 400480
+    second: ORG-lid.T.R.001
+  - first:
+      4: 400482
+    second: ORG-lid.T.R.001 1
+  - first:
+      4: 400484
+    second: ORG-lid.T.R.002
+  - first:
+      4: 400486
+    second: ORG-lid.T.R.002 1
+  - first:
+      4: 400488
+    second: ORG-lid.T.R.003
+  - first:
+      4: 400490
+    second: ORG-lid.T.R.003 1
+  - first:
+      4: 400492
+    second: ORG-lip.B.L
+  - first:
+      4: 400494
+    second: ORG-lip.B.L 1
+  - first:
+      4: 400496
+    second: ORG-lip.B.L.001
+  - first:
+      4: 400498
+    second: ORG-lip.B.L.001 1
+  - first:
+      4: 400500
+    second: ORG-lip.B.R
+  - first:
+      4: 400502
+    second: ORG-lip.B.R 1
+  - first:
+      4: 400504
+    second: ORG-lip.B.R.001
+  - first:
+      4: 400506
+    second: ORG-lip.B.R.001 1
+  - first:
+      4: 400508
+    second: ORG-lip.T.L
+  - first:
+      4: 400510
+    second: ORG-lip.T.L 1
+  - first:
+      4: 400512
+    second: ORG-lip.T.L.001
+  - first:
+      4: 400514
+    second: ORG-lip.T.L.001 1
+  - first:
+      4: 400516
+    second: ORG-lip.T.R
+  - first:
+      4: 400518
+    second: ORG-lip.T.R 1
+  - first:
+      4: 400520
+    second: ORG-lip.T.R.001
+  - first:
+      4: 400522
+    second: ORG-lip.T.R.001 1
+  - first:
+      4: 400524
+    second: ORG-neck
+  - first:
+      4: 400526
+    second: ORG-neck 1
+  - first:
+      4: 400528
+    second: ORG-nose
+  - first:
+      4: 400530
+    second: ORG-nose 1
+  - first:
+      4: 400532
+    second: ORG-nose.001
+  - first:
+      4: 400534
+    second: ORG-nose.001 1
+  - first:
+      4: 400536
+    second: ORG-nose.002
+  - first:
+      4: 400538
+    second: ORG-nose.002 1
+  - first:
+      4: 400540
+    second: ORG-nose.003
+  - first:
+      4: 400542
+    second: ORG-nose.003 1
+  - first:
+      4: 400544
+    second: ORG-nose.L
+  - first:
+      4: 400546
+    second: ORG-nose.L 1
+  - first:
+      4: 400548
+    second: ORG-nose.L.001
+  - first:
+      4: 400550
+    second: ORG-nose.L.001 1
+  - first:
+      4: 400552
+    second: ORG-nose.R
+  - first:
+      4: 400554
+    second: ORG-nose.R 1
+  - first:
+      4: 400556
+    second: ORG-nose.R.001
+  - first:
+      4: 400558
+    second: ORG-nose.R.001 1
+  - first:
+      4: 400560
+    second: ORG-palm.01.L
+  - first:
+      4: 400562
+    second: ORG-palm.01.L 1
+  - first:
+      4: 400564
+    second: ORG-palm.01.R
+  - first:
+      4: 400566
+    second: ORG-palm.01.R 1
+  - first:
+      4: 400568
+    second: ORG-palm.02.L
+  - first:
+      4: 400570
+    second: ORG-palm.02.L 1
+  - first:
+      4: 400572
+    second: ORG-palm.02.R
+  - first:
+      4: 400574
+    second: ORG-palm.02.R 1
+  - first:
+      4: 400576
+    second: ORG-palm.03.L
+  - first:
+      4: 400578
+    second: ORG-palm.03.L 1
+  - first:
+      4: 400580
+    second: ORG-palm.03.R
+  - first:
+      4: 400582
+    second: ORG-palm.03.R 1
+  - first:
+      4: 400584
+    second: ORG-palm.04.L
+  - first:
+      4: 400586
+    second: ORG-palm.04.L 1
+  - first:
+      4: 400588
+    second: ORG-palm.04.R
+  - first:
+      4: 400590
+    second: ORG-palm.04.R 1
+  - first:
+      4: 400592
+    second: ORG-pectoral.L
+  - first:
+      4: 400594
+    second: ORG-pectoral.L 1
+  - first:
+      4: 400596
+    second: ORG-pectoral.R
+  - first:
+      4: 400598
+    second: ORG-pectoral.R 1
+  - first:
+      4: 400600
+    second: ORG-shin.L
+  - first:
+      4: 400602
+    second: ORG-shin.L 1
+  - first:
+      4: 400604
+    second: ORG-shin.R
+  - first:
+      4: 400606
+    second: ORG-shin.R 1
+  - first:
+      4: 400608
+    second: ORG-shoulder.L
+  - first:
+      4: 400610
+    second: ORG-shoulder.L 1
+  - first:
+      4: 400612
+    second: ORG-shoulder.R
+  - first:
+      4: 400614
+    second: ORG-shoulder.R 1
+  - first:
+      4: 400616
+    second: ORG-temple.L
+  - first:
+      4: 400618
+    second: ORG-temple.L 1
+  - first:
+      4: 400620
+    second: ORG-temple.R
+  - first:
+      4: 400622
+    second: ORG-temple.R 1
+  - first:
+      4: 400624
+    second: ORG-thigh.L
+  - first:
+      4: 400626
+    second: ORG-thigh.L 1
+  - first:
+      4: 400628
+    second: ORG-thigh.R
+  - first:
+      4: 400630
+    second: ORG-thigh.R 1
+  - first:
+      4: 400632
+    second: ORG-thumb.01.L
+  - first:
+      4: 400634
+    second: ORG-thumb.01.L 1
+  - first:
+      4: 400636
+    second: ORG-thumb.01.R
+  - first:
+      4: 400638
+    second: ORG-thumb.01.R 1
+  - first:
+      4: 400640
+    second: ORG-thumb.02.L
+  - first:
+      4: 400642
+    second: ORG-thumb.02.L 1
+  - first:
+      4: 400644
+    second: ORG-thumb.02.R
+  - first:
+      4: 400646
+    second: ORG-thumb.02.R 1
+  - first:
+      4: 400648
+    second: ORG-thumb.03.L
+  - first:
+      4: 400650
+    second: ORG-thumb.03.L 1
+  - first:
+      4: 400652
+    second: ORG-thumb.03.R
+  - first:
+      4: 400654
+    second: ORG-thumb.03.R 1
+  - first:
+      4: 400656
+    second: ORG-toe.L
+  - first:
+      4: 400658
+    second: ORG-toe.L 1
+  - first:
+      4: 400660
+    second: ORG-toe.R
+  - first:
+      4: 400662
+    second: ORG-toe.R 1
+  - first:
+      4: 400664
+    second: ORG-tongue
+  - first:
+      4: 400666
+    second: ORG-tongue 1
+  - first:
+      4: 400668
+    second: ORG-tongue.001
+  - first:
+      4: 400670
+    second: ORG-tongue.001 1
+  - first:
+      4: 400672
+    second: ORG-tongue.002
+  - first:
+      4: 400674
+    second: ORG-tongue.002 1
+  - first:
+      4: 400676
+    second: ORG-upper_arm.L
+  - first:
+      4: 400678
+    second: ORG-upper_arm.L 1
+  - first:
+      4: 400680
+    second: ORG-upper_arm.R
+  - first:
+      4: 400682
+    second: ORG-upper_arm.R 1
+  - first:
+      4: 400684
+    second: ORG-upper_arm_twist.L
+  - first:
+      4: 400686
+    second: ORG-upper_arm_twist.L 1
+  - first:
+      4: 400688
+    second: ORG-upper_arm_twist.R
+  - first:
+      4: 400690
+    second: ORG-upper_arm_twist.R 1
+  - first:
+      4: 400692
+    second: ORG-upper_breast.L
+  - first:
+      4: 400694
+    second: ORG-upper_breast.L 1
+  - first:
+      4: 400696
+    second: ORG-upper_breast.R
+  - first:
+      4: 400698
+    second: ORG-upper_breast.R 1
+  - first:
+      4: 400700
+    second: ORG-upper_chest
+  - first:
+      4: 400702
+    second: ORG-upper_chest 1
+  - first:
+      4: 400704
+    second: ORG-upper_shoulder.L
+  - first:
+      4: 400706
+    second: ORG-upper_shoulder.L 1
+  - first:
+      4: 400708
+    second: ORG-upper_shoulder.R
+  - first:
+      4: 400710
+    second: ORG-upper_shoulder.R 1
+  - first:
+      4: 400712
+    second: ORG-upper_thigh.L
+  - first:
+      4: 400714
+    second: ORG-upper_thigh.L 1
+  - first:
+      4: 400716
+    second: ORG-upper_thigh.R
+  - first:
+      4: 400718
+    second: ORG-upper_thigh.R 1
+  - first:
+      4: 400720
+    second: ORG-waist
+  - first:
+      4: 400722
+    second: ORG-waist 1
+  - first:
+      4: 400724
+    second: ORG-wrist.L
+  - first:
+      4: 400726
+    second: ORG-wrist.L 1
+  - first:
+      4: 400728
+    second: ORG-wrist.R
+  - first:
+      4: 400730
+    second: ORG-wrist.R 1
+  - first:
+      4: 400732
+    second: rig
+  - first:
+      4: 400734
+    second: Suzanne
+  - first:
+      4: 400736
+    second: //RootNode
+  - first:
+      21: 2100000
+    second: Eye
+  - first:
+      21: 2100002
+    second: Face
+  - first:
+      21: 2100004
+    second: Hair
+  - first:
+      21: 2100006
+    second: Cloth
+  - first:
+      21: 2100008
+    second: Skin
+  - first:
+      43: 4300000
+    second: Suzanne
+  - first:
+      43: 4300002
+    second: Blender.hair
+  - first:
+      43: 4300004
+    second: Blender.cloth
+  - first:
+      43: 4300006
+    second: body
+  - first:
+      74: 7400000
+    second: rig|rigAction
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Blender.cloth
+  - first:
+      137: 13700002
+    second: Blender.hair
+  - first:
+      137: 13700004
+    second: body
+  - first:
+      137: 13700006
+    second: Suzanne
+  - first:
+      41386430: 2186277476908879412
+    second: ImportLogs
   externalObjects: {}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -777,7 +2285,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -788,6 +2296,7 @@ ModelImporter:
     - serializedVersion: 16
       name: rig|rigAction
       takeName: rig|rigAction
+      internalID: 0
       firstFrame: 0
       lastFrame: 39
       wrapMode: 0
@@ -820,25 +2329,32 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 1
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -847,10 +2363,10 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -860,13 +2376,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: ORG-hips
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 3
   humanoidOversampling: 1
+  avatarSetup: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

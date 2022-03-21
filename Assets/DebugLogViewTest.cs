@@ -10,6 +10,21 @@ namespace YourProjectNamespace
 
         public int maxSentence = 80;
 
+        void Test()
+        {
+            LogInfo("Test");
+        }
+
+        event System.Action test;
+
+        private void Awake()
+        {
+            test += Test;
+            test();
+            test -= Test;
+            LogInfo($"test == null {test == null}");
+        }
+
         public void AddLog()
         {
             AddLog(dropdown.value, inputField.text);
