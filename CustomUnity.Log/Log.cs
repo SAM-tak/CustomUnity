@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CustomUnity.Editor.Log")]
-
 namespace CustomUnity
 {
     static public class Log
@@ -281,25 +280,47 @@ namespace CustomUnity
             UnityEngine.Debug.Log($"Pass {callerMethod.DeclaringType.Name}.{callerMethod.Name} (at {callerFrame.GetFileName()}:{callerFrame.GetFileLineNumber()})", context);
         }
 
+        static bool alreadyWarnMessageWasFiltered;
+
+        public static void OnFilterChanged()
+        {
+            alreadyWarnMessageWasFiltered = false;
+        }
+
+        static bool WarnMessageWasFiltered()
+        {
+            if(!alreadyWarnMessageWasFiltered) {
+                alreadyWarnMessageWasFiltered = true;
+                UnityEngine.Debug.LogWarning("A log message was filtered.");
+            }
+            return false;
+        }
+
         internal static bool PassFilter(object message)
             => (FilterByMessage == null || FilterByMessage(message.ToString()))
-            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)));
+            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)))
+            || WarnMessageWasFiltered();
         internal static bool PassFilter(string message)
             => (FilterByMessage == null || FilterByMessage(message))
-            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)));
+            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)))
+            || WarnMessageWasFiltered();
         internal static bool PassFilter(UnityEngine.Object context, object message)
             => (FilterByObject == null || FilterByObject(context))
             && (FilterByMessage == null || FilterByMessage(message.ToString()))
-            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)));
+            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)))
+            || WarnMessageWasFiltered();
         internal static bool PassFilter(UnityEngine.Object context, string message)
             => (FilterByObject == null || FilterByObject(context))
             && (FilterByMessage == null || FilterByMessage(message.ToString()))
-            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)));
+            && (FilterByCaller == null || FilterByCaller(new StackFrame(3, true)))
+            || WarnMessageWasFiltered();
         internal static bool PassFilter(StackFrame stackFrame)
-            => FilterByCaller == null || !FilterByCaller(stackFrame);
+            => FilterByCaller == null || !FilterByCaller(stackFrame)
+            || WarnMessageWasFiltered();
         internal static bool PassFilter(UnityEngine.Object context, StackFrame stackFrame)
             => (FilterByObject == null || FilterByObject(context))
-            && (FilterByCaller == null || FilterByCaller(stackFrame));
+            && (FilterByCaller == null || FilterByCaller(stackFrame))
+            || WarnMessageWasFiltered();
 
         public static event System.Func<UnityEngine.Object, bool> FilterByObject;
         public static event System.Func<string, bool> FilterByMessage;

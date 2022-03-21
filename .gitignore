@@ -274,13 +274,12 @@ Library/
 UserSettings/
 Logs/
 Temp/
-Assembly-CSharp.csproj
-Assembly-CSharp-Editor.csproj
 /*.sln
 /*.csproj
 !Packages/manifest.json
-Tests.csproj
-CustomUnityEditor.csproj
+!CustomUnity.Log.sln
+!CustomUnity.Log.csproj
+!CustomUnity.Editor.Log.csproj
 !CustomUnity.Log/
 !CustomUnity.Editor.Log/
 AssetBundles/

@@ -31,26 +31,44 @@ namespace CustomUnity
         public string Name => prefab ? prefab.name : string.Empty;
         public int ActiveCount => entries?.Count(i => i.go.activeInHierarchy) ?? 0;
 
-        public void SetUp(Transform parent = null)
+        Transform _owner;
+
+        public void SetUp(Transform owner = null)
         {
             if(prefab) {
+                _owner = owner;
                 entries = new Entry[quantity];
                 for(int i = 0; i < quantity; i++) {
-                    entries[i] = new Entry {
-                        go = UnityEngine.Object.Instantiate(prefab),
-                        time = 0
-                    };
-                    entries[i].go.transform.parent = parent;
+                    entries[i] = new Entry { go = UnityEngine.Object.Instantiate(prefab, owner), time = 0 };
                     entries[i].go.SetActive(false);
                 }
             }
         }
-        
+
+        public void CollectInactives()
+        {
+            if(entries != null && _owner) {
+                foreach(var i in entries) {
+                    if(!i.go.activeSelf && i.go.transform.parent != _owner) {
+                        i.go.transform.parent = _owner;
+                    }
+                }
+            }
+        }
+
+        public void Deactivate(GameObject go)
+        {
+            if(entries.Any(x => x.go == go)) {
+                go.SetActive(false);
+                go.transform.parent = _owner;
+            }
+        }
+
         public void DeactivateAll()
         {
             foreach(var i in entries) {
                 i.go.SetActive(false);
-                i.go.transform.parent = null;
+                i.go.transform.parent = _owner;
             }
         }
 
@@ -58,11 +76,15 @@ namespace CustomUnity
 
         public IEnumerable<GameObject> ActiveGameObjects => entries.Where(x => x.go.activeInHierarchy).Select(x => x.go);
 
-        public GameObject Spawn(Vector3 position, Quaternion rotation)
+        GameObject Spawn(Vector3 position, Quaternion rotation, Transform parent, bool parents)
         {
             float oldestTime = float.MaxValue;
             int retIndex = 0;
             for(int i = 0; i < entries.Length; i++) {
+                if(!entries[i].go) {
+                    Log.Error($"GameObjectPool : '{Name}' ({retIndex}) : Detected pooled GameObject is missing. If you want to spawn it under a shorter lifetime GameObject, needs to use GameObjectPool|GameObjectPoolSet.Deactivate() before destroy parent GameObject to rescue pooled GameObject.");
+                    continue;
+                }
                 if(!entries[i].go.activeInHierarchy) {
                     retIndex = i;
                     break;
@@ -75,16 +97,24 @@ namespace CustomUnity
             var ret = entries[retIndex];
             ret.time = Time.timeSinceLevelLoad;
             ret.go.SetActive(false);
+            if(parents) ret.go.transform.parent = parent;
             ret.go.transform.SetPositionAndRotation(position, rotation);
             ret.go.SetActive(true);
             entries[retIndex] = ret;
             return ret.go;
         }
 
-        public GameObject TrySpawn(Vector3 position, Quaternion rotation)
+        GameObject TrySpawn(Vector3 position, Quaternion rotation, Transform parent, bool parents)
         {
-            if(ActiveCount < quantity) return Spawn(position, rotation);
-            return null;
+            return ActiveCount < quantity ? Spawn(position, rotation, parent, parents) : null;
         }
+
+        public GameObject Spawn(Vector3 position, Quaternion rotation) => Spawn(position, rotation, null, false);
+
+        public GameObject TrySpawn(Vector3 position, Quaternion rotation) => TrySpawn(position, rotation, null, false);
+
+        public GameObject Spawn(Transform parent, Vector3 position, Quaternion rotation) => Spawn(position, rotation, parent, true);
+
+        public GameObject TrySpawn(Transform parent, Vector3 position, Quaternion rotation) => TrySpawn(position, rotation, parent, true);
     }
 }

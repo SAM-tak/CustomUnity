@@ -58,7 +58,7 @@ namespace CustomUnity
                 return true;
             }
 
-            protected virtual Regex ToRegex(string line) => new Regex(line, (ignoreCase ? RegexOptions.IgnoreCase : 0) | RegexOptions.Singleline);
+            protected virtual Regex ToRegex(string line) => new(line, (ignoreCase ? RegexOptions.IgnoreCase : 0) | RegexOptions.Singleline);
 
             protected static Regex[] ToRegexes(string text, Func<string, Regex> regex)
             {
@@ -115,14 +115,21 @@ namespace CustomUnity
             return true;
         }
 
-        LogUserSettings()
+        public void SetUpLogFilterDelegate()
         {
             Log.FilterByCaller -= FilterByCaller;
-            Log.FilterByCaller += FilterByCaller;
+            if(IsValid(callerFilters)) Log.FilterByCaller += FilterByCaller;
             Log.FilterByMessage -= FilterByMessage;
-            Log.FilterByMessage += FilterByMessage;
+            if(IsValid(messageFilters)) Log.FilterByMessage += FilterByMessage;
             Log.FilterByObject -= FilterByObject;
-            Log.FilterByObject += FilterByObject;
+            if(IsValid(objectFilters)) Log.FilterByObject += FilterByObject;
+            Log.OnFilterChanged();
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        public static void Initialize()
+        {
+            instance?.SetUpLogFilterDelegate();
         }
     }
 
@@ -143,6 +150,7 @@ namespace CustomUnity
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
             var settings = LogUserSettings.instance;
+            settings.SetUpLogFilterDelegate();
             // set to editable ScriptableSingleton
             settings.hideFlags = HideFlags.HideAndDontSave & ~HideFlags.NotEditable;
             // create default inspector
@@ -153,11 +161,12 @@ namespace CustomUnity
         {
             EditorGUI.BeginChangeCheck();
             // 設定ファイルの標準のインスペクターを表示
-            _editor.OnInspectorGUI();
-            
+            if(_editor) _editor.OnInspectorGUI();
+
             if(EditorGUI.EndChangeCheck()) {
                 // 差分があったら保存
                 LogUserSettings.instance.Save();
+                LogUserSettings.instance.SetUpLogFilterDelegate();
             }
         }
     }

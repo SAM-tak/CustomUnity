@@ -3,6 +3,7 @@ using UnityEditor;
 
 namespace CustomUnity
 {
+#if !UNITY_2020_1_OR_NEWER
     [CustomPropertyDrawer(typeof(EnumFlagsAttribute))]
     public class EnumFlagsDrawer : PropertyDrawer
     {
@@ -11,4 +12,5 @@ namespace CustomUnity
             property.intValue = EditorGUI.MaskField(position, label, property.intValue, property.enumNames);
         }
     }
+#endif
 }

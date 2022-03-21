@@ -1,6 +1,9 @@
 {
     "name": "CustomUnity",
-    "references": [],
+    "rootNamespace": "CustomUnity",
+    "references": [
+        "GUID:74fbf83eeb9dc9642bbe2fc5b45b9bd8"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

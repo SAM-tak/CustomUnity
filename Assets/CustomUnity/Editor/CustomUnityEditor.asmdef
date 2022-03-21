@@ -1,12 +1,20 @@
 {
     "name": "CustomUnityEditor",
+    "rootNamespace": "",
     "references": [
-        "CustomUnity"
+        "CustomUnity",
+        "CustomUnity.Log",
+        "CustomUnity.Editor.Log"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

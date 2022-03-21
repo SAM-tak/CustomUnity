@@ -17,7 +17,10 @@ namespace CustomUnity
             Shift = 1 << 1,
             Ctrl  = 1 << 2
         }
+        
+#if !UNITY_2020_1_OR_NEWER
         [EnumFlags]
+#endif
         public Modifier modifier;
 
         bool MatchesInput(PointerEventData eventData)

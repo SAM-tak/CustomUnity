@@ -46,6 +46,16 @@ namespace CustomUnity
             SetUp(null, setUpProcPerObject);
         }
 
+        public void CollectInactives()
+        {
+            foreach(var i in pools) i.CollectInactives();
+        }
+
+        public void Deactivate(GameObject go)
+        {
+            foreach(var i in pools) i.Deactivate(go);
+        }
+
         public void DeactivateAll()
         {
             foreach(var i in pools) i.DeactivateAll();
@@ -67,9 +77,9 @@ namespace CustomUnity
         {
             if(parameter && index.TryGetValue(parameter.prefabName, out GameObjectPool pool)) {
                 var origin = parameter.GetOriginNode(root);
-                var go = pool.Spawn(parameter.GetPosition(origin), parameter.GetRotation(origin));
-                if(go) go.transform.parent = parameter.parentToOrigin ? origin : null;
-                return go;
+                return parameter.parentToOrigin
+                    ? pool.Spawn(origin, parameter.GetPosition(origin), parameter.GetRotation(origin)) 
+                    : pool.Spawn(parameter.GetPosition(origin), parameter.GetRotation(origin));
             }
             return null;
         }
@@ -78,9 +88,9 @@ namespace CustomUnity
         {
             if(parameter && index.TryGetValue(parameter.prefabName, out GameObjectPool pool)) {
                 var origin = parameter.GetOriginNode(root);
-                var go = pool.TrySpawn(parameter.GetPosition(origin), parameter.GetRotation(origin));
-                if(go) go.transform.parent = parameter.parentToOrigin ? origin : null;
-                return go;
+                return parameter.parentToOrigin
+                    ? pool.TrySpawn(origin, parameter.GetPosition(origin), parameter.GetRotation(origin))
+                    : pool.TrySpawn(parameter.GetPosition(origin), parameter.GetRotation(origin));
             }
             return null;
         }

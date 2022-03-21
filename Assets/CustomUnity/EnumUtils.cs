@@ -33,8 +33,12 @@ namespace CustomUnity
     /// <summary>
     /// フラグ(System.Flags属性を持ったEnum)表示するための属性
     /// ただしそのEnumはマスクのような複合フラグを定義に含んではいけない(EditorGUI.MaskFieldが正しく処理できない)
+    /// 2020以降は不要
     /// </summary>
-	public class EnumFlagsAttribute : PropertyAttribute
+    #if UNITY_2020_1_OR_NEWER
+    [System.Obsolete]
+    #endif
+    public class EnumFlagsAttribute : PropertyAttribute
     {
     }
 

@@ -22,7 +22,10 @@ namespace CustomUnity
             Flag8 = 1 << 7,
             Flag9 = 1 << 8,
         }
+
+#if !UNITY_2020_1_OR_NEWER
         [EnumFlags]
+#endif
         public Flags goalFlags;
         public UnityEvent @event;
 

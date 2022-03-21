@@ -59,9 +59,9 @@ namespace CustomUnity
 
                 var diff = Vector3.zero;
                 if(viewportRect.x > selectedRect.x) diff.x += viewportRect.x - selectedRect.x;
-                if(viewportRect.xMax < selectedRect.xMax) diff.x += viewportRect.xMax - selectedRect.xMax;
+                if(viewportRect.xMax < selectedRect.xMax) diff.x -= selectedRect.xMax - viewportRect.xMax;
                 if(viewportRect.y > selectedRect.y) diff.y += viewportRect.y - selectedRect.y;
-                if(viewportRect.yMax < selectedRect.yMax) diff.y += viewportRect.yMax - selectedRect.yMax;
+                if(viewportRect.yMax < selectedRect.yMax) diff.y -= selectedRect.yMax - viewportRect.yMax;
 
                 if(diff.magnitude > 0.001f) {
                     prevScrollPosition = ScrollRect.content.localPosition = Math.RubberStep(
