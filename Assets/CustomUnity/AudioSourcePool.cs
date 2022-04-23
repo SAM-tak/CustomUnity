@@ -74,19 +74,17 @@ namespace CustomUnity
             var audioSource = GetAudioSource();
             audioSource.clip = clip;
             audioSource.loop = false;
-            audioSource.Play();
+            if(audioSource.isActiveAndEnabled) audioSource.Play();
         }
 
-        public bool TryPlayOneShot(AudioClip clip)
+        public void TryPlayOneShot(AudioClip clip)
         {
             var audioSource = TryGetAudioSource();
             if(audioSource) {
                 audioSource.clip = clip;
                 audioSource.loop = false;
-                audioSource.Play();
-                return true;
+                if(audioSource.isActiveAndEnabled) audioSource.Play();
             }
-            return false;
         }
 
         public WeakReference<PlayHandle> Play(AudioClip clip, bool loop = false)
