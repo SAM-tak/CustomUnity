@@ -14,7 +14,7 @@ namespace CustomUnity
 
         AudioSource TryGetAudioSource()
         {
-            for(var i = 0; i < audioSources.Length; i++) {
+            for(var i = 0; audioSources != null && i < audioSources.Length; i++) {
                 if(!audioSources[i].isPlaying) {
                     lastRequestedTime[i] = Time.realtimeSinceStartup;
                     return audioSources[i];
