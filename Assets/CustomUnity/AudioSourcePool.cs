@@ -108,7 +108,7 @@ namespace CustomUnity
             return null;
         }
 
-        void Start()
+        void Awake()
         {
             audioSources = new AudioSource[quantity];
             audioSources[0] = GetComponent<AudioSource>();
