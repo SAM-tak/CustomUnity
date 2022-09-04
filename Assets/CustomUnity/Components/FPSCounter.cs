@@ -16,7 +16,9 @@ namespace CustomUnity
         readonly Image[] digits = new Image[3];
         float lastLapForFps;
         int lastLapFrameCount;
-        
+
+        public static bool hideOnRuntime;
+
 #if UNITY_EDITOR
         void Reset()
         {
@@ -37,8 +39,7 @@ namespace CustomUnity
         }
 #endif
 
-        // Use this for initialization
-        void Start()
+        void Awake()
         {
             var trs = transform.Find("Digit100");
             if(trs) digits[0] = trs.gameObject.GetComponent<Image>();
@@ -46,12 +47,23 @@ namespace CustomUnity
             if(trs) digits[1] = trs.gameObject.GetComponent<Image>();
             trs = transform.Find("Digit001");
             if(trs) digits[2] = trs.gameObject.GetComponent<Image>();
+        }
+
+        // Use this for initialization
+        void Start()
+        {
             lastLapForFps = lastLapFrameCount = 0;
         }
 
         // Update is called once per frame
         void Update()
         {
+            if(hideOnRuntime) {
+                foreach(var i in digits) if(i) i.enabled = false;
+                return;
+            }
+            else foreach(var i in digits) if(i) i.enabled = true;
+
             if(Time.frameCount % 30 == 0 && Time.frameCount > lastLapFrameCount) {
                 var fps = Mathf.RoundToInt(lastLapForFps > 0 ? 30f / (Time.realtimeSinceStartup - lastLapForFps) : 1f / Time.unscaledDeltaTime);
                 if(fps > 999) {
