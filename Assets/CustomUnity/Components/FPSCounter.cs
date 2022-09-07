@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using System.Linq;
 #endif
 
@@ -90,6 +91,7 @@ namespace CustomUnity
             if(pf) {
                 var parent = (Selection.activeObject ? Selection.activeObject : menuCommand.context) as GameObject;
                 var go = Instantiate(pf, parent ? parent.transform : null);
+                StageUtility.PlaceGameObjectInCurrentStage(go);
                 go.UniqueName(pf.name);
                 // Register the creation in the undo system
                 Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);

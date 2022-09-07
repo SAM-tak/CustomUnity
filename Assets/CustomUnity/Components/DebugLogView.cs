@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.SceneManagement;
 #endif
 
 namespace CustomUnity
@@ -42,6 +43,7 @@ namespace CustomUnity
             if(prefab) {
                 var parent = (Selection.activeObject ? Selection.activeObject : menuCommand.context) as GameObject;
                 var go = Instantiate(prefab, parent ? parent.transform : null);
+                StageUtility.PlaceGameObjectInCurrentStage(go);
                 go.UniqueName(prefab.name);
                 // Register the creation in the undo system
                 Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
