@@ -99,31 +99,15 @@ namespace CustomUnity
                     object comparedFieldValue = field.GetValue(property.serializedObject.targetObject);
 
                     if(attribute.ComparisonType < ReadOnlyIfAttribute.Comparison.GreaterThan || comparedFieldValue is IComparable) {
-                        switch(attribute.ComparisonType) {
-                        case ReadOnlyIfAttribute.Comparison.Equals:
-                            conditionMet = comparedFieldValue.Equals(attribute.ComparedValue);
-                            break;
-
-                        case ReadOnlyIfAttribute.Comparison.NotEqual:
-                            conditionMet = !comparedFieldValue.Equals(attribute.ComparedValue);
-                            break;
-
-                        case ReadOnlyIfAttribute.Comparison.GreaterThan:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) > 0;
-                            break;
-
-                        case ReadOnlyIfAttribute.Comparison.GreaterOrEqual:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) >= 0;
-                            break;
-
-                        case ReadOnlyIfAttribute.Comparison.LessThan:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) < 0;
-                            break;
-
-                        case ReadOnlyIfAttribute.Comparison.LessOrEqual:
-                            conditionMet = (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) <= 0;
-                            break;
-                        }
+                        conditionMet = attribute.ComparisonType switch {
+                            ReadOnlyIfAttribute.Comparison.Equals => comparedFieldValue.Equals(attribute.ComparedValue),
+                            ReadOnlyIfAttribute.Comparison.NotEqual => !comparedFieldValue.Equals(attribute.ComparedValue),
+                            ReadOnlyIfAttribute.Comparison.GreaterThan => (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) > 0,
+                            ReadOnlyIfAttribute.Comparison.GreaterOrEqual => (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) >= 0,
+                            ReadOnlyIfAttribute.Comparison.LessThan => (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) < 0,
+                            ReadOnlyIfAttribute.Comparison.LessOrEqual => (comparedFieldValue as IComparable).CompareTo(attribute.ComparedValue) <= 0,
+                            _ => conditionMet
+                        };
                     }
                     else {
                         Debug.LogError(comparedField.type + " is not supported of " + (property.propertyPath.Contains(".") ? System.IO.Path.ChangeExtension(property.propertyPath, attribute.ComparedPropertyName) : attribute.ComparedPropertyName));

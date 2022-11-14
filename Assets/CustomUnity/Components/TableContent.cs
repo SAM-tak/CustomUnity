@@ -51,17 +51,13 @@ namespace CustomUnity
             DataSource = GetComponent<IDataSource>();
             var firstChild = transform.GetChild(0);
             if(firstChild) {
-                if(columnCount == 1) {
-                    switch(orientaion) {
-                    case Orientaion.Horizontal:
-                        CellSize = new Vector2(firstChild.GetComponent<RectTransform>().rect.width, 0);
-                        break;
-                    case Orientaion.Vertical:
-                        CellSize = new Vector2(0, firstChild.GetComponent<RectTransform>().rect.height);
-                        break;
+                CellSize = columnCount == 1
+                    ? orientaion switch {
+                        Orientaion.Horizontal => new Vector2(firstChild.GetComponent<RectTransform>().rect.width, 0),
+                        Orientaion.Vertical => new Vector2(0, firstChild.GetComponent<RectTransform>().rect.height),
+                        _ => CellSize
                     }
-                }
-                else CellSize = firstChild.GetComponent<RectTransform>().rect.size;
+                    : firstChild.GetComponent<RectTransform>().rect.size;
             }
         }
 

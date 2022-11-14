@@ -32,7 +32,7 @@ namespace CustomUnity
             case EventType.DragPerform:
                 if(dropArea.Contains(UnityEngine.Event.current.mousePosition)) {
                     DragAndDrop.AcceptDrag();
-                    foreach(AnimationClip animationClip in DragAndDrop.objectReferences) {
+                    foreach(var animationClip in DragAndDrop.objectReferences.Cast<AnimationClip>()) {
                         if(clips.Any(item => item.name == animationClip.name) || string.IsNullOrEmpty(animationClip.name)) {
                             EditorUtility.DisplayDialog("Error", "can't add an AnimationClip has duplicate or empty name", "OK");
                         }

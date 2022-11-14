@@ -63,16 +63,12 @@ namespace CustomUnity
             if(!ScrollRect) return;
 
             var totalCount = DataSource != null ? DataSource.TotalCount : 0;
-            float viewLower = 0f;
             var contentRectLocalPosition = contentRectTransform.localPosition;
-            switch(orientaion) {
-            case Orientaion.Vertical:
-                viewLower = ScrollRect.viewport.rect.height;
-                break;
-            case Orientaion.Horizontal:
-                viewLower = ScrollRect.viewport.rect.width;
-                break;
-            }
+            var viewLower = orientaion switch {
+                Orientaion.Vertical => ScrollRect.viewport.rect.height,
+                Orientaion.Horizontal => ScrollRect.viewport.rect.width,
+                _ => 0f
+            };
 
             float contentSize = 0;
             int startIndex = 0;
@@ -80,15 +76,11 @@ namespace CustomUnity
 
             for(int i = 0; i < totalCount; ++i) {
                 var cellSize = DataSource.CellSize(i);
-                float cellUpper = 0;
-                switch(orientaion) {
-                case Orientaion.Vertical:
-                    cellUpper = contentSize - contentRectLocalPosition.y;
-                    break;
-                case Orientaion.Horizontal:
-                    cellUpper = contentSize + contentRectLocalPosition.x;
-                    break;
-                }
+                var cellUpper = orientaion switch {
+                    Orientaion.Vertical => contentSize - contentRectLocalPosition.y,
+                    Orientaion.Horizontal => contentSize + contentRectLocalPosition.x,
+                    _ => 0f
+                };
                 var cellPosition = new CellPosition { position = contentSize, size = cellSize };
 
                 contentSize += cellSize;

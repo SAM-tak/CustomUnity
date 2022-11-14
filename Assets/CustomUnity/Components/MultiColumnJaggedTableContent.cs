@@ -67,18 +67,16 @@ namespace CustomUnity
             if(!ScrollRect) return;
 
             var viewSize = ScrollRect.viewport.rect.size;
-            float rowWidth = 0f;
-            float viewLower = 0f;
-            switch(orientaion) {
-            case Orientaion.Vertical:
-                viewLower = viewSize.y;
-                rowWidth = viewSize.x;
-                break;
-            case Orientaion.Horizontal:
-                viewLower = viewSize.x;
-                rowWidth = viewSize.y;
-                break;
-            }
+            var rowWidth = orientaion switch {
+                Orientaion.Vertical => viewSize.x,
+                Orientaion.Horizontal => viewSize.y,
+                _ => 0f
+            };
+            var viewLower = orientaion switch {
+                Orientaion.Vertical => viewSize.y,
+                Orientaion.Horizontal => viewSize.x,
+                _ => 0f
+            };
 
             PreUpdate();
 

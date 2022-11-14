@@ -277,9 +277,18 @@ Temp/
 /*.sln
 /*.csproj
 !Packages/manifest.json
+Packages/packages-lock.json*
 !CustomUnity.Log.sln
 !CustomUnity.Log.csproj
 !CustomUnity.Editor.Log.csproj
 !CustomUnity.Log/
 !CustomUnity.Editor.Log/
 AssetBundles/
+Assets/VRMShaders/
+Assets/VRM/
+Assets/VRM Models/
+Assets/TextMesh Pro/
+Assets/VRM Models.meta
+Assets/VRM.meta
+Assets/VRMShaders.meta
+Assets/TextMesh Pro.meta
