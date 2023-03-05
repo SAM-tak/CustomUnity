@@ -205,85 +205,61 @@ namespace CustomUnity
             return new Vector3(pitch * Mathf.Rad2Deg, yaw * Mathf.Rad2Deg, roll * Mathf.Rad2Deg);
         }
 
-        public static Vector2 SetX(this Vector2 self, float x)
-        {
-            return new Vector2(x, self.y);
-        }
+        public static Vector3 XYZ(this in Vector2 self, float z) => new(self.x, self.y, z);
 
-        public static Vector2 SetY(this Vector2 self, float y)
-        {
-            return new Vector2(self.x, y);
-        }
+        public static Vector3 YXZ(this in Vector2 self, float z) => new(self.y, self.x, z);
 
-        public static Vector3 SetX(this Vector3 self, float x)
-        {
-            return new Vector3(x, self.y, self.z);
-        }
+        public static Vector3 XZY(this in Vector2 self, float z) => new(self.x, z, self.y);
 
-        public static Vector3 SetY(this Vector3 self, float y)
-        {
-            return new Vector3(self.x, y, self.z);
-        }
+        public static Vector3 YZX(this in Vector2 self, float z) => new(self.y, z, self.x);
 
-        public static Vector3 SetZ(this Vector3 self, float z)
-        {
-            return new Vector3(self.x, self.y, z);
-        }
+        public static Vector3 ZXY(this in Vector2 self, float z) => new(z, self.x, self.y);
 
-        public static Vector4 SetX(this Vector4 self, float x)
-        {
-            return new Vector4(x, self.y, self.z, self.w);
-        }
+        public static Vector3 ZYX(this in Vector2 self, float z) => new(z, self.y, self.x);
 
-        public static Vector4 SetY(this Vector4 self, float y)
-        {
-            return new Vector4(self.x, y, self.z, self.w);
-        }
+        public static Vector2 XY(this in Vector3 self) => new(self.x, self.y);
 
-        public static Vector4 SetZ(this Vector4 self, float z)
-        {
-            return new Vector4(self.x, self.y, z, self.w);
-        }
+        public static Vector2 XZ(this in Vector3 self) => new(self.x, self.z);
 
-        public static Vector4 SetW(this Vector4 self, float w)
-        {
-            return new Vector4(self.x, self.y, self.z, w);
-        }
+        public static Vector2 YX(this in Vector3 self) => new(self.y, self.x);
 
-        public static Vector4 SetZW(this Vector4 self, float z, float w)
-        {
-            return new Vector4(self.x, self.y, z, w);
-        }
+        public static Vector2 YZ(this in Vector3 self) => new(self.y, self.z);
 
-        public static Vector4 SetZW(this Vector4 self, Vector2 zw)
-        {
-            return new Vector4(self.x, self.y, zw.x, zw.y);
-        }
+        public static Vector2 ZX(this in Vector3 self) => new(self.z, self.x);
 
-        public static Vector2 ToVector2(this Vector3 self)
-        {
-            return new Vector2(self.x, self.y);
-        }
+        public static Vector2 ZY(this in Vector3 self) => new(self.z, self.y);
 
-        public static Vector3 ToVector3(this Vector2 self, float z)
-        {
-            return ((Vector3)self).SetZ(z);
-        }
+        public static Vector2 SetX(this in Vector2 self, float x) => new(x, self.y);
 
-        public static Vector4 ToVector4(this Vector2 self, float z, float w)
-        {
-            return ((Vector4)self).SetZW(z, w);
-        }
+        public static Vector2 SetY(this in Vector2 self, float y) => new(self.x, y);
 
-        public static Vector4 ToVector4(this Vector2 self, Vector2 zw)
-        {
-            return ((Vector4)self).SetZW(zw);
-        }
+        public static Vector3 SetX(this in Vector3 self, float x) => new(x, self.y, self.z);
 
-        public static Vector4 ToVector4(this Vector3 self, float w)
-        {
-            return ((Vector4)self).SetW(w);
-        }
+        public static Vector3 SetY(this in Vector3 self, float y) => new(self.x, y, self.z);
+
+        public static Vector3 SetZ(this in Vector3 self, float z) => new(self.x, self.y, z);
+
+        public static Vector4 SetX(this in Vector4 self, float x) => new(x, self.y, self.z, self.w);
+
+        public static Vector4 SetY(this in Vector4 self, float y) => new(self.x, y, self.z, self.w);
+
+        public static Vector4 SetZ(this in Vector4 self, float z) => new(self.x, self.y, z, self.w);
+
+        public static Vector4 SetW(this in Vector4 self, float w) => new(self.x, self.y, self.z, w);
+
+        public static Vector4 SetZW(this in Vector4 self, float z, float w) => new(self.x, self.y, z, w);
+
+        public static Vector4 SetZW(this in Vector4 self, Vector2 zw) => new(self.x, self.y, zw.x, zw.y);
+
+        public static Vector2 ToVector2(this in Vector3 self) => new(self.x, self.y);
+
+        public static Vector3 ToVector3(this in Vector2 self, float z) => ((Vector3)self).SetZ(z);
+
+        public static Vector4 ToVector4(this in Vector2 self, float z, float w) => ((Vector4)self).SetZW(z, w);
+
+        public static Vector4 ToVector4(this in Vector2 self, Vector2 zw) => ((Vector4)self).SetZW(zw);
+
+        public static Vector4 ToVector4(this in Vector3 self, float w) => ((Vector4)self).SetW(w);
 
         public static Vector2 EpsilonVector2 { get; } = new Vector2(float.Epsilon, float.Epsilon);
 
