@@ -34,11 +34,7 @@ namespace YourProjectNamespace
         public bool appendToFront;
         public bool appendToBack;
 
-        public int TotalCount {
-            get {
-                return (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
-            }
-        }
+        public int TotalCount => (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
 
         bool prevAppendToFront;
         bool prevAppendToBack;
@@ -75,13 +71,13 @@ namespace YourProjectNamespace
             }
         }
         
-        float JaggedTableContent.IDataSource.CellSize(int index)
-        {
-            return GetCellData(index).size;
-        }
+        float JaggedTableContent.IDataSource.CellSize(int index) => GetCellData(index).size;
+
+        bool newCellavailable;
 
         void JaggedTableContent.IDataSource.SetUpCell(int index, GameObject cell)
         {
+            newCellavailable = true;
             var data = GetCellData(index);
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
             cell.transform.Find("Button/Text").GetComponent<Text>().text = data.buttonTitle;
@@ -140,6 +136,39 @@ namespace YourProjectNamespace
 
         void LateUpdate()
         {
+            if(newCellavailable) {
+                newCellavailable = false;
+                var children = transform.EnumChildren()
+                    .Where(x => x.gameObject.activeInHierarchy)
+                    .OrderByDescending(x => tableContent.orientaion == Orientaion.Vertical ? x.position.y : x.position.x)
+                    .ToArray();
+                for(int i = 1; i < children.Length; i++) {
+                    var prevButton = children[i - 1].GetComponentInChildren<Button>(true);
+                    var button = children[i].GetComponentInChildren<Button>(true);
+
+                    var navigation = prevButton.navigation;
+                    if(tableContent.orientaion == Orientaion.Vertical) {
+                        if(i == 1) navigation.selectOnUp = null;
+                        navigation.selectOnDown = button;
+                    }
+                    else {
+                        if(i == 1) navigation.selectOnLeft = null;
+                        navigation.selectOnRight = button;
+                    }
+                    prevButton.navigation = navigation;
+
+                    navigation = button.navigation;
+                    if(tableContent.orientaion == Orientaion.Vertical) {
+                        navigation.selectOnUp = prevButton;
+                        if(i == children.Length - 1) navigation.selectOnDown = null;
+                    }
+                    else {
+                        navigation.selectOnLeft = prevButton;
+                        if(i == children.Length - 1) navigation.selectOnRight = null;
+                    }
+                    button.navigation = navigation;
+                }
+            }
             prevAppendToFront = appendToFront;
             prevAppendToBack = appendToBack;
         }

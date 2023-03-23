@@ -46,6 +46,14 @@ namespace CustomUnity
             }
         }
 
+        public static IEnumerable<Transform> EnumChildren(this Transform transform)
+        {
+            for(var i = 0; i < transform.childCount; i++) {
+                var child = transform.GetChild(i);
+                yield return child;
+            }
+        }
+
         public static GameObject[] GetChildGameObjects(this Transform transform)
         {
             if(transform.childCount > 0) {

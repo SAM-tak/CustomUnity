@@ -80,7 +80,7 @@ namespace CustomUnity
 
             PreUpdate();
 
-            var totalCount = (DataSource != null ? DataSource.TotalCount : 0);
+            var totalCount = DataSource != null ? DataSource.TotalCount : 0;
 
             float contentSize = 0;
             int startIndex = 0;

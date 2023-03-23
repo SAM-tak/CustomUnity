@@ -10,6 +10,10 @@ namespace CustomUnity
     [RequireComponent(typeof(RectTransform))]
     public class JaggedTableContent : TableContentBase
     {
+        [ReadOnlyWhenPlaying]
+        [Tooltip("Number of cells to be active even outside the viewport for navigation.")]
+        public int extraCells;
+
         public interface IDataSource
         {
             int TotalCount { get; }
@@ -33,7 +37,7 @@ namespace CustomUnity
         }
 
         CellPosition[] cellPositions;
-        
+
         public override float GetScrollAmountForBottomOfLastItem()
         {
             return orientaion switch {
@@ -88,13 +92,17 @@ namespace CustomUnity
                 if(startIndex > endIndex) {
                     if(cellUpper >= -cellSize && cellUpper <= viewLower) {
                         startIndex = endIndex = i;
-                        cellPositions[0] = cellPosition;
+                        cellPositions[Mathf.Min(startIndex, extraCells)] = cellPosition;
+                    }
+                    else if(extraCells > 0) {
+                        for(var n = Mathf.Min(i, extraCells - 1); n > 0; --n) cellPositions[n - 1] = cellPositions[n];
+                        cellPositions[Mathf.Min(i, extraCells - 1)] = cellPosition;
                     }
                 }
                 else {
-                    if(cellUpper >= -cellSize && cellUpper <= viewLower) {
-                        endIndex = i;
-                        if(i - startIndex < cellPositions.Length) cellPositions[i - startIndex] = cellPosition;
+                    if(cellUpper >= -cellSize && cellUpper <= viewLower) endIndex = i;
+                    if(i - Mathf.Max(0, startIndex - extraCells) < cellPositions.Length) {
+                        cellPositions[i - Mathf.Max(0, startIndex - extraCells)] = cellPosition;
                     }
                 }
             }
@@ -109,6 +117,9 @@ namespace CustomUnity
                 break;
             }
             contentRectTransform.sizeDelta = sizeDelta;
+
+            startIndex -= extraCells;
+            endIndex += extraCells;
 
             if(startIndex < 0) startIndex = 0;
             if(endIndex >= totalCount) endIndex = totalCount - 1;

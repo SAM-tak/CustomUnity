@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace CustomUnity
@@ -9,6 +8,7 @@ namespace CustomUnity
     {
         public AnimatorUpdateMode updateMode;
         public float halfLife = 0.3f;
+        public float activateDelayTimeFromEnabled = 0.15f;
         public Mergin selectedBoxMergin;
 
         public ScrollRect ScrollRect { get; private set; }
@@ -76,14 +76,23 @@ namespace CustomUnity
 
         protected bool MayMoveByOther => Vector3.Distance(prevScrollPosition, ScrollRect.content.localPosition) > 0.001f;
 
+        float delayTime;
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            delayTime = activateDelayTimeFromEnabled;
+        }
+
         void FixedUpdate()
         {
-            if(updateMode == AnimatorUpdateMode.AnimatePhysics) ScrollToTarget();
+            if(delayTime <= 0 && updateMode == AnimatorUpdateMode.AnimatePhysics) ScrollToTarget();
         }
 
         void Update()
         {
-            if(updateMode != AnimatorUpdateMode.AnimatePhysics) ScrollToTarget();
+            if(delayTime <= 0 && updateMode != AnimatorUpdateMode.AnimatePhysics) ScrollToTarget();
+            if(delayTime > 0f) delayTime -= Time.unscaledDeltaTime;
         }
     }
 }

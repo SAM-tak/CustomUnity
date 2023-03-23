@@ -73,10 +73,8 @@ namespace CustomUnity
         {
             var cellRectTransform = cell.GetComponent<RectTransform>();
             var rect = cellRectTransform.rect;
-            rect.position = cellRectTransform.TransformPoint(rect.position);
-            rect.size = cellRectTransform.TransformVector(rect.size);
-            rect.position = ScrollRect.viewport.InverseTransformPoint(rect.position);
-            rect.size = cellRectTransform.InverseTransformVector(rect.size);
+            rect.position = ScrollRect.viewport.InverseTransformPoint(cellRectTransform.TransformPoint(rect.position));
+            rect.size = cellRectTransform.InverseTransformVector(cellRectTransform.TransformVector(rect.size));
             return !ScrollRect.viewport.rect.Overlaps(rect);
         }
 

@@ -9,6 +9,10 @@ namespace CustomUnity
     [RequireComponent(typeof(RectTransform))]
     public class TableContent : TableContentBase
     {
+
+        [Tooltip("Number of cells to be active even outside the viewport for navigation.")]
+        public int extraCells;
+
         public interface IDataSource
         {
             int TotalCount { get; }
@@ -148,6 +152,10 @@ namespace CustomUnity
                 break;
             }
             contentRectTransform.sizeDelta = sizeDelta;
+
+            startIndex -= extraCells;
+            endIndex += extraCells;
+
             if(!repeat) {
                 if(startIndex < 0) startIndex = 0;
                 if(endIndex >= totalCount) endIndex = totalCount - 1;

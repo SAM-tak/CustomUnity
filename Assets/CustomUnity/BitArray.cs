@@ -117,12 +117,50 @@ namespace CustomUnity
 
         public bool Equals(NBitArray<N> other) => EqualityComparer<int[]>.Default.Equals(store, other.store);
 
-        public override int GetHashCode() => 383674718 + EqualityComparer<int[]>.Default.GetHashCode(store);
+        public override int GetHashCode() => HashCode.Combine(store);
 
         public byte this[int index] {
             get => Get(index);
             set => Set(index, value);
         }
+    }
+
+    public struct BitArray16 : IEquatable<BitArray16>
+    {
+        public ushort store;
+
+        public bool this[int i] {
+            get => (store & (1 << i)) > 0;
+            set => store = (ushort)((store & (ushort)~(1 << i)) | (value ? (ushort)(1 << i) : 0));
+        }
+
+        public static BitArray16 operator&(BitArray16 lhs, BitArray16 rhs)
+        {
+            return new BitArray16 { store = (ushort)(lhs.store & rhs.store) };
+        }
+
+        public static BitArray16 operator|(BitArray16 lhs, BitArray16 rhs)
+        {
+            return new BitArray16 { store = (ushort)(lhs.store | rhs.store) };
+        }
+
+        public static BitArray16 operator ^(BitArray16 lhs, BitArray16 rhs)
+        {
+            return new BitArray16 { store = (ushort)(lhs.store ^ rhs.store) };
+        }
+
+        public static BitArray16 operator ~(BitArray16 src)
+        {
+            return new BitArray16 { store = (ushort)(~src.store) };
+        }
+
+        public bool Any() => store != 0;
+
+        public override bool Equals(object obj) => obj is BitArray16 array && Equals(array);
+
+        public bool Equals(BitArray16 other) => store == other.store;
+
+        public override int GetHashCode() => HashCode.Combine(store);
     }
 
     public struct BitArray32 : IEquatable<BitArray32>
@@ -154,16 +192,13 @@ namespace CustomUnity
             return new BitArray32 { store = ~src.store };
         }
 
-        public bool Any()
-        {
-            return store != 0;
-        }
+        public bool Any() => store != 0;
 
         public override bool Equals(object obj) => obj is BitArray32 array && Equals(array);
 
         public bool Equals(BitArray32 other) => store == other.store;
 
-        public override int GetHashCode() => 383674718 + store.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(store);
     }
 
     public struct BitArray64 : IEquatable<BitArray64>

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using System;
+using UnityEngine;
 
 namespace CustomUnity
 {
@@ -47,6 +48,17 @@ namespace CustomUnity
             if(positions != null && positions.Length > 0) {
                 if(index < 0) index = 0;
                 if(index >= positions.Length) index = positions.Length - 1;
+
+                currentTarget = smoothMode switch {
+                    SmoothMode.RubberStep => ((Func<Vector3>)(() => {
+                        var newTarget = Math.RubberStep(currentTarget, positions[index].position, halfLife, Time.deltaTime);
+                        currentVelocity = newTarget - currentTarget;
+                        return newTarget;
+                    }))(),
+                    SmoothMode.SmoothDamp => Math.SmoothDamp(ref currentVelocity, currentTarget, positions[index].position, halfLife, Time.deltaTime),
+                    SmoothMode.UnitySmoothDamp => Vector3.SmoothDamp(currentTarget, positions[index].position, ref currentVelocity, halfLife * 2, float.PositiveInfinity, Time.deltaTime),
+                    _ => Vector3.zero
+                };
 
                 switch(smoothMode) {
                 case SmoothMode.RubberStep: {
