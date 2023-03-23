@@ -72,7 +72,7 @@ namespace CustomUnity
             return null;
         }
 
-        protected bool IsCulled(GameObject cell)
+        public bool IsCulled(GameObject cell)
         {
             var cellRectTransform = cell.GetComponent<RectTransform>();
             var rect = cellRectTransform.rect;
