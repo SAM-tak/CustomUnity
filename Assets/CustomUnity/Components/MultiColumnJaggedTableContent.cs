@@ -16,8 +16,9 @@ namespace CustomUnity
         {
             int TotalCount { get; }
             void SetUpCell(int index, GameObject cell);
-            void OnPreUpdate();
+            void CellDeactivated(GameObject cell);
             Vector2 CellSize(int index);
+            void OnPreUpdate();
         }
 
         public IDataSource DataSource { get; private set; }
@@ -141,13 +142,19 @@ namespace CustomUnity
                     if(startIndex > endIndex) {
                         if(cellUpper >= -rowHeight && cellUpper <= viewLower) {
                             startIndex = endIndex = index;
-                            cellRects[0] = rect;
+                            cellRects[Mathf.Min(startIndex, extraCells)] = rect;
+                        }
+                        else if(extraCells > 0) {
+                            for(var n = Mathf.Min(index, extraCells - 1); n > 0; --n) cellRects[n - 1] = cellRects[n];
+                            cellRects[Mathf.Min(index, extraCells - 1)] = rect;
                         }
                     }
                     else {
                         if(cellUpper >= -rowHeight && cellUpper <= viewLower) {
                             endIndex = index;
-                            if(index - startIndex < cellRects.Length) cellRects[index - startIndex] = rect;
+                        }
+                        if(index - Mathf.Max(0, startIndex - extraCells) < cellRects.Length) {
+                            cellRects[index - Mathf.Max(0, startIndex - extraCells)] = rect;
                         }
                     }
 
@@ -169,6 +176,9 @@ namespace CustomUnity
                 break;
             }
             contentRectTransform.sizeDelta = sizeDelta;
+
+            startIndex -= extraCells;
+            endIndex += extraCells;
 
             if(startIndex < 0) startIndex = 0;
             if(endIndex >= totalCount) endIndex = totalCount - 1;

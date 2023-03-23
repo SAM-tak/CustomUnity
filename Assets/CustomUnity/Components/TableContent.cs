@@ -9,14 +9,11 @@ namespace CustomUnity
     [RequireComponent(typeof(RectTransform))]
     public class TableContent : TableContentBase
     {
-
-        [Tooltip("Number of cells to be active even outside the viewport for navigation.")]
-        public int extraCells;
-
         public interface IDataSource
         {
             int TotalCount { get; }
             void SetUpCell(int index, GameObject cell);
+            void CellDeactivated(GameObject cell);
             void OnPreUpdate();
         }
 
@@ -160,7 +157,7 @@ namespace CustomUnity
                 if(startIndex < 0) startIndex = 0;
                 if(endIndex >= totalCount) endIndex = totalCount - 1;
             }
-            
+
             int ceillingTotalCount = Math.CeilDiv(totalCount, columnCount) * columnCount;
             foreach(var i in cellPool) {
                 if(i.cell.activeSelf && (
@@ -169,7 +166,10 @@ namespace CustomUnity
                     || Math.Wrap(i.index, columnCount) > rightRadix
                     || Math.Wrap(i.index, ceillingTotalCount) > totalCount
                     || (repeat && totalCount < columnCount * 3 && IsCulled(i.cell))
-                )) i.cell.SetActive(false);
+                )) {
+                    i.cell.SetActive(false);
+                    DataSource?.CellDeactivated(i.cell);
+                }
             }
 
             if(totalCount > 0 && endIndex - startIndex + 1 > 0) {

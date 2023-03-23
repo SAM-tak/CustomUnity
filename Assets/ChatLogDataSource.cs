@@ -174,6 +174,10 @@ namespace YourProjectNamespace
             root.transform.Find("Message").GetComponent<Text>().text = null;
         }
 
+        public void CellDeactivated(GameObject cell)
+        {
+        }
+
         float minHeight;
         int wrapColumnCount;
         int fontSize;

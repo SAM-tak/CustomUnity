@@ -179,6 +179,10 @@ namespace CustomUnity
             cell.transform.Find("AltBackground").gameObject.SetActive(index % 2 == 0);
         }
 
+        public void CellDeactivated(GameObject cell)
+        {
+        }
+
         float minHeight;
         int wrapColumnCount;
         int fontSize;

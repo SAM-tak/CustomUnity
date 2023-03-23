@@ -112,7 +112,11 @@ namespace YourProjectNamespace
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
             cell.transform.Find("Button/Text").GetComponent<Text>().text = data.buttonTitle;
         }
-        
+
+        public void CellDeactivated(GameObject cell)
+        {
+        }
+
 #if UNITY_EDITOR
         [ContextMenu("Make Test Data")]
         void MakeTestData()

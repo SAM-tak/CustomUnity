@@ -10,16 +10,13 @@ namespace CustomUnity
     [RequireComponent(typeof(RectTransform))]
     public class JaggedTableContent : TableContentBase
     {
-        [ReadOnlyWhenPlaying]
-        [Tooltip("Number of cells to be active even outside the viewport for navigation.")]
-        public int extraCells;
-
         public interface IDataSource
         {
             int TotalCount { get; }
             void SetUpCell(int index, GameObject cell);
-            void OnPreUpdate();
+            void CellDeactivated(GameObject cell);
             float CellSize(int index);
+            void OnPreUpdate();
         }
 
         public IDataSource DataSource { get; private set; }

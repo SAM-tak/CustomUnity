@@ -69,16 +69,21 @@ namespace YourProjectNamespace
             }
         }
 
-        bool newCellavailable;
+        bool needsUpdateNavigation;
 
         void TableContent.IDataSource.SetUpCell(int index, GameObject cell)
         {
-            newCellavailable = true;
+            needsUpdateNavigation = true;
             var data = GetCellData(index);
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
             cell.transform.Find("Button/Text").GetComponent<Text>().text = data.buttonTitle;
         }
-        
+
+        void TableContent.IDataSource.CellDeactivated(GameObject cell)
+        {
+            needsUpdateNavigation = true;
+        }
+
 #if UNITY_EDITOR
         [ContextMenu("Make Test Data")]
         void MakeTestData()
@@ -110,8 +115,8 @@ namespace YourProjectNamespace
 
         void LateUpdate()
         {
-            if(newCellavailable) {
-                newCellavailable = false;
+            if(needsUpdateNavigation) {
+                needsUpdateNavigation = false;
                 var children = transform.EnumChildren()
                     .Where(x => x.gameObject.activeInHierarchy)
                     .OrderByDescending(x => tableContent.orientaion == Orientaion.Vertical ? x.position.y : x.position.x)

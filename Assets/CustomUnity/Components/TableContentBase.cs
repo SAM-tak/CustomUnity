@@ -19,6 +19,9 @@ namespace CustomUnity
         [ReadOnlyWhenPlaying]
         public Orientaion orientaion;
 
+        [Tooltip("Number of cells to be active even outside the viewport for navigation.")]
+        public int extraCells;
+
         public int MaxCells => cellPool != null ? cellPool.Length : 0;
 
         public int MaxCellsRequired { get; protected set; }
@@ -41,7 +44,7 @@ namespace CustomUnity
 
         protected Cell[] cellPool;
 
-        protected GameObject GetCell(int index, out bool @new)
+        public GameObject GetCell(int index, out bool @new)
         {
             @new = false;
             int candidate = -1;
