@@ -25,9 +25,7 @@ namespace CustomUnity
         {
             if(!Application.isPlaying) return obj.name + "." + memberName;
             var objname = obj.GetName();
-            if(memberCache == null) {
-                memberCache = new Dictionary<Object, Dictionary<string, Dictionary<int, string>>>(256);
-            }
+            memberCache ??= new Dictionary<Object, Dictionary<string, Dictionary<int, string>>>(256);
             if(!memberCache.ContainsKey(obj)) {
                 memberCache[obj] = new Dictionary<string, Dictionary<int, string>>();
                 var l = new Dictionary<int, string> {
@@ -50,7 +48,7 @@ namespace CustomUnity
         static void OnActiveSceneChanged(Scene arg0, Scene arg1)
         {
             cache.Clear();
-            if(memberCache != null) memberCache.Clear();
+            memberCache?.Clear();
         }
 
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]

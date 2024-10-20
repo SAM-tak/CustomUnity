@@ -28,9 +28,7 @@ namespace CustomUnity
         }
         
         public string LayerName {
-            get {
-                return layerName;
-            }
+            get => layerName;
             set {
                 layerName = value;
                 foreach(var renderer in GetComponents<Renderer>()) {
@@ -40,9 +38,7 @@ namespace CustomUnity
         }
 
         public int OrderInLayer {
-            get {
-                return orderInLayer;
-            }
+            get => orderInLayer;
             set {
                 orderInLayer = value;
                 foreach(var renderer in GetComponents<Renderer>()) {

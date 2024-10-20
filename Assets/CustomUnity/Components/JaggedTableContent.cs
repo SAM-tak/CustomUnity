@@ -26,11 +26,11 @@ namespace CustomUnity
             public float position;
             public float size;
 
-            public override bool Equals(object obj) => obj is CellPosition position && Equals(position);
+            public override readonly bool Equals(object obj) => obj is CellPosition position && Equals(position);
 
-            public bool Equals(CellPosition other) => position == other.position && size == other.size;
+            public readonly bool Equals(CellPosition other) => position == other.position && size == other.size;
 
-            public override int GetHashCode() => HashCode.Combine(position, size);
+            public override readonly int GetHashCode() => HashCode.Combine(position, size);
         }
 
         CellPosition[] cellPositions;

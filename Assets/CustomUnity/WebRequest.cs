@@ -9,7 +9,7 @@ namespace CustomUnity
     {
         public static UnityWebRequest PostJson(string uri, string json)
         {
-            var ret = UnityWebRequest.Post(uri, json);
+            var ret = UnityWebRequest.PostWwwForm(uri, json);
             ret.uploadHandler.contentType = "application/json";
             return ret;
         }

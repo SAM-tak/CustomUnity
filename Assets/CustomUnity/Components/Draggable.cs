@@ -55,11 +55,11 @@ namespace CustomUnity
             if(onDragging) {
                 if(rb) {
                     rb.position = lastPosition;
-                    rb.velocity = Vector3.zero;
+                    rb.linearVelocity = Vector3.zero;
                 }
                 else if(rb2d) {
                     rb2d.position = lastPosition;
-                    rb2d.velocity = Vector2.zero;
+                    rb2d.linearVelocity = Vector2.zero;
                 }
             }
         }

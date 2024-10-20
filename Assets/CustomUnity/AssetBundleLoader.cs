@@ -667,21 +667,21 @@ namespace CustomUnity
             
             public AssetBundleLoadAssetOperation Operation { get; private set; }
 
-            public T Asset => Operation?.Result as T;
+            public readonly T Asset => Operation?.Result as T;
 
-            public object Current => Operation?.Current;
+            public readonly object Current => Operation?.Current;
 
-            public bool MoveNext() => Operation?.MoveNext() ?? false;
+            public readonly bool MoveNext() => Operation?.MoveNext() ?? false;
 
-            public void Reset() => Operation?.Reset();
+            public readonly void Reset() => Operation?.Reset();
             
-            public bool IsDone() => Operation?.IsDone() ?? true;
+            public readonly bool IsDone() => Operation?.IsDone() ?? true;
 
-            public override bool Equals(object obj) => obj is AssetLoadOperation<T> operation && Equals(operation);
+            public override readonly bool Equals(object obj) => obj is AssetLoadOperation<T> operation && Equals(operation);
 
-            public bool Equals(AssetLoadOperation<T> other) => EqualityComparer<AssetBundleLoadAssetOperation>.Default.Equals(Operation, other.Operation);
+            public readonly bool Equals(AssetLoadOperation<T> other) => EqualityComparer<AssetBundleLoadAssetOperation>.Default.Equals(Operation, other.Operation);
 
-            public override int GetHashCode() => HashCode.Combine(Operation);
+            public override readonly int GetHashCode() => HashCode.Combine(Operation);
         }
 
         /// <summary>

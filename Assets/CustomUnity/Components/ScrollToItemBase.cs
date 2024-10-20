@@ -86,12 +86,12 @@ namespace CustomUnity
 
         void FixedUpdate()
         {
-            if(delayTime <= 0 && updateMode == AnimatorUpdateMode.AnimatePhysics) ScrollToTarget();
+            if(delayTime <= 0 && updateMode == AnimatorUpdateMode.Fixed) ScrollToTarget();
         }
 
         void Update()
         {
-            if(delayTime <= 0 && updateMode != AnimatorUpdateMode.AnimatePhysics) ScrollToTarget();
+            if(delayTime <= 0 && updateMode != AnimatorUpdateMode.Fixed) ScrollToTarget();
             if(delayTime > 0f) delayTime -= Time.unscaledDeltaTime;
         }
     }

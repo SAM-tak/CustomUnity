@@ -46,7 +46,7 @@ namespace CustomUnity
 
             public bool Equals(LookAheadedCellSize other) => index == other.index && rect.Equals(other.rect);
 
-            public override int GetHashCode() => HashCode.Combine(index, rect);
+            public override readonly int GetHashCode() => HashCode.Combine(index, rect);
         }
 
         List<LookAheadedCellSize> LookAheadedCellSizes { get; } = new List<LookAheadedCellSize>(10);

@@ -19,11 +19,11 @@ namespace CustomUnity
             public GameObject go;
             public float time;
 
-            public override bool Equals(object obj) => obj is Entry entry && Equals(entry);
+            public override readonly bool Equals(object obj) => obj is Entry entry && Equals(entry);
 
-            public bool Equals(Entry other) => EqualityComparer<GameObject>.Default.Equals(go, other.go) && time == other.time;
+            public readonly bool Equals(Entry other) => EqualityComparer<GameObject>.Default.Equals(go, other.go) && time == other.time;
 
-            public override int GetHashCode() => HashCode.Combine(go, time);
+            public override readonly int GetHashCode() => HashCode.Combine(go, time);
         }
 
         Entry[] entries;
@@ -97,7 +97,7 @@ namespace CustomUnity
             var ret = entries[retIndex];
             ret.time = Time.timeSinceLevelLoad;
             ret.go.SetActive(false);
-            if(parents) ret.go.transform.parent = parent;
+            ret.go.transform.parent = parent;
             ret.go.transform.SetPositionAndRotation(position, rotation);
             ret.go.SetActive(true);
             entries[retIndex] = ret;

@@ -16,14 +16,14 @@ namespace CustomUnity
         RectTransform _rectTransform;
         RectTransform _parentRectTransform;
 
-        RectTransform rectTransform {
+        RectTransform RectTransform {
             get {
                 if(_rectTransform == null) _rectTransform = GetComponent<RectTransform>();
                 return _rectTransform;
             }
         }
 
-        RectTransform parentRectTransform {
+        RectTransform ParentRectTransform {
             get {
                 if(_parentRectTransform == null) _parentRectTransform = transform.parent.GetComponent<RectTransform>();
                 return _parentRectTransform;
@@ -43,7 +43,7 @@ namespace CustomUnity
         protected override void OnDisable()
         {
             tracker.Clear();
-            LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+            LayoutRebuilder.MarkLayoutForRebuild(RectTransform);
             base.OnDisable();
         }
 
@@ -57,10 +57,10 @@ namespace CustomUnity
         public void SetLayoutHorizontal()
         {
             if(orientaion == Orientaion.Horizontal) {
-                tracker.Add(this, rectTransform, DrivenTransformProperties.SizeDeltaX);
-                rectTransform.SetSizeWithCurrentAnchors(
+                tracker.Add(this, RectTransform, DrivenTransformProperties.SizeDeltaX);
+                RectTransform.SetSizeWithCurrentAnchors(
                     RectTransform.Axis.Horizontal,
-                    Mathf.Min(parentRectTransform.rect.width - insetSizeFromParent, LayoutUtility.GetPreferredWidth(rectTransform))
+                    Mathf.Min(ParentRectTransform.rect.width - insetSizeFromParent, LayoutUtility.GetPreferredWidth(RectTransform))
                 );
             }
         }
@@ -68,10 +68,10 @@ namespace CustomUnity
         public void SetLayoutVertical()
         {
             if(orientaion == Orientaion.Vertical) {
-                tracker.Add(this, rectTransform, DrivenTransformProperties.SizeDeltaY);
-                rectTransform.SetSizeWithCurrentAnchors(
+                tracker.Add(this, RectTransform, DrivenTransformProperties.SizeDeltaY);
+                RectTransform.SetSizeWithCurrentAnchors(
                     RectTransform.Axis.Vertical,
-                    Mathf.Min(parentRectTransform.rect.height - insetSizeFromParent, LayoutUtility.GetPreferredHeight(rectTransform))
+                    Mathf.Min(ParentRectTransform.rect.height - insetSizeFromParent, LayoutUtility.GetPreferredHeight(RectTransform))
                 );
             }
         }
@@ -79,7 +79,7 @@ namespace CustomUnity
         protected void SetDirty()
         {
             if(!IsActive()) return;
-            LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+            LayoutRebuilder.MarkLayoutForRebuild(RectTransform);
         }
 
 #if UNITY_EDITOR

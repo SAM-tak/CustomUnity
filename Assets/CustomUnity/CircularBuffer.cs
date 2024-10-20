@@ -24,17 +24,17 @@ namespace CustomUnity
         public int Count { get; private set; }
 
         public T First {
-            get { return buffer[tail]; }
-            set { buffer[tail] = value; }
+            get => buffer[tail];
+            set => buffer[tail] = value;
         }
 
         public T Last {
-            get { return buffer[head]; }
-            set { buffer[head] = value; }
+            get => buffer[head];
+            set => buffer[head] = value;
         }
 
         public int Capacity {
-            get { return buffer.Length; }
+            get => buffer.Length;
             set {
                 if(value < 0) throw new ArgumentOutOfRangeException("value", "must be positive");
 
@@ -139,9 +139,6 @@ namespace CustomUnity
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

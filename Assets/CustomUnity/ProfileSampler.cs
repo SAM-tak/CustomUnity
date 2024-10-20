@@ -9,7 +9,7 @@ namespace CustomUnity
     /// <summary>
     /// Create and manage sample point of CustomSampler
     /// </summary>
-    public struct ProfileSampler : IDisposable, IEquatable<ProfileSampler>
+    public readonly struct ProfileSampler : IDisposable, IEquatable<ProfileSampler>
     {
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && PROFILING
         static readonly Dictionary<string, CustomSampler> samplerCache = new (256);

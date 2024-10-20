@@ -35,11 +35,11 @@ namespace CustomUnity
             public GameObject cell;
             public int index;
 
-            public override bool Equals(object obj) => obj is Cell cell && Equals(cell);
+            public override readonly bool Equals(object obj) => obj is Cell cell && Equals(cell);
 
-            public bool Equals(Cell other) => EqualityComparer<GameObject>.Default.Equals(cell, other.cell) && index == other.index;
+            public readonly bool Equals(Cell other) => EqualityComparer<GameObject>.Default.Equals(cell, other.cell) && index == other.index;
 
-            public override int GetHashCode() => HashCode.Combine(cell, index);
+            public override readonly int GetHashCode() => HashCode.Combine(cell, index);
         }
 
         protected Cell[] cellPool;

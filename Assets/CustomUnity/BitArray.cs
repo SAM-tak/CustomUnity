@@ -7,68 +7,68 @@ namespace CustomUnity
 
     public struct Bit2 : IBit<int>, IEquatable<Bit2>
     {
-        public int Value => 2;
+        public readonly int Value => 2;
 
-        public override bool Equals(object obj) => obj is Bit2 bit && Equals(bit);
+        public override readonly bool Equals(object obj) => obj is Bit2 bit && Equals(bit);
 
-        public bool Equals(Bit2 other) => Value == other.Value;
+        public readonly bool Equals(Bit2 other) => Value == other.Value;
 
-        public override int GetHashCode() => HashCode.Combine(Value);
+        public override readonly int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit3 : IBit<int>, IEquatable<Bit3>
     {
-        public int Value => 3;
+        public readonly int Value => 3;
 
-        public override bool Equals(object obj) => obj is Bit3 bit && Equals(bit);
+        public override readonly bool Equals(object obj) => obj is Bit3 bit && Equals(bit);
 
-        public bool Equals(Bit3 other) => Value == other.Value;
+        public readonly bool Equals(Bit3 other) => Value == other.Value;
 
-        public override int GetHashCode() => HashCode.Combine(Value);
+        public override readonly int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit4 : IBit<int>, IEquatable<Bit4>
     {
-        public int Value => 4;
+        public readonly int Value => 4;
 
-        public override bool Equals(object obj) => obj is Bit4 bit && Equals(bit);
+        public override readonly bool Equals(object obj) => obj is Bit4 bit && Equals(bit);
 
-        public bool Equals(Bit4 other) => Value == other.Value;
+        public readonly bool Equals(Bit4 other) => Value == other.Value;
 
-        public override int GetHashCode() => HashCode.Combine(Value);
+        public override readonly int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit5 : IBit<int>, IEquatable<Bit5>
     {
-        public int Value => 5;
+        public readonly int Value => 5;
 
-        public override bool Equals(object obj) => obj is Bit5 bit && Equals(bit);
+        public override readonly bool Equals(object obj) => obj is Bit5 bit && Equals(bit);
 
-        public bool Equals(Bit5 other) => Value == other.Value;
+        public readonly bool Equals(Bit5 other) => Value == other.Value;
 
-        public override int GetHashCode() => HashCode.Combine(Value);
+        public override readonly int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit6 : IBit<int>, IEquatable<Bit6>
     {
-        public int Value => 6;
+        public readonly int Value => 6;
 
-        public override bool Equals(object obj) => obj is Bit6 bit && Equals(bit);
+        public override readonly bool Equals(object obj) => obj is Bit6 bit && Equals(bit);
 
-        public bool Equals(Bit6 other) => Value == other.Value;
+        public readonly bool Equals(Bit6 other) => Value == other.Value;
 
-        public override int GetHashCode() => HashCode.Combine(Value);
+        public override readonly int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct Bit7 : IBit<int>, IEquatable<Bit7>
     {
-        public int Value => 7;
+        public readonly int Value => 7;
 
-        public override bool Equals(object obj) => obj is Bit7 bit && Equals(bit);
+        public override readonly bool Equals(object obj) => obj is Bit7 bit && Equals(bit);
 
-        public bool Equals(Bit7 other) => Value == other.Value;
+        public readonly bool Equals(Bit7 other) => Value == other.Value;
 
-        public override int GetHashCode() => HashCode.Combine(Value);
+        public override readonly int GetHashCode() => HashCode.Combine(Value);
     }
 
     public struct NBitArray<N> : IEquatable<NBitArray<N>> where N : struct, IBit<int>
@@ -91,7 +91,7 @@ namespace CustomUnity
             else store = new int[newsize];
         }
 
-        public byte Get(int index)
+        public readonly byte Get(int index)
         {
             var bitoffset = index * default(N).Value;
             var storeindex = bitoffset / 32;
@@ -99,7 +99,7 @@ namespace CustomUnity
             return (byte)((store[storeindex] >> shiftcount) & (default(N).Value - 1));
         }
         
-        public void Set(int index, int value)
+        public readonly void Set(int index, int value)
         {
             var bitoffset = index * default(N).Value;
             var storeindex = bitoffset / 32;
@@ -108,18 +108,18 @@ namespace CustomUnity
             store[storeindex] = (store[storeindex] & ~(mask << shiftcount)) | ((value & mask) << shiftcount);
         }
 
-        public void Clear()
+        public readonly void Clear()
         {
             for(int i = 0; i < store.Length; ++i) store[i] = 0;
         }
 
-        public override bool Equals(object obj) => obj is NBitArray<N> array && Equals(array);
+        public override readonly bool Equals(object obj) => obj is NBitArray<N> array && Equals(array);
 
-        public bool Equals(NBitArray<N> other) => EqualityComparer<int[]>.Default.Equals(store, other.store);
+        public readonly bool Equals(NBitArray<N> other) => EqualityComparer<int[]>.Default.Equals(store, other.store);
 
-        public override int GetHashCode() => HashCode.Combine(store);
+        public override readonly int GetHashCode() => HashCode.Combine(store);
 
-        public byte this[int index] {
+        public readonly byte this[int index] {
             get => Get(index);
             set => Set(index, value);
         }
@@ -130,7 +130,7 @@ namespace CustomUnity
         public ushort store;
 
         public bool this[int i] {
-            get => (store & (1 << i)) > 0;
+            readonly get => (store & (1 << i)) > 0;
             set => store = (ushort)((store & (ushort)~(1 << i)) | (value ? (ushort)(1 << i) : 0));
         }
 
@@ -154,13 +154,13 @@ namespace CustomUnity
             return new BitArray16 { store = (ushort)(~src.store) };
         }
 
-        public bool Any() => store != 0;
+        public readonly bool Any() => store != 0;
 
-        public override bool Equals(object obj) => obj is BitArray16 array && Equals(array);
+        public override readonly bool Equals(object obj) => obj is BitArray16 array && Equals(array);
 
-        public bool Equals(BitArray16 other) => store == other.store;
+        public readonly bool Equals(BitArray16 other) => store == other.store;
 
-        public override int GetHashCode() => HashCode.Combine(store);
+        public override readonly int GetHashCode() => HashCode.Combine(store);
     }
 
     public struct BitArray32 : IEquatable<BitArray32>
@@ -168,7 +168,7 @@ namespace CustomUnity
         public uint store;
 
         public bool this[int i] {
-            get => (store & (1 << i)) > 0;
+            readonly get => (store & (1 << i)) > 0;
             set => store = (store & (uint)~(1 << i)) | (value ? (uint)(1 << i) : 0);
         }
 
@@ -192,13 +192,13 @@ namespace CustomUnity
             return new BitArray32 { store = ~src.store };
         }
 
-        public bool Any() => store != 0;
+        public readonly bool Any() => store != 0;
 
-        public override bool Equals(object obj) => obj is BitArray32 array && Equals(array);
+        public override readonly bool Equals(object obj) => obj is BitArray32 array && Equals(array);
 
-        public bool Equals(BitArray32 other) => store == other.store;
+        public readonly bool Equals(BitArray32 other) => store == other.store;
 
-        public override int GetHashCode() => HashCode.Combine(store);
+        public override readonly int GetHashCode() => HashCode.Combine(store);
     }
 
     public struct BitArray64 : IEquatable<BitArray64>
@@ -207,7 +207,7 @@ namespace CustomUnity
         public BitArray32 store2;
 
         public bool this[int i] {
-            get {
+            readonly get {
                 if(i < 32) return store1[i];
                 return store2[i - 32];
             }
@@ -237,13 +237,13 @@ namespace CustomUnity
             return new BitArray64 { store1 = ~src.store1, store2 = ~src.store2 };
         }
 
-        public bool Any() => store1.Any() || store2.Any();
+        public readonly bool Any() => store1.Any() || store2.Any();
 
-        public override bool Equals(object obj) => obj is BitArray64 array && Equals(array);
+        public override readonly bool Equals(object obj) => obj is BitArray64 array && Equals(array);
 
-        public bool Equals(BitArray64 other) => store1.Equals(other.store1) && store2.Equals(other.store2);
+        public readonly bool Equals(BitArray64 other) => store1.Equals(other.store1) && store2.Equals(other.store2);
 
-        public override int GetHashCode() => HashCode.Combine(store1, store2);
+        public override readonly int GetHashCode() => HashCode.Combine(store1, store2);
     }
 
     public struct BitArray96 : IEquatable<BitArray96>
@@ -253,7 +253,7 @@ namespace CustomUnity
         public BitArray32 store3;
 
         public bool this[int i] {
-            get {
+            readonly get {
                 if(i < 32) return store1[i];
                 else if(i < 64) return store2[i - 32];
                 return store3[i - 64];
@@ -285,13 +285,13 @@ namespace CustomUnity
             return new BitArray96 { store1 = ~src.store1, store2 = ~src.store2, store3 = ~src.store3 };
         }
 
-        public bool Any() => store1.Any() || store2.Any() || store3.Any();
+        public readonly bool Any() => store1.Any() || store2.Any() || store3.Any();
 
-        public override bool Equals(object obj) => obj is BitArray96 array && Equals(array);
+        public override readonly bool Equals(object obj) => obj is BitArray96 array && Equals(array);
 
-        public bool Equals(BitArray96 other) => store1.Equals(other.store1) && store2.Equals(other.store2) && store3.Equals(other.store3);
+        public readonly bool Equals(BitArray96 other) => store1.Equals(other.store1) && store2.Equals(other.store2) && store3.Equals(other.store3);
 
-        public override int GetHashCode() => HashCode.Combine(store1, store2, store3);
+        public override readonly int GetHashCode() => HashCode.Combine(store1, store2, store3);
     }
 
     public struct BitArray128 : IEquatable<BitArray128>
@@ -302,7 +302,7 @@ namespace CustomUnity
         public BitArray32 store4;
 
         public bool this[int i] {
-            get {
+            readonly get {
                 if(i < 32) return store1[i];
                 else if(i < 64) return store2[i - 32];
                 else if(i < 96) return store3[i - 64];
@@ -336,12 +336,12 @@ namespace CustomUnity
             return new BitArray128 { store1 = ~src.store1, store2 = ~src.store2, store3 = ~src.store3, store4 = ~src.store4 };
         }
 
-        public bool Any() => store1.Any() || store2.Any() || store3.Any() || store4.Any();
+        public readonly bool Any() => store1.Any() || store2.Any() || store3.Any() || store4.Any();
 
-        public override bool Equals(object obj) => obj is BitArray128 array && Equals(array);
+        public override readonly bool Equals(object obj) => obj is BitArray128 array && Equals(array);
 
-        public bool Equals(BitArray128 other) => store1.Equals(other.store1) && store2.Equals(other.store2) && store3.Equals(other.store3) && store4.Equals(other.store4);
+        public readonly bool Equals(BitArray128 other) => store1.Equals(other.store1) && store2.Equals(other.store2) && store3.Equals(other.store3) && store4.Equals(other.store4);
 
-        public override int GetHashCode() => HashCode.Combine(store1, store2, store3, store4);
+        public override readonly int GetHashCode() => HashCode.Combine(store1, store2, store3, store4);
     }
 }

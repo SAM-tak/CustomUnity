@@ -20,13 +20,13 @@ namespace CustomUnity
             public string message;
             public string stackTrace;
 
-            public override bool Equals(object obj) => obj is Log log
+            public override readonly bool Equals(object obj) => obj is Log log
                 && dateTime == log.dateTime
                 && type == log.type
                 && message == log.message
                 && stackTrace == log.stackTrace;
 
-            public override int GetHashCode() => HashCode.Combine(dateTime, type, message, stackTrace);
+            public override readonly int GetHashCode() => HashCode.Combine(dateTime, type, message, stackTrace);
         }
 
         class LogData
