@@ -61,15 +61,19 @@ namespace CustomUnity
             foreach(var i in pools) i.DeactivateAll();
         }
 
-        public GameObject Spawn(string name, Vector3 position, Quaternion rotation)
+        public GameObject Spawn(string name, Vector3 position, Quaternion rotation) => Spawn(name, null, position, rotation);
+
+        public GameObject TrySpawn(string name, Vector3 position, Quaternion rotation) => TrySpawn(name, null, position, rotation);
+
+        public GameObject Spawn(string name, Transform parent, Vector3 position, Quaternion rotation)
         {
-            if(index.TryGetValue(name, out GameObjectPool pool)) return pool.Spawn(position, rotation);
+            if(index.TryGetValue(name, out GameObjectPool pool)) return pool.Spawn(parent, position, rotation);
             return null;
         }
 
-        public GameObject TrySpawn(string name, Vector3 position, Quaternion rotation)
+        public GameObject TrySpawn(string name, Transform parent, Vector3 position, Quaternion rotation)
         {
-            if(index.TryGetValue(name, out GameObjectPool pool)) return pool.TrySpawn(position, rotation);
+            if(index.TryGetValue(name, out GameObjectPool pool)) return pool.TrySpawn(parent, position, rotation);
             return null;
         }
 
