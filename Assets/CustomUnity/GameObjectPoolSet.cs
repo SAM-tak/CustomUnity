@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace CustomUnity
 {
@@ -7,10 +7,10 @@ namespace CustomUnity
     /// Set of GameObject Pools
     /// </summary>
     [System.Serializable]
-    public sealed class GameObjectPoolSet
+    public class GameObjectPoolSet
     {
         public GameObjectPool[] pools;
-        public readonly Dictionary<string, GameObjectPool> index = new ();
+        public readonly Dictionary<string, GameObjectPool> index = new();
 
         public void SetUp(Transform parent, System.Action<GameObject> setUpProcPerObject = null)
         {

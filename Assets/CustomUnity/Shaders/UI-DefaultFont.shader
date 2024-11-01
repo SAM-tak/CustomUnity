@@ -1,6 +1,6 @@
 // Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
-Shader "UI/Default Font" {
+Shader "UI/CustomUnity/Default Font" {
     Properties {
         [PerRendererData] _MainTex ("Font Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
@@ -16,7 +16,7 @@ Shader "UI/Default Font" {
         [Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
     }
 
-    FallBack "UI/Default"
+    FallBack "UI/CustomUnity/Default"
 
     CustomEditor "CustomUnity.UIDefaultShaderGUI"
 }

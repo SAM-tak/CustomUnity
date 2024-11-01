@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 namespace CustomUnity
 {
@@ -9,7 +9,7 @@ namespace CustomUnity
     /// Game Object Pool
     /// </summary>
     [Serializable]
-    public sealed class GameObjectPool
+    public class GameObjectPool
     {
         public GameObject prefab;
         public int quantity;
