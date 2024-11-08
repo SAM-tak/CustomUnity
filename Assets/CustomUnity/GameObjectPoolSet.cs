@@ -46,6 +46,40 @@ namespace CustomUnity
             SetUp(null, setUpProcPerObject);
         }
 
+        public async Awaitable SetUpAsync(Transform parent, System.Action<GameObject> setUpProcPerObject = null)
+        {
+            index.Clear();
+            foreach(var i in pools) {
+                await i.SetUpAsync(parent);
+                if(setUpProcPerObject != null) {
+                    foreach(var j in i.AllGameObjects) setUpProcPerObject(j);
+                }
+                index.Add(i.Name, i);
+            }
+        }
+
+        public async Awaitable SetUpAsync(Transform parent, System.Action<GameObjectPool, GameObject> setUpProcPerObject)
+        {
+            index.Clear();
+            foreach(var i in pools) {
+                await i.SetUpAsync(parent);
+                if(setUpProcPerObject != null) {
+                    foreach(var j in i.AllGameObjects) setUpProcPerObject(i, j);
+                }
+                index.Add(i.Name, i);
+            }
+        }
+
+        public async Awaitable SetUpAsync(System.Action<GameObject> setUpProcPerObject = null)
+        {
+            await SetUpAsync(null, setUpProcPerObject);
+        }
+
+        public async Awaitable SetUpAsync(System.Action<GameObjectPool, GameObject> setUpProcPerObject)
+        {
+            await SetUpAsync(null, setUpProcPerObject);
+        }
+
         public void CollectInactives()
         {
             foreach(var i in pools) i.CollectInactives();

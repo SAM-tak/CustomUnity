@@ -45,6 +45,20 @@ namespace CustomUnity
             }
         }
 
+        public async Awaitable SetUpAsync(Transform owner = null)
+        {
+            if(prefab) {
+                _owner = owner;
+                entries = new Entry[quantity];
+                var gos = await UnityEngine.Object.InstantiateAsync(prefab, quantity, owner);
+                for(int i = 0; i < quantity; i++) {
+                    entries[i] = new Entry { go = gos[i], time = 0 };
+                    Log.Info(entries[i].go, $"{i} {entries[i].go.activeSelf}");
+                    entries[i].go.SetActive(false);
+                }
+            }
+        }
+
         public void CollectInactives()
         {
             if(entries != null && _owner) {

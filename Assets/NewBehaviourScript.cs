@@ -40,9 +40,9 @@ namespace YourProjectNamespace
             animationExitEvent?.Invoke();
         }
         
-        void Awake()
+        async void Awake()
         {
-            gameObjectPools?.SetUp();
+            await gameObjectPools?.SetUpAsync();
         }
 
         // Use this for initialization
