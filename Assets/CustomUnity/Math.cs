@@ -433,6 +433,20 @@ namespace CustomUnity
         }
 
         /// <summary>
+        /// ゴムひも補間角度版
+        /// </summary>
+        /// <param name="current">現在値</param>
+        /// <param name="target">目標値</param>
+        /// <param name="halfLife">半減期</param>
+        /// <param name="deltaTime">経過時間</param>
+        /// <returns>次の値</returns>
+        public static float RubberStepAngle(float current, float target, float halflife, float deltaTime)
+        {
+            target = current + Mathf.DeltaAngle(current, target);
+            return RubberStep(current, target, halflife, deltaTime);
+        }
+
+        /// <summary>
         /// ゴムひも補間
         /// </summary>
         /// <param name="current">現在値</param>
@@ -502,12 +516,10 @@ namespace CustomUnity
         /// <returns>次の値</returns>
         public static Quaternion RubberStep(Quaternion current, Quaternion target, float halfLife, float deltaTime)
         {
-            Quaternion delta = target * Quaternion.Inverse(current);
-            if(Quaternion.Angle(delta, Quaternion.identity) > float.Epsilon) {
-                float omega = 1.0f / Mathf.Max(float.Epsilon, halfLife * halfLife);
-                float a = 0.5f * omega * deltaTime * deltaTime;
-                float a2 = a * a;
-                return current * Quaternion.Slerp(Quaternion.identity, delta, Mathf.Clamp01(omega * deltaTime * (1.0f + a + 0.48f * a2 + 0.235f * a2 * a)));
+            float delta = Quaternion.Angle(current, target);
+            if(delta > 0f) {
+                float t = RubberStepAngle(delta, 0.0f, halfLife, deltaTime);
+                return Quaternion.Slerp(current, target, 1.0f - (t / delta));
             }
             return target;
         }
@@ -656,7 +668,7 @@ namespace CustomUnity
             var newPosition = RubberStep(current, target, halfLife, deltaTime);
 
             var newVelocity = newPosition - current;
-            var accel = (newVelocity - currentVelocity);
+            var accel = newVelocity - currentVelocity;
             if(currentVelocity.sqrMagnitude > 0.0001f && accel.sqrMagnitude > 0.0001f) {
                 accel *= Mathf.Lerp(0.1f, 1.0f, (0.5f - 0.5f * Vector3.Dot(currentVelocity.normalized, accel.normalized)) * Mathf.Clamp01(accel.sqrMagnitude / DampCoeff));
                 newVelocity = currentVelocity + accel;
@@ -672,7 +684,7 @@ namespace CustomUnity
             var newPosition = RubberStep(current, target, halfLife, deltaTime);
 
             var newVelocity = newPosition - current;
-            var accel = (newVelocity - currentVelocity);
+            var accel = newVelocity - currentVelocity;
             if(currentVelocity.sqrMagnitude > 0.0001f && accel.sqrMagnitude > 0.0001f) {
                 accel *= Mathf.Lerp(0.1f, 1.0f, (0.5f - 0.5f * Vector3.Dot(currentVelocity.normalized, accel.normalized)) * Mathf.Clamp01(accel.sqrMagnitude / DampCoeff));
                 newVelocity = currentVelocity + accel;
@@ -688,7 +700,7 @@ namespace CustomUnity
             var newPosition = RubberStep(current, target, increaseHalfLife, decreaseHalfLife, deltaTime);
 
             var newVelocity = newPosition - current;
-            var accel = (newVelocity - currentVelocity);
+            var accel = newVelocity - currentVelocity;
             if(currentVelocity.sqrMagnitude > 0.0001f && accel.sqrMagnitude > 0.0001f) {
                 accel *= Mathf.Lerp(0.1f, 1.0f, (0.5f - 0.5f * Vector3.Dot(currentVelocity.normalized, accel.normalized)) * Mathf.Clamp01(accel.sqrMagnitude / DampCoeff));
                 newVelocity = currentVelocity + accel;
