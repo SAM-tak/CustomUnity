@@ -15,7 +15,10 @@ namespace CustomUnity
 
         protected virtual void OnDisable()
         {
-            StopCoroutine(lateFixedUpdate);
+            if(lateFixedUpdate != null) {
+                StopCoroutine(lateFixedUpdate);
+                lateFixedUpdate = null;
+            }
         }
 
         Coroutine lateFixedUpdate;
