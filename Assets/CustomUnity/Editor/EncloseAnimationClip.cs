@@ -23,14 +23,14 @@ namespace CustomUnity
 
             EditorGUILayout.HelpBox("Drop AnimationClip here to enclose.", MessageType.Info, true);
 
-            switch(UnityEngine.Event.current.type) {
+            switch(Event.current.type) {
             case EventType.DragUpdated:
-                if(dropArea.Contains(UnityEngine.Event.current.mousePosition)) {
+                if(dropArea.Contains(Event.current.mousePosition)) {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
                 }
                 break;
             case EventType.DragPerform:
-                if(dropArea.Contains(UnityEngine.Event.current.mousePosition)) {
+                if(dropArea.Contains(Event.current.mousePosition)) {
                     DragAndDrop.AcceptDrag();
                     foreach(var animationClip in DragAndDrop.objectReferences.Cast<AnimationClip>()) {
                         if(clips.Any(item => item.name == animationClip.name) || string.IsNullOrEmpty(animationClip.name)) {
@@ -95,12 +95,12 @@ namespace CustomUnity
                     if(GUILayout.Button(extractIcon, GUILayout.Width(20))) {
                         var cloned = Object.Instantiate(enclosedClip);
                         cloned.name = enclosedClip.name;
-                        var destinationPath = Path.Combine(Path.GetDirectoryName(AssetDatabase.GetAssetPath(target)), cloned.name + ".anim");
+                        var destinationPath = Path.Combine(Path.GetDirectoryName(AssetDatabase.GetAssetPath(target)), $"{cloned.name}.anim");
                         if(File.Exists(destinationPath)) {
-                            EditorUtility.DisplayDialog("Error", "\"" + destinationPath + "\" is already exists.", "OK");
+                            EditorUtility.DisplayDialog("Error", $"\"{destinationPath}\" is already exists.", "OK");
                         }
                         else {
-                            Debug.Log("extract to " + destinationPath);
+                            Debug.Log($"extract to {destinationPath}");
                             AssetDatabase.CreateAsset(cloned, destinationPath);
                             replaceReference(enclosedClip, cloned);
                             Object.DestroyImmediate(enclosedClip, true);
@@ -182,7 +182,7 @@ namespace CustomUnity
     [CustomEditor(typeof(AnimatorController))]
     public class AnimatorControllerCustomInspector : Editor
     {
-        readonly EncloseAnimationClip encloseAnimationClip = new ();
+        readonly EncloseAnimationClip encloseAnimationClip = new();
 
         public override void OnInspectorGUI()
         {
