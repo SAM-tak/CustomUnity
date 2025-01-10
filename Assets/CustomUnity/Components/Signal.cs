@@ -8,7 +8,7 @@ namespace CustomUnity
     [AddComponentMenu("CustomUnity/Signal/Signal")]
     public class Signal : MonoBehaviour
     {
-        public SumAllSignalsEvent @event;
+        public SumAllSignalsSlot @event;
 
         void Start()
         {

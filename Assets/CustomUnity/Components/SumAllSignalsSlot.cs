@@ -8,8 +8,8 @@ namespace CustomUnity
     /// <summary>
     /// Fire unityevent after all recognized signals fired.
     /// </summary>
-    [AddComponentMenu("CustomUnity/Signal/SumAllSignalsEvent")]
-    public class SumAllSignalsEvent : MonoBehaviour
+    [AddComponentMenu("CustomUnity/Signal/SumAllSignalsSlot")]
+    public class SumAllSignalsSlot : MonoBehaviour
     {
         public Animator[] animators;
         public UnityEvent @event;

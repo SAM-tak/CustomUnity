@@ -25,8 +25,12 @@ namespace CustomUnity
 
             if(Application.isPlaying) {
                 var tableContent = target as TableContent;
-                if(tableContent.DataSource == null) EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
-                else EditorGUILayout.HelpBox($"DataSource ({tableContent.DataSource.GetType()})\nLength : {tableContent.DataSource.TotalCount}", MessageType.Info);
+                if(tableContent.DataSource == null) {
+                    EditorGUILayout.HelpBox("DataSource is null", MessageType.Warning);
+                }
+                else {
+                    EditorGUILayout.HelpBox($"DataSource ({tableContent.DataSource.GetType()})\nLength : {tableContent.DataSource.TotalCount}", MessageType.Info);
+                } 
                 if(tableContent.MaxCellsRequired > tableContent.MaxCells) {
                     EditorGUILayout.HelpBox($"Short of Cell Object : Required {tableContent.MaxCellsRequired} / Pooled {tableContent.MaxCells}", MessageType.Warning);
                 }

@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace CustomUnity
 {
-    [CustomEditor(typeof(SumAllSignalsEvent))]
+    [CustomEditor(typeof(SumAllSignalsSlot))]
     //[CanEditMultipleObjects]
     public class SumAllSignalsEventInspector : Editor
     {
@@ -29,7 +29,7 @@ namespace CustomUnity
             // Apply changes to the serializedProperty - always do this in the end of OnInspectorGUI.
             serializedObject.ApplyModifiedProperties();
             
-            var signals = ((SumAllSignalsEvent)target).signals;
+            var signals = ((SumAllSignalsSlot)target).signals;
             EditorGUILayout.Space();
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.LabelField("Connected Signals");

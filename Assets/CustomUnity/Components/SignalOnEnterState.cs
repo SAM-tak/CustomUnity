@@ -14,8 +14,8 @@ namespace CustomUnity
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if(layer < 0 || layerIndex == layer) {
-                var sumAllSignalsEvent = animator.GetComponent<SumAllSignalsEvent>();
-                if(sumAllSignalsEvent) sumAllSignalsEvent.EmitSignal(this);
+                var sumAllSignalsSlot = animator.GetComponent<SumAllSignalsSlot>();
+                if(sumAllSignalsSlot) sumAllSignalsSlot.EmitSignal(this);
             }
         }
     }

@@ -9,8 +9,8 @@ namespace CustomUnity
     /// <remarks>
     /// for AnimationEvent.
     /// </remarks>
-    [AddComponentMenu("CustomUnity/Event")]
-    public class Event : MonoBehaviour
+    [AddComponentMenu("CustomUnity/Slot")]
+    public class Slot : MonoBehaviour
     {
         public UnityEvent @event;
         

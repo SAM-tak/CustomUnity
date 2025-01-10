@@ -8,7 +8,7 @@ namespace CustomUnity
     [AddComponentMenu("CustomUnity/Signal/SignalParticleSystemStopped"), RequireComponent(typeof(ParticleSystem))]
     public class SignalParticleSystemStopped : MonoBehaviour
     {
-        public SumAllSignalsEvent @event;
+        public SumAllSignalsSlot @event;
 
         void OnValidate()
         {

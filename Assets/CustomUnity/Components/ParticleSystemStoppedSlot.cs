@@ -6,8 +6,8 @@ namespace CustomUnity
     /// <summary>
     /// unity event holder for OnParticleSystemStopped event.
     /// </summary>
-    [AddComponentMenu("CustomUnity/ParticleSystemStoppedEvent")]
-    public class ParticleSystemStoppedEvent : MonoBehaviour
+    [AddComponentMenu("CustomUnity/ParticleSystemStoppedSlot")]
+    public class ParticleSystemStoppedSlot : MonoBehaviour
     {
         public UnityEvent @event;
 

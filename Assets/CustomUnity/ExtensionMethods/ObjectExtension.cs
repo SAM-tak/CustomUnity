@@ -23,24 +23,24 @@ namespace CustomUnity
 
         public static string GetMemberName(this Object obj, string memberName, int id = 0)
         {
-            if(!Application.isPlaying) return obj.name + "." + memberName;
+            if(!Application.isPlaying) return $"{obj.name}.{memberName}";
             var objname = obj.GetName();
             memberCache ??= new Dictionary<Object, Dictionary<string, Dictionary<int, string>>>(256);
             if(!memberCache.ContainsKey(obj)) {
                 memberCache[obj] = new Dictionary<string, Dictionary<int, string>>();
                 var l = new Dictionary<int, string> {
-                    { id, id == 0 ? objname + "." + memberName : objname + "." + memberName + " " + id }
+                    { id, id == 0 ? $"{objname}.{memberName}" : $"{objname}.{memberName} {id}" }
                 };
                 memberCache[obj].Add(memberName, l);
             }
             else if(!memberCache[obj].ContainsKey(memberName)) {
                 var l = new Dictionary<int, string> {
-                    { id, id == 0 ? objname + "." + memberName : objname + "." + memberName + " " + id }
+                    { id, id == 0 ? $"{objname}.{memberName}" : $"{objname}.{memberName} {id}" }
                 };
                 memberCache[obj].Add(memberName, l);
             }
             else if(!memberCache[obj][memberName].ContainsKey(id)) {
-                memberCache[obj][memberName][id] = id == 0 ? objname + "." + memberName : objname + "." + memberName + " " + id;
+                memberCache[obj][memberName][id] = id == 0 ? $"{objname}.{memberName}" : $"{objname}.{memberName} {id}";
             }
             return memberCache[obj][memberName][id];
         }

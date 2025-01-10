@@ -11,7 +11,7 @@ namespace CustomUnity
             int index = 0;
             var ret = basename;
             foreach(var i in go.SiblingGameObjects().OrderBy(x => x.name)) {
-                if(i.name == ret) ret = string.Format("{0} ({1})", basename, ++index);
+                if(i.name == ret) ret = $"{basename} ({++index})";
             }
             go.name = ret;
         }

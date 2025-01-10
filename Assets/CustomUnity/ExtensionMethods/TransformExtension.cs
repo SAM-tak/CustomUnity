@@ -6,17 +6,17 @@ namespace CustomUnity
 {
     public static class TransformExtension
     {
-        static System.Text.StringBuilder work = null;
+        static System.Text.StringBuilder _work = null;
 
         public static string GetPath(this Transform transform, Transform root = null)
         {
-            if(work == null) work = new System.Text.StringBuilder(256);
-            work.Length = 0;
+            _work ??= new System.Text.StringBuilder(256);
+            _work.Length = 0;
             for(var i = transform; i != null && i != root; i = i.parent) {
-                if(i != transform) work.Insert(0, "/");
-                work.Insert(0, i.GetName());
+                if(i != transform) _work.Insert(0, "/");
+                _work.Insert(0, i.GetName());
             }
-            return work.ToString();
+            return _work.ToString();
         }
 
         public static Transform FindRecursive(this Transform transform, string name)

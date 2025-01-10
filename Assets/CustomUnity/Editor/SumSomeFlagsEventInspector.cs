@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace CustomUnity
 {
-    [CustomEditor(typeof(SumSomeFlagsEvent))]
+    [CustomEditor(typeof(SumSomeFlagsSlot))]
     [CanEditMultipleObjects]
     public class SumSomeFlagsEventInspector : Editor
     {
@@ -29,7 +29,7 @@ namespace CustomUnity
             serializedObject.ApplyModifiedProperties();
 
             EditorGUILayout.Space();
-            EditorGUILayout.EnumFlagsField("Current Flags", ((SumSomeFlagsEvent)target).CurrentFlags, CustomStyle);
+            EditorGUILayout.EnumFlagsField("Current Flags", ((SumSomeFlagsSlot)target).CurrentFlags, CustomStyle);
         }
     }
 }

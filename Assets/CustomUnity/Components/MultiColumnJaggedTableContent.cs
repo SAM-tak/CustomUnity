@@ -49,7 +49,7 @@ namespace CustomUnity
             public override readonly int GetHashCode() => HashCode.Combine(index, rect);
         }
 
-        List<LookAheadedCellSize> LookAheadedCellSizes { get; } = new List<LookAheadedCellSize>(10);
+        List<LookAheadedCellSize> LookAheadedCellSizes { get; } = new(10);
 
         protected override void Awake()
         {

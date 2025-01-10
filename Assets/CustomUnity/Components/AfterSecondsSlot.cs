@@ -6,8 +6,8 @@ namespace CustomUnity
     /// <summary>
     /// Fire unity event after specified seconds later
     /// </summary>
-    [AddComponentMenu("CustomUnity/AfterSecondsEvent")]
-    public class AfterSecondsEvent : LateFixedUpdateBehaviour
+    [AddComponentMenu("CustomUnity/AfterSecondsSlot")]
+    public class AfterSecondsSlot : LateFixedUpdateBehaviour
     {
         public float time;
         public bool unsacled;

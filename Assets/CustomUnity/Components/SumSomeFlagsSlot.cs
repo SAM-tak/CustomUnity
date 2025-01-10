@@ -6,8 +6,8 @@ namespace CustomUnity
     /// <summary>
     /// Fire unityevent after specified flags on.
     /// </summary>
-    [AddComponentMenu("CustomUnity/Flag/SumSomeFlagsEvent")]
-    public class SumSomeFlagsEvent : MonoBehaviour
+    [AddComponentMenu("CustomUnity/Flag/SumSomeFlagsSlot")]
+    public class SumSomeFlagsSlot : MonoBehaviour
     {
         [System.Flags]
         public enum Flags
