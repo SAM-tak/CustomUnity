@@ -1,5 +1,12 @@
-using Bogus;
+#if UNITY_EDITOR
+#define USE_BOGUS
+#endif
 using UnityEngine;
+#if USE_BOGUS
+using Bogus;
+#else
+using System.Text;
+#endif
 
 namespace YourProjectNamespace
 {
@@ -15,14 +22,17 @@ namespace YourProjectNamespace
             LogInfo("Test");
         }
 
-        event System.Action test;
-
+#if USE_BOGUS
+        event System.Action TestEvent;
+#else
+        event global::System.Action TestEvent;
+#endif
         private void Awake()
         {
-            test += Test;
-            test();
-            test -= Test;
-            LogInfo($"test == null {test == null}");
+            TestEvent += Test;
+            TestEvent();
+            TestEvent -= Test;
+            LogInfo($"test == null {TestEvent == null}");
         }
 
         public void AddLog()
@@ -45,18 +55,61 @@ namespace YourProjectNamespace
             }
         }
 
+#if !USE_BOGUS
+        static public string GenRandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringBuilder = new StringBuilder();
+            for(int i = 0; i < length; i++) {
+                int index = Random.Range(0, chars.Length);
+                stringBuilder.Append(chars[index]);
+            }
+            return stringBuilder.ToString();
+        }
+
+        class Lorem
+        {
+            public string Sentence(int length) => GenRandomString(length);
+        }
+
+        class Person
+        {
+            public Person()
+            {
+                FirstName = GenRandomString(Random.Range(3, 8));
+            }
+
+            public string FirstName { get; set; }
+        }
+
+        class System
+        {
+            public global::System.Exception Exception() => new global::System.SystemException(GenRandomString(12));
+        }
+
+        class Faker
+        {
+            public Faker(string _)
+            {
+            }
+
+            public Lorem Lorem { get; set; } = new();
+            public System System { get; set; } = new();
+        }
+#endif
+
         static readonly Faker[] fakers = {
-            new Faker("en"),
-            new Faker("fr"),
-            new Faker("de"),
-            new Faker("it"),
-            new Faker("es"),
-            new Faker("ja"),
-            new Faker("zh_CN"),
-            new Faker("zh_TW"),
-            new Faker("ko"),
-            new Faker("af_ZA"),
-            new Faker("ar"),
+            new("en"),
+            new("fr"),
+            new("de"),
+            new("it"),
+            new("es"),
+            new("ja"),
+            new("zh_CN"),
+            new("zh_TW"),
+            new("ko"),
+            new("af_ZA"),
+            new("ar"),
         };
 
         public void AddRandomLog()

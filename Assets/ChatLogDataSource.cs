@@ -1,10 +1,17 @@
+#if UNITY_EDITOR
+#define USE_BOGUS
+#endif
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using CustomUnity;
-using Bogus;
 using Random = UnityEngine.Random;
+#if USE_BOGUS
+using Bogus;
+#else
+using System.Text;
+#endif
 
 namespace YourProjectNamespace
 {
@@ -17,6 +24,43 @@ namespace YourProjectNamespace
             public int userId;
             public string message;
         }
+
+#if !USE_BOGUS
+        static public string GenRandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringBuilder = new StringBuilder();
+            for(int i = 0; i < length; i++) {
+                int index = Random.Range(0, chars.Length);
+                stringBuilder.Append(chars[index]);
+            }
+            return stringBuilder.ToString();
+        }
+
+        class Lorem
+        {
+            public string Sentence(int length) => GenRandomString(length);
+        }
+
+        class Person
+        {
+            public Person()
+            {
+                FirstName = GenRandomString(Random.Range(3, 8));
+            }
+
+            public string FirstName { get; set; }
+        }
+
+        class Faker {
+            public Faker(string _)
+            {
+            }
+
+            public Lorem Lorem { get; set; } = new();
+            public Person Person { get; set; } = new();
+        }
+#endif
 
         struct User
         {
@@ -51,22 +95,23 @@ namespace YourProjectNamespace
         static readonly Lazy<LogData> logRecords = new(() => new() { texts = new(256), logs = new(256) });
         static event Action OnLogCleared;
 
-        static readonly Faker[] fakers = {
-            new Faker("en"),
-            new Faker("fr"),
-            new Faker("de"),
-            new Faker("it"),
-            new Faker("es"),
-            new Faker("ja"),
-            new Faker("zh_CN"),
-            new Faker("zh_TW"),
-            new Faker("ko"),
-            new Faker("af_ZA"),
-            new Faker("ar"),
-        };
-
         const int userCount = 20;
 
+        static readonly Faker[] fakers = {
+            new("en"),
+            new("fr"),
+            new("de"),
+            new("it"),
+            new("es"),
+            new("ja"),
+            new("zh_CN"),
+            new("zh_TW"),
+            new("ko"),
+            new("af_ZA"),
+            new("ar"),
+        };
+
+#if USE_BOGUS
         public static void SetUpDummyUsers()
         {
             for(int i = 2; i < userCount; ++i) {
@@ -85,6 +130,26 @@ namespace YourProjectNamespace
                 message = userAccounts[userId].faker.Lorem.Sentence(Random.Range(3, Mathf.Max(3, maxSentence)))
             });
         }
+#else
+        public static void SetUpDummyUsers()
+        {
+            for(int i = 2; i < userCount; ++i) {
+                var faker = fakers[Random.Range(0, fakers.Length)];
+                var person = faker.Person;
+                userAccounts[i] = new() { name = person.FirstName, icon = null, faker = faker };
+            }
+        }
+
+        public static void AddRandomChat(int maxSentence)
+        {
+            var userId = Random.Range(1, userCount);
+            logRecords.Value.Add(new() {
+                dateTime = DateTime.Now,
+                userId = userId,
+                message = userAccounts[userId].faker.Lorem.Sentence(Random.Range(3, Mathf.Max(3, maxSentence)))
+            });
+        }
+#endif
 
         public static void Say(string message)
         {
