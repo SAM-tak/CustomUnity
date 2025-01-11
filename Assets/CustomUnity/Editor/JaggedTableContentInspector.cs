@@ -18,9 +18,25 @@ namespace CustomUnity
         {
             if(!Application.isPlaying) {
                 var tableContent = target as JaggedTableContent;
-                var layoutGroup = tableContent.GetComponent<LayoutGroup>();
-                if(layoutGroup != null && layoutGroup.enabled) {
+                if(tableContent.TryGetComponent<LayoutGroup>(out var layoutGroup) && layoutGroup.enabled) {
                     EditorGUILayout.HelpBox("Layout Group Component will corrupt table view or cause of glitch. Please disable it before save a prefab/scene or before play.", MessageType.Warning);
+                }
+                for(int i = 0; i < tableContent.transform.childCount; ++i) {
+                    var c = tableContent.transform.GetChild(i);
+                    if(c.TryGetComponent<RectTransform>(out var crt)) {
+                        if(tableContent.orientaion == TableOrientaion.Horizontal) {
+                            if(!Mathf.Approximately(crt.pivot.x, 0.5f)) {
+                                EditorGUILayout.HelpBox("This component assumes that the pivot X of the cells is 0.5 when orientation is horizontal.\nThere are cells with a pivot X that is not 0.5.", MessageType.Warning);
+                                break;
+                            }
+                        }
+                        else {
+                            if(!Mathf.Approximately(crt.pivot.y, 0.5f)) {
+                                EditorGUILayout.HelpBox("This component assumes that the pivot Y of the cells is 0.5 when orientation is vertical.\nThere are cells with a pivot Y that is not 0.5.", MessageType.Warning);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             // Update the serializedProperty - always do this in the beginning of OnInspectorGUI.
