@@ -17,11 +17,11 @@ namespace CustomUnity
         [HideInInspector]
         public int frame = 0;
 
-        string[] clipNames = null;
+        string[] _clipNames = null;
         public string[] ClipNames {
             get {
-                if(clipNames == null && clips != null) clipNames = clips.Select(x => x.name).ToArray();
-                return clipNames;
+                if(_clipNames == null && clips != null) _clipNames = clips.Select(x => x.name).ToArray();
+                return _clipNames;
             }
         }
 
@@ -35,7 +35,7 @@ namespace CustomUnity
         {
             if(Application.isPlaying) return;
             clips = null;
-            clipNames = null;
+            _clipNames = null;
         }
 
         // Update is called once per frame

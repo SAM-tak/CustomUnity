@@ -9,31 +9,31 @@ namespace CustomUnity
     [RequireComponent(typeof(ScrollRect))]
     public class AutoScrollToLastTableCell : ScrollToItemBase
     {
-        TableContentBase tableContent;
+        TableContentBase _tableContent;
 
-        int lastTotalCount;
-        float lastScrollAmount;
-        int frameCountAfterChange;
-        int frameCountManualScroll;
-        const int maxFrameCountManualScroll = 2;
-        bool IsAutoScrolling => frameCountManualScroll < maxFrameCountManualScroll;
+        int _lastTotalCount;
+        float _lastScrollAmount;
+        int _frameCountAfterChange;
+        int _frameCountManualScroll;
+        const int MaxFrameCountManualScroll = 2;
+        bool IsAutoScrolling => _frameCountManualScroll < MaxFrameCountManualScroll;
 
         protected override void Awake()
         {
             base.Awake();
-            tableContent = GetComponentInChildren<TableContentBase>();
+            _tableContent = GetComponentInChildren<TableContentBase>();
         }
 
         protected override void ScrollToTarget()
         {
-            var totalCount = tableContent.DataSourceTotalCount;
+            var totalCount = _tableContent.DataSourceTotalCount;
             // maxFrameCountManualScroll間、身に覚えのない座標変更があったのなら、UIによる干渉だと判断して自動スクロールをやめる
-            if(totalCount > 0 && lastTotalCount == totalCount && MayMoveByOther) {
-                if(frameCountManualScroll < maxFrameCountManualScroll) ++frameCountManualScroll;
+            if(totalCount > 0 && _lastTotalCount == totalCount && MayMoveByOther) {
+                if(_frameCountManualScroll < MaxFrameCountManualScroll) ++_frameCountManualScroll;
             }
             else if(totalCount == 0 || targetItem) {
                 // 前回フレームの時点で最終セルが画面外なら自動スクロールを再開させないよう、targetItemが非nullかチェックする
-                frameCountManualScroll = 0;
+                _frameCountManualScroll = 0;
             }
 
             //if(totalCount - lastTotalCount >= 100) {
@@ -42,7 +42,7 @@ namespace CustomUnity
             //    LogDataSource.StartLogging();
             //}
 
-            targetItem = totalCount > 0 ? tableContent.GetActiveCell(totalCount - 1) : null;
+            targetItem = totalCount > 0 ? _tableContent.GetActiveCell(totalCount - 1) : null;
 
             if(IsAutoScrolling) {
                 if(targetItem) base.ScrollToTarget();
@@ -50,18 +50,18 @@ namespace CustomUnity
                     //LogDataSource.StopLogging();
                     //Log.Info($"frameCountManualScroll = {frameCountManualScroll}");
                     //LogDataSource.StartLogging();
-                    if(lastTotalCount != totalCount) frameCountAfterChange = 0;
-                    if(frameCountAfterChange % 5 == 0) lastScrollAmount = tableContent.GetScrollAmountForBottomOfLastItem();
-                    if(frameCountAfterChange < int.MaxValue) ++frameCountAfterChange;
+                    if(_lastTotalCount != totalCount) _frameCountAfterChange = 0;
+                    if(_frameCountAfterChange % 5 == 0) _lastScrollAmount = _tableContent.GetScrollAmountForBottomOfLastItem();
+                    if(_frameCountAfterChange < int.MaxValue) ++_frameCountAfterChange;
                     prevScrollPosition = ScrollRect.content.localPosition = Math.RubberStep(
                         ScrollRect.content.localPosition,
-                        tableContent.GetPositionFromScrollAmount(lastScrollAmount),
+                        _tableContent.GetPositionFromScrollAmount(_lastScrollAmount),
                         halfLife,
                         DeltaTime
                     );
                 }
             }
-            lastTotalCount = totalCount;
+            _lastTotalCount = totalCount;
         }
     }
 }

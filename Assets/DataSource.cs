@@ -36,48 +36,48 @@ namespace YourProjectNamespace
 
         public int TotalCount => (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
 
-        bool prevAppendToFront;
-        bool prevAppendToBack;
-        JaggedTableContent tableContent;
+        bool _prevAppendToFront;
+        bool _prevAppendToBack;
+        JaggedTableContent _tableContent;
 
         void JaggedTableContent.IDataSource.OnPreUpdate()
         {
-            if(prevAppendToFront != appendToFront || prevAppendToBack != appendToBack) tableContent.Refresh();
+            if(_prevAppendToFront != appendToFront || _prevAppendToBack != appendToBack) _tableContent.Refresh();
 
-            if(prevAppendToFront != appendToFront) {
+            if(_prevAppendToFront != appendToFront) {
                 var moveSize = dataSource2.Sum(x => x.size);
-                var pos = tableContent.transform.localPosition;
+                var pos = _tableContent.transform.localPosition;
                 if(appendToFront) {
-                    switch(tableContent.orientaion) {
-                    case Orientaion.Vertical:
+                    switch(_tableContent.orientaion) {
+                    case TableOrientaion.Vertical:
                         pos.y += moveSize;
                         break;
-                    case Orientaion.Horizontal:
+                    case TableOrientaion.Horizontal:
                         pos.x -= moveSize;
                         break;
                     }
                 }
                 else {
-                    switch(tableContent.orientaion) {
-                    case Orientaion.Vertical:
+                    switch(_tableContent.orientaion) {
+                    case TableOrientaion.Vertical:
                         pos.y -= moveSize;
                         break;
-                    case Orientaion.Horizontal:
+                    case TableOrientaion.Horizontal:
                         pos.x += moveSize;
                         break;
                     }
                 }
-                tableContent.transform.localPosition = pos;
+                _tableContent.transform.localPosition = pos;
             }
         }
         
         float JaggedTableContent.IDataSource.CellSize(int index) => GetCellData(index).size;
 
-        bool needsUpdateNavigation;
+        bool _needsUpdateNavigation;
 
         void JaggedTableContent.IDataSource.SetUpCell(int index, GameObject cell)
         {
-            needsUpdateNavigation = true;
+            _needsUpdateNavigation = true;
             var data = GetCellData(index);
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
             cell.transform.Find("Button/Text").GetComponent<Text>().text = data.buttonTitle;
@@ -85,7 +85,7 @@ namespace YourProjectNamespace
 
         void JaggedTableContent.IDataSource.CellDeactivated(GameObject cell)
         {
-            needsUpdateNavigation = true;
+            _needsUpdateNavigation = true;
         }
 
 #if UNITY_EDITOR
@@ -130,29 +130,29 @@ namespace YourProjectNamespace
 
         void Awake()
         {
-            tableContent = GetComponent<JaggedTableContent>();
+            _tableContent = GetComponent<JaggedTableContent>();
         }
 
         void Start()
         {
-            prevAppendToFront = appendToFront;
-            prevAppendToBack = appendToBack;
+            _prevAppendToFront = appendToFront;
+            _prevAppendToBack = appendToBack;
         }
 
         void LateUpdate()
         {
-            if(needsUpdateNavigation) {
-                needsUpdateNavigation = false;
+            if(_needsUpdateNavigation) {
+                _needsUpdateNavigation = false;
                 var children = transform.EnumChildren()
                     .Where(x => x.gameObject.activeInHierarchy)
-                    .OrderByDescending(x => tableContent.orientaion == Orientaion.Vertical ? x.position.y : x.position.x)
+                    .OrderByDescending(x => _tableContent.orientaion == TableOrientaion.Vertical ? x.position.y : x.position.x)
                     .ToArray();
                 for(int i = 1; i < children.Length; i++) {
                     var prevButton = children[i - 1].GetComponentInChildren<Button>(true);
                     var button = children[i].GetComponentInChildren<Button>(true);
 
                     var navigation = prevButton.navigation;
-                    if(tableContent.orientaion == Orientaion.Vertical) {
+                    if(_tableContent.orientaion == TableOrientaion.Vertical) {
                         if(i == 1) navigation.selectOnUp = null;
                         navigation.selectOnDown = button;
                     }
@@ -163,7 +163,7 @@ namespace YourProjectNamespace
                     prevButton.navigation = navigation;
 
                     navigation = button.navigation;
-                    if(tableContent.orientaion == Orientaion.Vertical) {
+                    if(_tableContent.orientaion == TableOrientaion.Vertical) {
                         navigation.selectOnUp = prevButton;
                         if(i == children.Length - 1) navigation.selectOnDown = null;
                     }
@@ -174,8 +174,8 @@ namespace YourProjectNamespace
                     button.navigation = navigation;
                 }
             }
-            prevAppendToFront = appendToFront;
-            prevAppendToBack = appendToBack;
+            _prevAppendToFront = appendToFront;
+            _prevAppendToBack = appendToBack;
         }
     }
 }

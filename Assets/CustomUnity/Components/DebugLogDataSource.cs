@@ -75,18 +75,18 @@ namespace CustomUnity
             }
         }
 
-        static readonly Lazy<LogData> logRecords = new(() => new() { texts = new(256), firstUseLogIndex = new(), logs = new(256), filtered = new(256) });
+        static readonly Lazy<LogData> _logData = new(() => new() { texts = new(256), firstUseLogIndex = new(), logs = new(256), filtered = new(256) });
         static event Action OnLogAdded;
         static event Action OnLogCleared;
-        static bool isStarted;
+        static bool _isStarted;
 
         [Conditional("DEVELOPMENT_BUILD")]
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void StartLogging()
         {
-            lock(logRecords) {
-                if(!isStarted) {
-                    isStarted = true;
+            lock(_logData) {
+                if(!_isStarted) {
+                    _isStarted = true;
                     Application.logMessageReceivedThreaded += LogCallback;
                     Application.quitting += StopLogging;
                 }
@@ -95,24 +95,24 @@ namespace CustomUnity
 
         public static void StopLogging()
         {
-            lock(logRecords) {
+            lock(_logData) {
                 Application.logMessageReceivedThreaded -= LogCallback;
                 Application.quitting -= StopLogging;
-                isStarted = false;
+                _isStarted = false;
             }
         }
 
         public static void ClearLog()
         {
-            if(logRecords.IsValueCreated) {
-                logRecords.Value.Clear();
+            if(_logData.IsValueCreated) {
+                _logData.Value.Clear();
                 OnLogCleared();
             }
         }
 
         static void LogCallback(string message, string stackTrace, LogType type)
         {
-            logRecords.Value.Add(message, stackTrace, type);
+            _logData.Value.Add(message, stackTrace, type);
             OnLogAdded?.Invoke();
         }
 
@@ -123,34 +123,34 @@ namespace CustomUnity
 
         bool _dirty = true;
         bool _includeInfo = true;
-        public bool IncludeInfo { get => _includeInfo; set { _dirty = true; _includeInfo = value; } }
+        public bool IncludeInfo { get => _includeInfo; set { if(_includeInfo != value) _dirty = true; _includeInfo = value; } }
         bool _includeWarning = true;
-        public bool IncludeWarning { get => _includeWarning; set { _dirty = true; _includeWarning = value; } }
+        public bool IncludeWarning { get => _includeWarning; set { if(_includeWarning != value) _dirty = true; _includeWarning = value; } }
         bool _includeError = true;
-        public bool IncludeError { get => _includeError; set { _dirty = true; _includeError = value; } }
+        public bool IncludeError { get => _includeError; set { if(_includeError != value) _dirty = true; _includeError = value; } }
         bool _collapse = false;
-        public bool Collapse { get => _collapse; set { _dirty = true; _collapse = value; } }
+        public bool Collapse { get => _collapse; set { if(_collapse != value) _dirty = true; _collapse = value; } }
         string _filterString = string.Empty;
-        public string FilterString { get => _filterString; set { _dirty = true; _filterString = value; } }
+        public string FilterString { get => _filterString; set { if(_filterString != value) _dirty = true; _filterString = value; } }
 
-        public int LogCount => logRecords.IsValueCreated ? logRecords.Value.logs.Count : 0;
+        public int LogCount => _logData.IsValueCreated ? _logData.Value.logs.Count : 0;
 
         bool Includes(Log log) => (!Collapse || log.count > 0)
-            && (string.IsNullOrEmpty(FilterString) || log.message.Contains(FilterString))
             && ((IncludeInfo && log.type == LogType.Log)
              || (IncludeWarning && log.type == LogType.Warning)
-             || (IncludeError && (log.type == LogType.Error || log.type == LogType.Assert || log.type == LogType.Exception)));
+             || (IncludeError && (log.type == LogType.Error || log.type == LogType.Assert || log.type == LogType.Exception)))
+            && (string.IsNullOrEmpty(FilterString) || log.message.Contains(FilterString));
 
         int _totalCount = 0;
         public int TotalCount {
             get {
-                if(_dirty && logRecords.IsValueCreated) {
-                    logRecords.Value.filtered.Clear();
-                    logRecords.Value.filtered.AddRange(logRecords.Value.logs.Where(i => Includes(i)));
-                    _totalCount = logRecords.Value.filtered.Count;
-                    InfoCount = logRecords.Value.logs.Count(x => x.type == LogType.Log);
-                    WarnningCount = logRecords.Value.logs.Count(x => x.type == LogType.Warning);
-                    ErrorCount = logRecords.Value.logs.Count(x => x.type == LogType.Error || x.type == LogType.Assert || x.type == LogType.Exception);
+                if(_dirty && _logData.IsValueCreated) {
+                    _logData.Value.filtered.Clear();
+                    _logData.Value.filtered.AddRange(_logData.Value.logs.Where(i => Includes(i)));
+                    _totalCount = _logData.Value.filtered.Count;
+                    InfoCount = _logData.Value.logs.Count(x => x.type == LogType.Log);
+                    WarnningCount = _logData.Value.logs.Count(x => x.type == LogType.Warning);
+                    ErrorCount = _logData.Value.logs.Count(x => x.type == LogType.Error || x.type == LogType.Assert || x.type == LogType.Exception);
                     _dirty = false;
                 }
                 return _totalCount;
@@ -160,61 +160,61 @@ namespace CustomUnity
         public int WarnningCount { get; private set; }
         public int ErrorCount { get; private set; }
 
-        int prevLogCount = 0;
-        int prevTotalCount = 0;
+        int _prevLogCount = 0;
+        int _prevTotalCount = 0;
 
-        JaggedTableContent tableContent;
+        JaggedTableContent _tableContent;
 
         void JaggedTableContent.IDataSource.OnPreUpdate()
         {
             bool needsRefresh = false;
-            if(prevLogCount != LogCount) {
-                prevLogCount = LogCount;
+            if(_prevLogCount != LogCount) {
+                _prevLogCount = LogCount;
                 needsRefresh = true;
             }
-            if(prevTotalCount != TotalCount) {
-                prevTotalCount = TotalCount;
+            if(_prevTotalCount != TotalCount) {
+                _prevTotalCount = TotalCount;
                 needsRefresh = true;
             }
             if(needsRefresh) {
-                tableContent.Refresh();
+                _tableContent.Refresh();
             }
         }
 
         float EstimateHeight(int lineCount)
         {
-            return Mathf.Max(minHeight, lineCount * (fontSize + 2) + Mathf.Max(0, lineCount - 1) * lineSpacing + mergin * 2f);
+            return Mathf.Max(_minHeight, lineCount * (_fontSize + 2) + Mathf.Max(0, lineCount - 1) * _lineSpacing + _mergin * 2f);
         }
 
-        readonly Dictionary<int, float> preferredHeightCache = new(256);
+        readonly Dictionary<int, float> _preferredHeightCache = new(256);
 
         public void ClearPreferredHeightCache()
         {
-            preferredHeightCache.Clear();
+            _preferredHeightCache.Clear();
         }
 
         float JaggedTableContent.IDataSource.CellSize(int index)
         {
-            if(index < 0 || logRecords.Value.filtered.Count <= index) return minHeight;
+            if(index < 0 || _logData.Value.filtered.Count <= index) return _minHeight;
 
-            var log = logRecords.Value.filtered.ElementAt(index);
+            var log = _logData.Value.filtered.ElementAt(index);
 
-            var trueIndex = logRecords.Value.logs.IndexOf(log);
+            var trueIndex = _logData.Value.logs.IndexOf(log);
 
-            if(preferredHeightCache.ContainsKey(trueIndex)) return preferredHeightCache[trueIndex];
+            if(_preferredHeightCache.ContainsKey(trueIndex)) return _preferredHeightCache[trueIndex];
 
-            var cell = tableContent.GetActiveCell(index);
+            var cell = _tableContent.GetActiveCell(index);
             if(cell && cell.activeInHierarchy) {
                 var text = cell.transform.Find("Message").GetComponent<Text>();
                 if(text.text.Equals(log.message)) {
-                    var preferredHeight = Mathf.Max(minHeight, text.preferredHeight + mergin * 2f);
-                    preferredHeightCache[trueIndex] = preferredHeight;
-                    tableContent.NeedsRelayout();
+                    var preferredHeight = Mathf.Max(_minHeight, text.preferredHeight + _mergin * 2f);
+                    _preferredHeightCache[trueIndex] = preferredHeight;
+                    _tableContent.NeedsRelayout();
                     return preferredHeight;
                 }
             }
 
-            var lineCount = wrapColumnCount > 0 ? log.message.LineCount(wrapColumnCount) : log.message.LineCount();
+            var lineCount = _wrapColumnCount > 0 ? log.message.LineCount(_wrapColumnCount) : log.message.LineCount();
             //StopLogging();
             //LogInfo($"lineCount = {lineCount} fontSize = {fontSize} lineSpacing = {lineSpacing} mergin = {mergin} height = {EstimateHeight(lineCount)}");
             //StartLogging();
@@ -223,7 +223,7 @@ namespace CustomUnity
 
         void JaggedTableContent.IDataSource.SetUpCell(int index, GameObject cell)
         {
-            var data = logRecords.Value.filtered.ElementAt(index);
+            var data = _logData.Value.filtered.ElementAt(index);
             if(cell.TryGetComponent<DebugLogLine>(out var logLine)) {
                 logLine.SetUp(data, Collapse, index % 2 == 0);
             }
@@ -233,15 +233,15 @@ namespace CustomUnity
         {
         }
 
-        float minHeight;
-        int wrapColumnCount;
-        int fontSize;
-        float lineSpacing;
-        float mergin;
+        float _minHeight;
+        int _wrapColumnCount;
+        int _fontSize;
+        float _lineSpacing;
+        float _mergin;
 
         void Awake()
         {
-            tableContent = GetComponent<JaggedTableContent>();
+            _tableContent = GetComponent<JaggedTableContent>();
             StartLogging();
             OnLogAdded += SetDirty;
             OnLogCleared += SetDirty;
@@ -249,17 +249,21 @@ namespace CustomUnity
 
             var firstChild = transform.GetChild(0);
 
-            minHeight = tableContent.orientaion  == Orientaion.Horizontal
-                ? firstChild.GetComponent<RectTransform>().rect.width
-                : firstChild.GetComponent<RectTransform>().rect.height;
+            _minHeight = _tableContent.orientaion switch {
+                TableOrientaion.Horizontal => firstChild.GetComponent<RectTransform>().rect.width,
+                TableOrientaion.Vertical => firstChild.GetComponent<RectTransform>().rect.height,
+                _ => 0f
+            };
 
             var text = firstChild.Find("Message").GetComponent<Text>();
-            mergin = tableContent.orientaion == Orientaion.Horizontal
-                ? Mathf.Abs(text.rectTransform.sizeDelta.x / 2)
-                : Mathf.Abs(text.rectTransform.sizeDelta.y / 2);
-            fontSize = text.fontSize;
-            lineSpacing = text.lineSpacing;
-            wrapColumnCount = Mathf.RoundToInt(text.rectTransform.rect.width / (fontSize + 1));
+            _mergin = _tableContent.orientaion switch {
+                TableOrientaion.Horizontal => Mathf.Abs(text.rectTransform.sizeDelta.x / 2),
+                TableOrientaion.Vertical => Mathf.Abs(text.rectTransform.sizeDelta.y / 2),
+                _ => 0f
+            };
+            _fontSize = text.fontSize;
+            _lineSpacing = text.lineSpacing;
+            _wrapColumnCount = Mathf.RoundToInt(text.rectTransform.rect.width / (_fontSize + 1));
         }
 
         void OnDestroy()

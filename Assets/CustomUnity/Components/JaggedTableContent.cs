@@ -33,15 +33,13 @@ namespace CustomUnity
             public override readonly int GetHashCode() => HashCode.Combine(position, size);
         }
 
-        CellPosition[] cellPositions;
+        CellPosition[] _cellPositions;
 
-        public override float GetScrollAmountForBottomOfLastItem()
-        {
-            return orientaion switch {
-                Orientaion.Horizontal => GetComponent<RectTransform>().rect.width,
-                _ => GetComponent<RectTransform>().rect.height,
-            };
-        }
+        public override float GetScrollAmountForBottomOfLastItem() => orientaion switch {
+            TableOrientaion.Horizontal => GetComponent<RectTransform>().rect.width,
+            TableOrientaion.Vertical => GetComponent<RectTransform>().rect.height,
+            _ => 0f
+        };
 
         public override int DataSourceTotalCount => DataSource.TotalCount;
 
@@ -56,7 +54,7 @@ namespace CustomUnity
         protected override void Start()
         {
             base.Start();
-            cellPositions = new CellPosition[transform.childCount];
+            _cellPositions = new CellPosition[transform.childCount];
         }
 
         protected override void UpdateContent()
@@ -66,8 +64,8 @@ namespace CustomUnity
             var totalCount = DataSource != null ? DataSource.TotalCount : 0;
             var contentRectLocalPosition = contentRectTransform.localPosition;
             var viewLower = orientaion switch {
-                Orientaion.Vertical => ScrollRect.viewport.rect.height,
-                Orientaion.Horizontal => ScrollRect.viewport.rect.width,
+                TableOrientaion.Vertical => ScrollRect.viewport.rect.height,
+                TableOrientaion.Horizontal => ScrollRect.viewport.rect.width,
                 _ => 0f
             };
 
@@ -78,8 +76,8 @@ namespace CustomUnity
             for(int i = 0; i < totalCount; ++i) {
                 var cellSize = DataSource.CellSize(i);
                 var cellUpper = orientaion switch {
-                    Orientaion.Vertical => contentSize - contentRectLocalPosition.y,
-                    Orientaion.Horizontal => contentSize + contentRectLocalPosition.x,
+                    TableOrientaion.Vertical => contentSize - contentRectLocalPosition.y,
+                    TableOrientaion.Horizontal => contentSize + contentRectLocalPosition.x,
                     _ => 0f
                 };
                 var cellPosition = new CellPosition { position = contentSize, size = cellSize };
@@ -89,27 +87,27 @@ namespace CustomUnity
                 if(startIndex > endIndex) {
                     if(cellUpper >= -cellSize && cellUpper <= viewLower) {
                         startIndex = endIndex = i;
-                        cellPositions[Mathf.Min(startIndex, extraCells)] = cellPosition;
+                        _cellPositions[Mathf.Min(startIndex, extraCells)] = cellPosition;
                     }
                     else if(extraCells > 0) {
-                        for(var n = Mathf.Min(i, extraCells - 1); n > 0; --n) cellPositions[n - 1] = cellPositions[n];
-                        cellPositions[Mathf.Min(i, extraCells - 1)] = cellPosition;
+                        for(var n = Mathf.Min(i, extraCells - 1); n > 0; --n) _cellPositions[n - 1] = _cellPositions[n];
+                        _cellPositions[Mathf.Min(i, extraCells - 1)] = cellPosition;
                     }
                 }
                 else {
                     if(cellUpper >= -cellSize && cellUpper <= viewLower) endIndex = i;
-                    if(i - Mathf.Max(0, startIndex - extraCells) < cellPositions.Length) {
-                        cellPositions[i - Mathf.Max(0, startIndex - extraCells)] = cellPosition;
+                    if(i - Mathf.Max(0, startIndex - extraCells) < _cellPositions.Length) {
+                        _cellPositions[i - Mathf.Max(0, startIndex - extraCells)] = cellPosition;
                     }
                 }
             }
 
             var sizeDelta = contentRectTransform.sizeDelta;
             switch(orientaion) {
-            case Orientaion.Vertical:
+            case TableOrientaion.Vertical:
                 sizeDelta.y = contentSize;
                 break;
-            case Orientaion.Horizontal:
+            case TableOrientaion.Horizontal:
                 sizeDelta.x = contentSize;
                 break;
             }
@@ -130,17 +128,17 @@ namespace CustomUnity
                 for(int i = startIndex; i <= endIndex; ++i) {
                     int wrapedIndex = Math.Wrap(i, totalCount);
                     var cell = GetCell(i, out var @new);
-                    if(cell && !(i - startIndex < 0 || i - startIndex >= cellPositions.Length)) {
+                    if(cell && !(i - startIndex < 0 || i - startIndex >= _cellPositions.Length)) {
                         var rectTrans = cell.GetComponent<RectTransform>();
                         var localPosition = rectTrans.localPosition;
                         var size = rectTrans.sizeDelta;
-                        var cellPosition = cellPositions[i - startIndex];
+                        var cellPosition = _cellPositions[i - startIndex];
                         switch(orientaion) {
-                        case Orientaion.Vertical:
+                        case TableOrientaion.Vertical:
                             size.y = cellPosition.size;
                             localPosition.y = -cellPosition.position - size.y * rectTrans.pivot.y;
                             break;
-                        case Orientaion.Horizontal:
+                        case TableOrientaion.Horizontal:
                             size.x = cellPosition.size;
                             localPosition.x = cellPosition.position + size.x * rectTrans.pivot.x;
                             break;

@@ -13,7 +13,9 @@ namespace CustomUnity
     {
         public GameObject prefab;
         public int quantity;
-        
+
+        public string Name => prefab ? prefab.name : string.Empty;
+
         struct Entry : IEquatable<Entry>
         {
             public GameObject go;
@@ -26,10 +28,9 @@ namespace CustomUnity
             public override readonly int GetHashCode() => HashCode.Combine(go, time);
         }
 
-        Entry[] entries;
+        Entry[] _entries;
 
-        public string Name => prefab ? prefab.name : string.Empty;
-        public int ActiveCount => entries?.Count(i => i.go.activeInHierarchy) ?? 0;
+        public int ActiveCount => _entries?.Count(i => i.go.activeInHierarchy) ?? 0;
 
         Transform _owner;
 
@@ -37,10 +38,10 @@ namespace CustomUnity
         {
             if(prefab) {
                 _owner = owner;
-                entries = new Entry[quantity];
+                _entries = new Entry[quantity];
                 for(int i = 0; i < quantity; i++) {
-                    entries[i] = new Entry { go = UnityEngine.Object.Instantiate(prefab, owner), time = 0 };
-                    entries[i].go.SetActive(false);
+                    _entries[i] = new Entry { go = UnityEngine.Object.Instantiate(prefab, owner), time = 0 };
+                    _entries[i].go.SetActive(false);
                 }
             }
         }
@@ -49,20 +50,19 @@ namespace CustomUnity
         {
             if(prefab) {
                 _owner = owner;
-                entries = new Entry[quantity];
+                _entries = new Entry[quantity];
                 var gos = await UnityEngine.Object.InstantiateAsync(prefab, quantity, owner);
                 for(int i = 0; i < quantity; i++) {
-                    entries[i] = new Entry { go = gos[i], time = 0 };
-                    Log.Info(entries[i].go, $"{i} {entries[i].go.activeSelf}");
-                    entries[i].go.SetActive(false);
+                    _entries[i] = new Entry { go = gos[i], time = 0 };
+                    _entries[i].go.SetActive(false);
                 }
             }
         }
 
         public void CollectInactives()
         {
-            if(entries != null && _owner) {
-                foreach(var i in entries) {
+            if(_entries != null && _owner) {
+                foreach(var i in _entries) {
                     if(!i.go.activeSelf && i.go.transform.parent != _owner) {
                         i.go.transform.parent = _owner;
                     }
@@ -72,7 +72,7 @@ namespace CustomUnity
 
         public void Deactivate(GameObject go)
         {
-            if(entries.Any(x => x.go == go)) {
+            if(_entries.Any(x => x.go == go)) {
                 go.SetActive(false);
                 go.transform.parent = _owner;
             }
@@ -80,55 +80,57 @@ namespace CustomUnity
 
         public void DeactivateAll()
         {
-            foreach(var i in entries) {
-                i.go.SetActive(false);
-                i.go.transform.parent = _owner;
+            foreach(var i in _entries) {
+                if(i.go) {
+                    i.go.SetActive(false);
+                    i.go.transform.parent = _owner;
+                }
             }
         }
 
-        public IEnumerable<GameObject> AllGameObjects => entries.Select(x => x.go);
+        public IEnumerable<GameObject> AllGameObjects => _entries.Select(x => x.go);
 
-        public IEnumerable<GameObject> ActiveGameObjects => entries.Where(x => x.go.activeInHierarchy).Select(x => x.go);
+        public IEnumerable<GameObject> ActiveGameObjects => _entries.Where(x => x.go.activeInHierarchy).Select(x => x.go);
 
-        GameObject Spawn(Vector3 position, Quaternion rotation, Transform parent, bool parents)
+        GameObject Spawn(Vector3 position, Quaternion rotation, Transform parent)
         {
             float oldestTime = float.MaxValue;
             int retIndex = 0;
-            for(int i = 0; i < entries.Length; i++) {
-                if(!entries[i].go) {
+            for(int i = 0; i < _entries.Length; i++) {
+                if(!_entries[i].go) {
                     Log.Error($"GameObjectPool : '{Name}' ({retIndex}) : Detected pooled GameObject is missing. If you want to spawn it under a shorter lifetime GameObject, needs to use GameObjectPool|GameObjectPoolSet.Deactivate() before destroy parent GameObject to rescue pooled GameObject.");
                     continue;
                 }
-                if(!entries[i].go.activeInHierarchy) {
+                if(!_entries[i].go.activeInHierarchy) {
                     retIndex = i;
                     break;
                 }
-                if(entries[i].time < oldestTime) {
-                    oldestTime = entries[i].time;
+                if(_entries[i].time < oldestTime) {
+                    oldestTime = _entries[i].time;
                     retIndex = i;
                 }
             }
-            var ret = entries[retIndex];
+            var ret = _entries[retIndex];
             ret.time = Time.timeSinceLevelLoad;
             ret.go.SetActive(false);
             ret.go.transform.parent = parent;
             ret.go.transform.SetPositionAndRotation(position, rotation);
             ret.go.SetActive(true);
-            entries[retIndex] = ret;
+            _entries[retIndex] = ret;
             return ret.go;
         }
 
-        GameObject TrySpawn(Vector3 position, Quaternion rotation, Transform parent, bool parents)
+        GameObject TrySpawn(Vector3 position, Quaternion rotation, Transform parent)
         {
-            return ActiveCount < quantity ? Spawn(position, rotation, parent, parents) : null;
+            return ActiveCount < quantity ? Spawn(position, rotation, parent) : null;
         }
 
-        public GameObject Spawn(Vector3 position, Quaternion rotation) => Spawn(position, rotation, null, false);
+        public GameObject Spawn(Vector3 position, Quaternion rotation) => Spawn(position, rotation, null);
 
-        public GameObject TrySpawn(Vector3 position, Quaternion rotation) => TrySpawn(position, rotation, null, false);
+        public GameObject TrySpawn(Vector3 position, Quaternion rotation) => TrySpawn(position, rotation, null);
 
-        public GameObject Spawn(Transform parent, Vector3 position, Quaternion rotation) => Spawn(position, rotation, parent, true);
+        public GameObject Spawn(Transform parent, Vector3 position, Quaternion rotation) => Spawn(position, rotation, parent);
 
-        public GameObject TrySpawn(Transform parent, Vector3 position, Quaternion rotation) => TrySpawn(position, rotation, parent, true);
+        public GameObject TrySpawn(Transform parent, Vector3 position, Quaternion rotation) => TrySpawn(position, rotation, parent);
     }
 }

@@ -61,7 +61,7 @@ namespace CustomUnity
         public void ShowDetail(DebugLogLine debugLogLine)
         {
             detailView.gameObject.SetActive(true);
-            detailContent.text = $"{debugLogLine.message.text}\n{debugLogLine.stackTrace}";
+            detailContent.text = $"{debugLogLine.dateTime.text}\n{debugLogLine.message.text}\n{debugLogLine.stackTrace}";
         }
 
 #if UNITY_EDITOR

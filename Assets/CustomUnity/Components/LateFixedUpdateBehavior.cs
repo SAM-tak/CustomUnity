@@ -10,24 +10,24 @@ namespace CustomUnity
     {
         protected virtual void OnEnable()
         {
-            lateFixedUpdate = StartCoroutine(RunLateFixedUpdate());
+            _lateFixedUpdate = StartCoroutine(RunLateFixedUpdate());
         }
 
         protected virtual void OnDisable()
         {
-            if(lateFixedUpdate != null) {
-                StopCoroutine(lateFixedUpdate);
-                lateFixedUpdate = null;
+            if(_lateFixedUpdate != null) {
+                StopCoroutine(_lateFixedUpdate);
+                _lateFixedUpdate = null;
             }
         }
 
-        Coroutine lateFixedUpdate;
-        static readonly WaitForFixedUpdate waitForFixedUpdate = new ();
+        Coroutine _lateFixedUpdate;
+        static readonly WaitForFixedUpdate _waitForFixedUpdate = new();
 
         IEnumerator RunLateFixedUpdate()
         {
             while(true) {
-                yield return waitForFixedUpdate;
+                yield return _waitForFixedUpdate;
                 LateFixedUpdate();
             }
         }

@@ -76,23 +76,23 @@ namespace CustomUnity
 
         protected bool MayMoveByOther => Vector3.Distance(prevScrollPosition, ScrollRect.content.localPosition) > 0.001f;
 
-        float delayTime;
+        float _delayTime;
 
         protected override void OnEnable()
         {
             base.OnEnable();
-            delayTime = activateDelayTimeFromEnabled;
+            _delayTime = activateDelayTimeFromEnabled;
         }
 
         void FixedUpdate()
         {
-            if(delayTime <= 0 && updateMode == AnimatorUpdateMode.Fixed) ScrollToTarget();
+            if(_delayTime <= 0 && updateMode == AnimatorUpdateMode.Fixed) ScrollToTarget();
         }
 
         void Update()
         {
-            if(delayTime <= 0 && updateMode != AnimatorUpdateMode.Fixed) ScrollToTarget();
-            if(delayTime > 0f) delayTime -= Time.unscaledDeltaTime;
+            if(_delayTime <= 0 && updateMode != AnimatorUpdateMode.Fixed) ScrollToTarget();
+            if(_delayTime > 0f) _delayTime -= Time.unscaledDeltaTime;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace CustomUnity
             infoIcon.SetActive(data.type == LogType.Log);
             warningIcon.SetActive(data.type == LogType.Warning);
             errorIcon.SetActive(data.type == LogType.Error || data.type == LogType.Exception || data.type == LogType.Assert);
-            if(isCollapsed && data.count > 1) {
+            if(isCollapsed) {
                 countPanel.SetActive(true);
                 count.text = $"{data.count}";
             }

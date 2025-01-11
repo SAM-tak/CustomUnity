@@ -30,7 +30,7 @@ namespace YourProjectNamespace
         public void FireEvent2(int i)
         {
             LogInfo($"FireEvent2 {i}");
-            if(event2 != null) event2.Invoke(i);
+            event2?.Invoke(i);
         }
         
         public UnityEvent animationExitEvent;
@@ -39,15 +39,19 @@ namespace YourProjectNamespace
             LogInfo("OnAnimationExit".Aqua());
             animationExitEvent?.Invoke();
         }
-        
+
+        bool ready = false;
+
         async void Awake()
         {
             await gameObjectPools?.SetUpAsync();
+            ready = true;
         }
 
         // Use this for initialization
-        void Start()
+        async void Start()
         {
+            while(!ready) await Awaitable.NextFrameAsync();
             gameObjectPools?.DeactivateAll();
             LogInfo("Start");
             LogInfo($"{"blahblah".Red().Bold()}\n{$"{"foobar".Grey()} {"hogehoge".Color(0x443322FF)}".Small()}");

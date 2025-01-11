@@ -14,9 +14,9 @@ namespace CustomUnity
     public class FPSCounter : MonoBehaviour
     {
         public Sprite[] digitSprites;
-        readonly Image[] digits = new Image[3];
-        float lastLapForFps;
-        int lastLapFrameCount;
+        readonly Image[] _digits = new Image[3];
+        float _lastLapForFps;
+        int _lastLapFrameCount;
 
         public static bool hideOnRuntime;
 
@@ -43,42 +43,42 @@ namespace CustomUnity
         void Awake()
         {
             var trs = transform.Find("Digit100");
-            if(trs) digits[0] = trs.gameObject.GetComponent<Image>();
+            if(trs) _digits[0] = trs.gameObject.GetComponent<Image>();
             trs = transform.Find("Digit010");
-            if(trs) digits[1] = trs.gameObject.GetComponent<Image>();
+            if(trs) _digits[1] = trs.gameObject.GetComponent<Image>();
             trs = transform.Find("Digit001");
-            if(trs) digits[2] = trs.gameObject.GetComponent<Image>();
+            if(trs) _digits[2] = trs.gameObject.GetComponent<Image>();
         }
 
         // Use this for initialization
         void Start()
         {
-            lastLapForFps = lastLapFrameCount = 0;
+            _lastLapForFps = _lastLapFrameCount = 0;
         }
 
         // Update is called once per frame
         void Update()
         {
             if(hideOnRuntime) {
-                foreach(var i in digits) if(i) i.enabled = false;
+                foreach(var i in _digits) if(i) i.enabled = false;
                 return;
             }
-            else foreach(var i in digits) if(i) i.enabled = true;
+            else foreach(var i in _digits) if(i) i.enabled = true;
 
-            if(Time.frameCount % 30 == 0 && Time.frameCount > lastLapFrameCount) {
-                var fps = Mathf.RoundToInt(lastLapForFps > 0 ? 30f / (Time.realtimeSinceStartup - lastLapForFps) : 1f / Time.unscaledDeltaTime);
+            if(Time.frameCount % 30 == 0 && Time.frameCount > _lastLapFrameCount) {
+                var fps = Mathf.RoundToInt(_lastLapForFps > 0 ? 30f / (Time.realtimeSinceStartup - _lastLapForFps) : 1f / Time.unscaledDeltaTime);
                 if(fps > 999) {
-                    if(digits[0]) digits[0].sprite = digitSprites[9];
-                    if(digits[1]) digits[1].sprite = digitSprites[9];
-                    if(digits[2]) digits[2].sprite = digitSprites[9];
+                    if(_digits[0]) _digits[0].sprite = digitSprites[9];
+                    if(_digits[1]) _digits[1].sprite = digitSprites[9];
+                    if(_digits[2]) _digits[2].sprite = digitSprites[9];
                 }
                 else {
-                    if(digits[0]) digits[0].sprite = digitSprites[Mathf.Min(9, fps / 100)];
-                    if(digits[1]) digits[1].sprite = digitSprites[fps / 10 % 10];
-                    if(digits[2]) digits[2].sprite = digitSprites[fps % 10];
+                    if(_digits[0]) _digits[0].sprite = digitSprites[Mathf.Min(9, fps / 100)];
+                    if(_digits[1]) _digits[1].sprite = digitSprites[fps / 10 % 10];
+                    if(_digits[2]) _digits[2].sprite = digitSprites[fps % 10];
                 }
-                lastLapForFps = Time.realtimeSinceStartup;
-                lastLapFrameCount = Time.frameCount;
+                _lastLapForFps = Time.realtimeSinceStartup;
+                _lastLapFrameCount = Time.frameCount;
             }
         }
 

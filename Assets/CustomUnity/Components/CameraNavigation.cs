@@ -28,46 +28,46 @@ namespace CustomUnity
         public Texture2D handCursor;
         public Texture2D loupeCursor;
 
-        Camera targetCamera;
+        Camera _targetCamera;
 
-        Vector3 prevMousePos;
+        Vector3 _prevMousePos;
 
-        float centerDist = 3;
+        float _centerDist = 3;
 
-        Vector3 moveVector;
+        Vector3 _moveVector;
 
-        bool enableTargetPosition;
-        Vector3 targetPosition;
+        bool _enableTargetPosition;
+        Vector3 _targetPosition;
 
         void Start()
         {
-            targetCamera = GetComponent<Camera>();
+            _targetCamera = GetComponent<Camera>();
         }
 
         void Update()
         {
             float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
             if(Mathf.Abs(scrollWheel) > 0.0f) {
-                enableTargetPosition = false;
+                _enableTargetPosition = false;
                 transform.position += scrollWheel * wheelSpeed * transform.forward;
             }
 
             if(Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2)) {
-                prevMousePos = Input.mousePosition;
+                _prevMousePos = Input.mousePosition;
             }
 
             bool brake = true;
-            Vector3 diff = Input.mousePosition - prevMousePos;
+            Vector3 diff = Input.mousePosition - _prevMousePos;
             if(Input.GetMouseButtonDown(2) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))) {
-                if(Physics.Raycast(targetCamera.ScreenPointToRay(Input.mousePosition), out var hit)) {
-                    enableTargetPosition = true;
-                    moveVector = Vector3.zero;
-                    targetPosition = hit.point - (transform.TransformDirection(Vector3.forward) * centerDist);
+                if(Physics.Raycast(_targetCamera.ScreenPointToRay(Input.mousePosition), out var hit)) {
+                    _enableTargetPosition = true;
+                    _moveVector = Vector3.zero;
+                    _targetPosition = hit.point - (transform.TransformDirection(Vector3.forward) * _centerDist);
                 }
             }
             else if(Input.GetMouseButton(2)) {
                 if(diff.magnitude > Vector3.kEpsilon) {
-                    enableTargetPosition = false;
+                    _enableTargetPosition = false;
                     transform.position += GetDragAmount();
                 }
                 Cursor.SetCursor(handCursor, new Vector2(16, 16), CursorMode.Auto);
@@ -75,11 +75,11 @@ namespace CustomUnity
             else if(Input.GetMouseButton(1)) {
                 if(Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) {
                     if(diff.magnitude > Vector3.kEpsilon) {
-                        enableTargetPosition = false;
+                        _enableTargetPosition = false;
                         var amount = (Mathf.Abs(diff.x) > Mathf.Abs(diff.y) ? diff.x : diff.y) * dollySpeed * Time.unscaledDeltaTime;
                         transform.position += transform.forward * amount;
-                        centerDist -= amount;
-                        if(centerDist < 0.1f) centerDist = 0.1f;
+                        _centerDist -= amount;
+                        if(_centerDist < 0.1f) _centerDist = 0.1f;
                     }
                     Cursor.SetCursor(loupeCursor, new Vector2(16, 16), CursorMode.Auto);
                 }
@@ -102,51 +102,51 @@ namespace CustomUnity
                         brake = false;
                     }
 
-                    moveVector = transform.TransformDirection(v) * (moveVector.magnitude + moveAcc * Time.unscaledDeltaTime);
-                    if(moveVector.magnitude > maxMoveSpeed) moveVector = moveVector.normalized * maxMoveSpeed;
+                    _moveVector = transform.TransformDirection(v) * (_moveVector.magnitude + moveAcc * Time.unscaledDeltaTime);
+                    if(_moveVector.magnitude > maxMoveSpeed) _moveVector = _moveVector.normalized * maxMoveSpeed;
 
                     Cursor.SetCursor(flyModeCursor, new Vector2(14, 12), CursorMode.Auto);
                 }
             }
             else if(Input.GetMouseButton(0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))) {
-                enableTargetPosition = false;
-                var center = transform.TransformPoint(Vector3.forward * centerDist);
+                _enableTargetPosition = false;
+                var center = transform.TransformPoint(Vector3.forward * _centerDist);
                 transform.position += GetDragAmount();
                 transform.LookAt(center);
-                transform.position += transform.TransformDirection(Vector3.forward) * (Vector3.Distance(transform.position, center) - centerDist);
+                transform.position += transform.TransformDirection(Vector3.forward) * (Vector3.Distance(transform.position, center) - _centerDist);
                 Cursor.SetCursor(orbitCursor, new Vector2(16, 16), CursorMode.Auto);
             }
             else {
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             }
 
-            if(moveVector.sqrMagnitude > Vector3.kEpsilon) {
-                enableTargetPosition = false;
-                transform.position += moveVector * Time.unscaledDeltaTime;
+            if(_moveVector.sqrMagnitude > Vector3.kEpsilon) {
+                _enableTargetPosition = false;
+                transform.position += _moveVector * Time.unscaledDeltaTime;
                 if(brake) {
-                    moveVector = Math.RubberStep(moveVector, Vector3.zero, 0.15f, Time.unscaledDeltaTime);
+                    _moveVector = Math.RubberStep(_moveVector, Vector3.zero, 0.15f, Time.unscaledDeltaTime);
                 }
             }
 
-            if(enableTargetPosition) {
-                if(Vector3.Distance(transform.position, targetPosition) > Vector3.kEpsilon) {
-                    transform.position = Math.RubberStep(transform.position, targetPosition, 0.25f, Time.unscaledDeltaTime);
+            if(_enableTargetPosition) {
+                if(Vector3.Distance(transform.position, _targetPosition) > Vector3.kEpsilon) {
+                    transform.position = Math.RubberStep(transform.position, _targetPosition, 0.25f, Time.unscaledDeltaTime);
                 }
                 else {
-                    enableTargetPosition = false;
+                    _enableTargetPosition = false;
                 }
             }
 
             if(diff.magnitude > Vector3.kEpsilon) {
-                prevMousePos = Input.mousePosition;
+                _prevMousePos = Input.mousePosition;
             }
         }
 
         public Vector3 GetDragAmount()
         {
-            var z = targetCamera.WorldToScreenPoint(transform.TransformPoint(Vector3.forward * centerDist)).z;
-            var prev = targetCamera.ScreenToWorldPoint(new Vector3(prevMousePos.x, prevMousePos.y, z));
-            var now = targetCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, z));
+            var z = _targetCamera.WorldToScreenPoint(transform.TransformPoint(Vector3.forward * _centerDist)).z;
+            var prev = _targetCamera.ScreenToWorldPoint(new Vector3(_prevMousePos.x, _prevMousePos.y, z));
+            var now = _targetCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, z));
             return prev - now;
         }
 

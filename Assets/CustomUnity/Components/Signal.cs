@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CustomUnity
 {
@@ -8,16 +9,17 @@ namespace CustomUnity
     [AddComponentMenu("CustomUnity/Signal/Signal")]
     public class Signal : MonoBehaviour
     {
-        public SumAllSignalsSlot @event;
+        [FormerlySerializedAs("event")]
+        public SumAllSignalsSlot slot;
 
         void Start()
         {
-            if(@event) @event.DefineSignal(this);
+            if(slot) slot.DefineSignal(this);
         }
 
         public void Emit()
         {
-            if(@event) @event.EmitSignal(this);
+            if(slot) slot.EmitSignal(this);
         }
     }
 }

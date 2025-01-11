@@ -15,13 +15,13 @@ namespace CustomUnity
         public UnityEvent @event;
 
         public readonly Dictionary<Object, bool> signals = new();
-        readonly List<Object> keyCache = new(10);
+        readonly List<Object> _keyCache = new(10);
 
         void OnEnable()
         {
-            keyCache.Clear();
-            foreach(var i in signals.Keys.Where(x => x is SignalOnEnterState)) keyCache.Add(i);
-            for(int i = 0; i < keyCache.Count; ++i) signals.Remove(keyCache[i]);
+            _keyCache.Clear();
+            foreach(var i in signals.Keys.Where(x => x is SignalOnEnterState)) _keyCache.Add(i);
+            for(int i = 0; i < _keyCache.Count; ++i) signals.Remove(_keyCache[i]);
             foreach(var i in animators) {
                 var behaviours = i.GetBehaviours<SignalOnEnterState>();
                 foreach(var j in behaviours) DefineSignal(j);
@@ -65,9 +65,9 @@ namespace CustomUnity
 
         public void ClearSignals()
         {
-            keyCache.Clear();
-            foreach(var k in signals.Keys) keyCache.Add(k);
-            for(int i = 0; i < keyCache.Count; ++i) signals[keyCache[i]] = false;
+            _keyCache.Clear();
+            foreach(var k in signals.Keys) _keyCache.Add(k);
+            for(int i = 0; i < _keyCache.Count; ++i) signals[_keyCache[i]] = false;
         }
     }
 }

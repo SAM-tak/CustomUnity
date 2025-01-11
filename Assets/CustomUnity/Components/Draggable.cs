@@ -35,31 +35,30 @@ namespace CustomUnity
             return false;
         }
 
-        Graphic graphic;
-        Rigidbody rb;
-        Rigidbody2D rb2d;
+        Graphic _graphic;
+        Rigidbody _rb;
+        Rigidbody2D _rb2d;
+        bool _onDragging;
+        Vector3 _lastPosition;
 
         void OnEnable()
         {
-            onDragging = false;
-            graphic = GetComponent<Graphic>();
-            rb = GetComponent<Rigidbody>();
-            rb2d = GetComponent<Rigidbody2D>();
+            _onDragging = false;
+            _graphic = GetComponent<Graphic>();
+            _rb = GetComponent<Rigidbody>();
+            _rb2d = GetComponent<Rigidbody2D>();
         }
-
-        bool onDragging;
-        Vector3 lastPosition;
 
         void FixedUpdate()
         {
-            if(onDragging) {
-                if(rb) {
-                    rb.position = lastPosition;
-                    rb.linearVelocity = Vector3.zero;
+            if(_onDragging) {
+                if(_rb) {
+                    _rb.position = _lastPosition;
+                    _rb.linearVelocity = Vector3.zero;
                 }
-                else if(rb2d) {
-                    rb2d.position = lastPosition;
-                    rb2d.linearVelocity = Vector2.zero;
+                else if(_rb2d) {
+                    _rb2d.position = _lastPosition;
+                    _rb2d.linearVelocity = Vector2.zero;
                 }
             }
         }
@@ -67,26 +66,26 @@ namespace CustomUnity
         public void OnBeginDrag(PointerEventData eventData)
         {
             if(MatchesInput(eventData)) {
-                onDragging = true;
-                if(rb) lastPosition = rb.position + transform.GetDragAmount(eventData);
-                else if(rb2d) lastPosition = rb2d.position + (Vector2)transform.GetDragAmount(eventData);
+                _onDragging = true;
+                if(_rb) _lastPosition = _rb.position + transform.GetDragAmount(eventData);
+                else if(_rb2d) _lastPosition = _rb2d.position + (Vector2)transform.GetDragAmount(eventData);
             }
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            if(onDragging) {
-                if(graphic) graphic.ApplyDrag(eventData);
-                else if(rb) lastPosition = rb.position + transform.GetDragAmount(eventData);
-                else if(rb2d) lastPosition = rb2d.position + (Vector2)transform.GetDragAmount(eventData);
+            if(_onDragging) {
+                if(_graphic) _graphic.ApplyDrag(eventData);
+                else if(_rb) _lastPosition = _rb.position + transform.GetDragAmount(eventData);
+                else if(_rb2d) _lastPosition = _rb2d.position + (Vector2)transform.GetDragAmount(eventData);
                 else transform.ApplyDrag(eventData);
             }
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if(onDragging) {
-                onDragging = false;
+            if(_onDragging) {
+                _onDragging = false;
             }
         }
     }

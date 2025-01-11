@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CustomUnity
 {
@@ -8,7 +9,8 @@ namespace CustomUnity
     [AddComponentMenu("CustomUnity/Signal/SignalParticleSystemStopped"), RequireComponent(typeof(ParticleSystem))]
     public class SignalParticleSystemStopped : MonoBehaviour
     {
-        public SumAllSignalsSlot @event;
+        [FormerlySerializedAs("event")]
+        public SumAllSignalsSlot slot;
 
         void OnValidate()
         {
@@ -18,12 +20,12 @@ namespace CustomUnity
 
         void Start()
         {
-            if(@event) @event.DefineSignal(this);
+            if(slot) slot.DefineSignal(this);
         }
 
         void OnParticleSystemStopped()
         {
-            if(@event) @event.EmitSignal(this);
+            if(slot) slot.EmitSignal(this);
         }
     }
 }

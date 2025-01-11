@@ -10,10 +10,9 @@ namespace CustomUnity
     [ExecuteInEditMode, RequireComponent(typeof(Renderer)), AddComponentMenu("CustomUnity/SortingLayer")]
     public class SortingLayer : MonoBehaviour
     {
-        [SerializeField, SortingLayer]
-        string layerName = "Default";
-        [SerializeField]
-        int orderInLayer = 0;
+        [SortingLayer]
+        public string layerName = "Default";
+        public int orderInLayer = 0;
 
         void Awake()
         {

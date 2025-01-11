@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace CustomUnity
 {
-    public enum Orientaion
+    public enum TableOrientaion
     {
         Vertical,
         Horizontal
@@ -17,7 +17,7 @@ namespace CustomUnity
     public abstract class TableContentBase : MonoBehaviour
     {
         [ReadOnlyWhenPlaying]
-        public Orientaion orientaion;
+        public TableOrientaion orientaion;
 
         [Tooltip("Number of cells to be active even outside the viewport for navigation.")]
         public int extraCells;
@@ -82,8 +82,9 @@ namespace CustomUnity
         }
 
         public Vector3 GetPositionFromScrollAmount(float scrollAmount) => orientaion switch {
-            Orientaion.Horizontal => new Vector3(Mathf.Max(0f, scrollAmount - ScrollRect.viewport.rect.width), 0f, 0f),
-            _ => new Vector3(0f, Mathf.Max(0f, scrollAmount - ScrollRect.viewport.rect.height), 0f),
+            TableOrientaion.Horizontal => new Vector3(Mathf.Max(0f, scrollAmount - ScrollRect.viewport.rect.width), 0f, 0f),
+            TableOrientaion.Vertical => new Vector3(0f, Mathf.Max(0f, scrollAmount - ScrollRect.viewport.rect.height), 0f),
+            _ => Vector3.zero
         };
 
         public abstract float GetScrollAmountForBottomOfLastItem();
@@ -112,15 +113,15 @@ namespace CustomUnity
         public ScrollRect ScrollRect { get; protected set; }
 
         public Canvas Canvas { get; protected set; }
-        bool OriginalCanvasOverridePixelPerfect;
-        bool OriginalCanvasPixelPerfect;
-        Vector2 previousScrollRectPosition;
+        bool _originalCanvasOverridePixelPerfect;
+        bool _originalCanvasPixelPerfect;
+        Vector2 _previousScrollRectPosition;
 
         protected virtual void Awake()
         {
             Canvas = GetComponentInParent<Canvas>();
-            OriginalCanvasOverridePixelPerfect = Canvas.overridePixelPerfect;
-            OriginalCanvasPixelPerfect = Canvas.pixelPerfect;
+            _originalCanvasOverridePixelPerfect = Canvas.overridePixelPerfect;
+            _originalCanvasPixelPerfect = Canvas.pixelPerfect;
             ScrollRect = GetComponentInParent<ScrollRect>();
         }
 
@@ -138,25 +139,25 @@ namespace CustomUnity
                 go.SetActive(false);
                 cellPool[i].cell = go;
             }
-            previousScrollRectPosition = ScrollRect.normalizedPosition;
+            _previousScrollRectPosition = ScrollRect.normalizedPosition;
             ScrollRect.onValueChanged.AddListener(position => {
-                if(isUpdatingContent) NeedsUpdateContent = true;
+                if(_isUpdatingContent) NeedsUpdateContent = true;
                 else {
-                    isUpdatingContent = true;
+                    _isUpdatingContent = true;
                     UpdateContent();
-                    isUpdatingContent = false;
+                    _isUpdatingContent = false;
                 }
 
-                if((ScrollRect.content.rect.size * previousScrollRectPosition - ScrollRect.content.rect.size * position).magnitude > 0.01f) {
+                if((ScrollRect.content.rect.size * _previousScrollRectPosition - ScrollRect.content.rect.size * position).magnitude > 0.01f) {
                     Canvas.overridePixelPerfect = true;
                     Canvas.pixelPerfect = false;
                 }
                 else {
                     ScrollRect.StopMovement();
-                    Canvas.overridePixelPerfect = OriginalCanvasOverridePixelPerfect;
-                    Canvas.pixelPerfect = OriginalCanvasPixelPerfect;
+                    Canvas.overridePixelPerfect = _originalCanvasOverridePixelPerfect;
+                    Canvas.pixelPerfect = _originalCanvasPixelPerfect;
                 }
-                previousScrollRectPosition = position;
+                _previousScrollRectPosition = position;
             });
             FrameCount = 0;
         }
@@ -164,7 +165,7 @@ namespace CustomUnity
         // workaround for 2019.1 or higher
         protected int FrameCount { get; private set; } = 0;
 
-        bool isUpdatingContent;
+        bool _isUpdatingContent;
 
         protected virtual void Update()
         {
@@ -173,9 +174,9 @@ namespace CustomUnity
                 // needs set NeedsUpdateContent to false before UpdateContent.
                 // If not, cannot specify needs UpdateContent on next frame in UpdateContent
                 NeedsUpdateContent = false;
-                isUpdatingContent = true;
+                _isUpdatingContent = true;
                 UpdateContent();
-                isUpdatingContent = false;
+                _isUpdatingContent = false;
             }
             if(FrameCount < int.MaxValue) ++FrameCount;
         }

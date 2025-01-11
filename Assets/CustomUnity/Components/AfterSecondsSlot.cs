@@ -13,17 +13,17 @@ namespace CustomUnity
         public bool unsacled;
         public UnityEvent @event;
 
-        float startTime;
+        float _startTime;
 
         protected override void OnEnable()
         {
             base.OnEnable();
-            startTime = Time.fixedTime;
+            _startTime = Time.fixedTime;
         }
 
         protected override void LateFixedUpdate()
         {
-            if(startTime + time < (unsacled ? Time.fixedTime : Time.fixedUnscaledTime)) @event?.Invoke();
+            if(_startTime + time < (unsacled ? Time.fixedTime : Time.fixedUnscaledTime)) @event?.Invoke();
         }
     }
 }

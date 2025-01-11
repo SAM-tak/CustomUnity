@@ -36,22 +36,22 @@ namespace YourProjectNamespace
 
         public int TotalCount => (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
 
-        bool prevAppendToFront;
-        bool prevAppendToBack;
-        MultiColumnJaggedTableContent tableContent;
+        bool _prevAppendToFront;
+        bool _prevAppendToBack;
+        MultiColumnJaggedTableContent _tableContent;
 
         public void OnPreUpdate()
         {
-            if(prevAppendToFront != appendToFront || prevAppendToBack != appendToBack) tableContent.Refresh();
+            if(_prevAppendToFront != appendToFront || _prevAppendToBack != appendToBack) _tableContent.Refresh();
 
-            if(prevAppendToFront != appendToFront) {
-                var viewSize = tableContent.GetComponent<RectTransform>().sizeDelta;
-                var pos = tableContent.transform.localPosition;
+            if(_prevAppendToFront != appendToFront) {
+                var viewSize = _tableContent.GetComponent<RectTransform>().sizeDelta;
+                var pos = _tableContent.transform.localPosition;
                 var moveSize = 0f;
                 var curWidth = 0f;
                 var curHeight = 0f;
-                switch(tableContent.orientaion) {
-                case Orientaion.Vertical:
+                switch(_tableContent.orientaion) {
+                case TableOrientaion.Vertical:
                     foreach(var i in dataSource2) {
                         if(curWidth + i.width > viewSize.x) {
                             moveSize += curHeight;
@@ -63,7 +63,7 @@ namespace YourProjectNamespace
                         }
                     }
                     break;
-                case Orientaion.Horizontal:
+                case TableOrientaion.Horizontal:
                     foreach(var i in dataSource2) {
                         if(curWidth + i.height > viewSize.y) {
                             moveSize += curHeight;
@@ -77,26 +77,26 @@ namespace YourProjectNamespace
                     break;
                 }
                 if(appendToFront) {
-                    switch(tableContent.orientaion) {
-                    case Orientaion.Vertical:
+                    switch(_tableContent.orientaion) {
+                    case TableOrientaion.Vertical:
                         pos.y += moveSize;
                         break;
-                    case Orientaion.Horizontal:
+                    case TableOrientaion.Horizontal:
                         pos.x -= moveSize;
                         break;
                     }
                 }
                 else {
-                    switch(tableContent.orientaion) {
-                    case Orientaion.Vertical:
+                    switch(_tableContent.orientaion) {
+                    case TableOrientaion.Vertical:
                         pos.y -= moveSize;
                         break;
-                    case Orientaion.Horizontal:
+                    case TableOrientaion.Horizontal:
                         pos.x += moveSize;
                         break;
                     }
                 }
-                tableContent.transform.localPosition = pos;
+                _tableContent.transform.localPosition = pos;
             }
         }
         
@@ -163,19 +163,19 @@ namespace YourProjectNamespace
 
         void Awake()
         {
-            tableContent = GetComponent<MultiColumnJaggedTableContent>();
+            _tableContent = GetComponent<MultiColumnJaggedTableContent>();
         }
 
         void Start()
         {
-            prevAppendToFront = appendToFront;
-            prevAppendToBack = appendToBack;
+            _prevAppendToFront = appendToFront;
+            _prevAppendToBack = appendToBack;
         }
 
         void LateUpdate()
         {
-            prevAppendToFront = appendToFront;
-            prevAppendToBack = appendToBack;
+            _prevAppendToFront = appendToFront;
+            _prevAppendToBack = appendToBack;
         }
     }
 }

@@ -13,21 +13,21 @@ namespace CustomUnity
         public EventSystem eventSystem;
 
         // フォーカスが外れてもしばらくスクロールの対象にするため
-        GameObject lastSelected;
+        GameObject _lastSelected;
         // フォーカスされているオブジェクトがいつまでもスクロールの対象にならないようにする時間の計測用
-        float lastSelectedInterval;
+        float _lastSelectedInterval;
 
         protected override void ScrollToTarget()
         {
-            targetItem = lastSelected;
+            targetItem = _lastSelected;
             if(eventSystem.currentSelectedGameObject
                 && eventSystem.currentSelectedGameObject.transform.IsChildOf(ScrollRect.content.transform)
                 && eventSystem.currentSelectedGameObject.GetComponentInParent<ScrollRect>() == ScrollRect) {
-                lastSelected = targetItem = eventSystem.currentSelectedGameObject;
-                lastSelectedInterval = 0;
+                _lastSelected = targetItem = eventSystem.currentSelectedGameObject;
+                _lastSelectedInterval = 0;
             }
-            else if(lastSelectedInterval < halfLife * 2) lastSelectedInterval += DeltaTime;
-            else lastSelected = null;
+            else if(_lastSelectedInterval < halfLife * 2) _lastSelectedInterval += DeltaTime;
+            else _lastSelected = null;
 
             base.ScrollToTarget();
         }
@@ -35,7 +35,7 @@ namespace CustomUnity
         public void OnScroll(PointerEventData eventData)
         {
             eventSystem.SetSelectedGameObject(null);
-            lastSelected = null;
+            _lastSelected = null;
         }
     }
 }

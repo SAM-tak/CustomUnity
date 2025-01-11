@@ -10,6 +10,12 @@ namespace CustomUnity
     [RequireComponent(typeof(RectTransform))]
     public class ContentSizeShrink : UIBehaviour, ILayoutSelfController
     {
+        public enum Orientaion
+        {
+            Vertical,
+            Horizontal
+        }
+
         public Orientaion orientaion;
         public float insetSizeFromParent = 6f;
 
@@ -30,7 +36,7 @@ namespace CustomUnity
             }
         }
         
-        DrivenRectTransformTracker tracker;
+        DrivenRectTransformTracker _tracker;
 
         #region Unity Lifetime calls
 
@@ -42,7 +48,7 @@ namespace CustomUnity
 
         protected override void OnDisable()
         {
-            tracker.Clear();
+            _tracker.Clear();
             LayoutRebuilder.MarkLayoutForRebuild(RectTransform);
             base.OnDisable();
         }
@@ -57,7 +63,7 @@ namespace CustomUnity
         public void SetLayoutHorizontal()
         {
             if(orientaion == Orientaion.Horizontal) {
-                tracker.Add(this, RectTransform, DrivenTransformProperties.SizeDeltaX);
+                _tracker.Add(this, RectTransform, DrivenTransformProperties.SizeDeltaX);
                 RectTransform.SetSizeWithCurrentAnchors(
                     RectTransform.Axis.Horizontal,
                     Mathf.Min(ParentRectTransform.rect.width - insetSizeFromParent, LayoutUtility.GetPreferredWidth(RectTransform))
@@ -68,7 +74,7 @@ namespace CustomUnity
         public void SetLayoutVertical()
         {
             if(orientaion == Orientaion.Vertical) {
-                tracker.Add(this, RectTransform, DrivenTransformProperties.SizeDeltaY);
+                _tracker.Add(this, RectTransform, DrivenTransformProperties.SizeDeltaY);
                 RectTransform.SetSizeWithCurrentAnchors(
                     RectTransform.Axis.Vertical,
                     Mathf.Min(ParentRectTransform.rect.height - insetSizeFromParent, LayoutUtility.GetPreferredHeight(RectTransform))

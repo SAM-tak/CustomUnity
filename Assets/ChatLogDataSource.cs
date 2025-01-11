@@ -170,21 +170,21 @@ namespace YourProjectNamespace
 
         public int TotalCount => logRecords.IsValueCreated ? logRecords.Value.logs.Count : 0;
 
-        int prevTotalCount = 0;
+        int _prevTotalCount = 0;
 
-        JaggedTableContent tableContent;
+        JaggedTableContent _tableContent;
 
         void JaggedTableContent.IDataSource.OnPreUpdate()
         {
-            if(prevTotalCount != TotalCount) {
-                tableContent.Refresh();
-                prevTotalCount = TotalCount;
+            if(_prevTotalCount != TotalCount) {
+                _tableContent.Refresh();
+                _prevTotalCount = TotalCount;
             }
         }
 
         float EstimateHeight(int lineCount)
         {
-            return Mathf.Max(minHeight, lineCount * (fontSize + 2) + Mathf.Max(0, lineCount - 1) * lineSpacing + mergin * 2f);
+            return Mathf.Max(_minHeight, lineCount * (_fontSize + 2) + Mathf.Max(0, lineCount - 1) * _lineSpacing + _mergin * 2f);
         }
 
         readonly Dictionary<int, float> preferredHeightCache = new(256);
@@ -196,24 +196,24 @@ namespace YourProjectNamespace
 
         float JaggedTableContent.IDataSource.CellSize(int index)
         {
-            if(index < 0 || logRecords.Value.logs.Count <= index) return minHeight;
+            if(index < 0 || logRecords.Value.logs.Count <= index) return _minHeight;
 
             if(preferredHeightCache.ContainsKey(index)) return preferredHeightCache[index];
 
             var log = logRecords.Value.logs[index];
-            var cell = tableContent.GetActiveCell(index);
+            var cell = _tableContent.GetActiveCell(index);
             if(cell && cell.activeInHierarchy) {
                 var text = cell.transform.Find("Self/Message").GetComponent<Text>();
                 if(!text.gameObject.activeInHierarchy) text = cell.transform.Find("Other/Message").GetComponent<Text>();
                 if(text.text.Equals(log.message)) {
-                    var preferredHeight = Mathf.Max(minHeight, text.preferredHeight + mergin * 2f);
+                    var preferredHeight = Mathf.Max(_minHeight, text.preferredHeight + _mergin * 2f);
                     preferredHeightCache[index] = preferredHeight;
-                    tableContent.NeedsRelayout();
+                    _tableContent.NeedsRelayout();
                     return preferredHeight;
                 }
             }
 
-            var lineCount = wrapColumnCount > 0 ? log.message.LineCount(wrapColumnCount) : log.message.LineCount();
+            var lineCount = _wrapColumnCount > 0 ? log.message.LineCount(_wrapColumnCount) : log.message.LineCount();
             //StopLogging();
             //LogInfo($"lineCount = {lineCount} fontSize = {fontSize} lineSpacing = {lineSpacing} mergin = {mergin} height = {EstimateHeight(lineCount)}");
             //StartLogging();
@@ -243,32 +243,34 @@ namespace YourProjectNamespace
         {
         }
 
-        float minHeight;
-        int wrapColumnCount;
-        int fontSize;
-        float lineSpacing;
-        float mergin;
+        float _minHeight;
+        int _wrapColumnCount;
+        int _fontSize;
+        float _lineSpacing;
+        float _mergin;
 
         void Awake()
         {
-            tableContent = GetComponent<JaggedTableContent>();
+            _tableContent = GetComponent<JaggedTableContent>();
             OnLogCleared += ClearPreferredHeightCache;
 
             var firstChild = transform.GetChild(0);
 
-            minHeight = tableContent.orientaion switch {
-                Orientaion.Horizontal => firstChild.GetComponent<RectTransform>().rect.width,
-                _ => firstChild.GetComponent<RectTransform>().rect.height
+            _minHeight = _tableContent.orientaion switch {
+                TableOrientaion.Horizontal => firstChild.GetComponent<RectTransform>().rect.width,
+                TableOrientaion.Vertical => firstChild.GetComponent<RectTransform>().rect.height,
+                _ => 0f
             };
 
             var text = firstChild.Find("Self/Message").GetComponent<Text>();
-            mergin = tableContent.orientaion switch {
-                Orientaion.Horizontal => Mathf.Abs(text.rectTransform.sizeDelta.x / 2),
-                _ => Mathf.Abs(text.rectTransform.sizeDelta.y / 2)
+            _mergin = _tableContent.orientaion switch {
+                TableOrientaion.Horizontal => Mathf.Abs(text.rectTransform.sizeDelta.x / 2),
+                TableOrientaion.Vertical => Mathf.Abs(text.rectTransform.sizeDelta.y / 2),
+                _ => 0f
             };
-            fontSize = text.fontSize;
-            lineSpacing = text.lineSpacing;
-            wrapColumnCount = Mathf.RoundToInt(text.rectTransform.rect.width / (fontSize + 1));
+            _fontSize = text.fontSize;
+            _lineSpacing = text.lineSpacing;
+            _wrapColumnCount = Mathf.RoundToInt(text.rectTransform.rect.width / (_fontSize + 1));
         }
 
         void OnDestroy()

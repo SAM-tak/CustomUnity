@@ -33,55 +33,55 @@ namespace YourProjectNamespace
         public bool appendToFront;
         public bool appendToBack;
 
-        int TableContent.IDataSource.TotalCount => (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
+        public int TotalCount => (appendToFront ? dataSource2.Length : 0) + dataSource.Length + (appendToBack ? dataSource2.Length : 0);
 
-        bool prevAppendToFront;
-        bool prevAppendToBack;
-        TableContent tableContent;
+        bool _prevAppendToFront;
+        bool _prevAppendToBack;
+        TableContent _tableContent;
 
-        void TableContent.IDataSource.OnPreUpdate()
+        public void OnPreUpdate()
         {
-            if(prevAppendToFront != appendToFront || prevAppendToBack != appendToBack) tableContent.Refresh();
+            if(_prevAppendToFront != appendToFront || _prevAppendToBack != appendToBack) _tableContent.Refresh();
 
-            if(prevAppendToFront != appendToFront) {
-                var pos = tableContent.transform.localPosition;
+            if(_prevAppendToFront != appendToFront) {
+                var pos = _tableContent.transform.localPosition;
                 if(appendToFront) {
-                    switch(tableContent.orientaion) {
-                    case Orientaion.Vertical:
-                        pos.y += dataSource2.Length * tableContent.CellSize.y;
+                    switch(_tableContent.orientaion) {
+                    case TableOrientaion.Vertical:
+                        pos.y += dataSource2.Length * _tableContent.CellSize.y;
                         break;
-                    case Orientaion.Horizontal:
-                        pos.x -= dataSource2.Length * tableContent.CellSize.x;
+                    case TableOrientaion.Horizontal:
+                        pos.x -= dataSource2.Length * _tableContent.CellSize.x;
                         break;
                     }
                 }
                 else {
-                    switch(tableContent.orientaion) {
-                    case Orientaion.Vertical:
-                        pos.y -= dataSource2.Length * tableContent.CellSize.y;
+                    switch(_tableContent.orientaion) {
+                    case TableOrientaion.Vertical:
+                        pos.y -= dataSource2.Length * _tableContent.CellSize.y;
                         break;
-                    case Orientaion.Horizontal:
-                        pos.x += dataSource2.Length * tableContent.CellSize.x;
+                    case TableOrientaion.Horizontal:
+                        pos.x += dataSource2.Length * _tableContent.CellSize.x;
                         break;
                     }
                 }
-                tableContent.transform.localPosition = pos;
+                _tableContent.transform.localPosition = pos;
             }
         }
 
-        bool needsUpdateNavigation;
+        bool _needsUpdateNavigation;
 
-        void TableContent.IDataSource.SetUpCell(int index, GameObject cell)
+        public void SetUpCell(int index, GameObject cell)
         {
-            needsUpdateNavigation = true;
+            _needsUpdateNavigation = true;
             var data = GetCellData(index);
             cell.transform.Find("Image").GetComponent<Image>().color = data.color;
             cell.transform.Find("Button/Text").GetComponent<Text>().text = data.buttonTitle;
         }
 
-        void TableContent.IDataSource.CellDeactivated(GameObject cell)
+        public void CellDeactivated(GameObject cell)
         {
-            needsUpdateNavigation = true;
+            _needsUpdateNavigation = true;
         }
 
 #if UNITY_EDITOR
@@ -104,29 +104,29 @@ namespace YourProjectNamespace
 #endif
         void Awake()
         {
-            tableContent = GetComponent<TableContent>();
+            _tableContent = GetComponent<TableContent>();
         }
 
         void Start()
         {
-            prevAppendToFront = appendToFront;
-            prevAppendToBack = appendToBack;
+            _prevAppendToFront = appendToFront;
+            _prevAppendToBack = appendToBack;
         }
 
         void LateUpdate()
         {
-            if(needsUpdateNavigation) {
-                needsUpdateNavigation = false;
+            if(_needsUpdateNavigation) {
+                _needsUpdateNavigation = false;
                 var children = transform.EnumChildren()
                     .Where(x => x.gameObject.activeInHierarchy)
-                    .OrderByDescending(x => tableContent.orientaion == Orientaion.Vertical ? x.position.y : x.position.x)
+                    .OrderByDescending(x => _tableContent.orientaion == TableOrientaion.Vertical ? x.position.y : x.position.x)
                     .ToArray();
                 for(int i = 1; i < children.Length; i++) {
                     var prevButton = children[i - 1].GetComponentInChildren<Button>(true);
                     var button = children[i].GetComponentInChildren<Button>(true);
 
                     var navigation = prevButton.navigation;
-                    if(tableContent.orientaion == Orientaion.Vertical) {
+                    if(_tableContent.orientaion == TableOrientaion.Vertical) {
                         if(i == 1) navigation.selectOnUp = null;
                         navigation.selectOnDown = button;
                     }
@@ -137,7 +137,7 @@ namespace YourProjectNamespace
                     prevButton.navigation = navigation;
 
                     navigation = button.navigation;
-                    if(tableContent.orientaion == Orientaion.Vertical) {
+                    if(_tableContent.orientaion == TableOrientaion.Vertical) {
                         navigation.selectOnUp = prevButton;
                         if(i == children.Length - 1) navigation.selectOnDown = null;
                     }
@@ -148,8 +148,8 @@ namespace YourProjectNamespace
                     button.navigation = navigation;
                 }
             }
-            prevAppendToFront = appendToFront;
-            prevAppendToBack = appendToBack;
+            _prevAppendToFront = appendToFront;
+            _prevAppendToBack = appendToBack;
         }
     }
 }

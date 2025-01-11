@@ -25,21 +25,18 @@ namespace CustomUnity
 
         public Vector2 CellSize { get; protected set; }
 
-        public override float GetScrollAmountForBottomOfLastItem()
-        {
-            var n = DataSource.TotalCount;
-            return orientaion switch {
-                Orientaion.Horizontal => Math.CeilDiv(n, columnCount) * CellSize.x,
-                _ => Math.CeilDiv(n, columnCount) * CellSize.y,
-            };
-        }
+        public override float GetScrollAmountForBottomOfLastItem() => orientaion switch {
+            TableOrientaion.Horizontal => Math.CeilDiv(DataSource.TotalCount, columnCount) * CellSize.x,
+            TableOrientaion.Vertical => Math.CeilDiv(DataSource.TotalCount, columnCount) * CellSize.y,
+            _ => 0f
+        };
 
         public override int DataSourceTotalCount => DataSource.TotalCount;
 
         protected override void PreUpdate() => DataSource?.OnPreUpdate();
 
-        const int merginScaler = 2;
-        const int minimumMergin = 400;
+        const int MerginScaler = 2;
+        const int MinimumMergin = 400;
 
         void OnValidate()
         {
@@ -54,8 +51,8 @@ namespace CustomUnity
             if(firstChild) {
                 CellSize = columnCount == 1
                     ? orientaion switch {
-                        Orientaion.Horizontal => new Vector2(firstChild.GetComponent<RectTransform>().rect.width, 0),
-                        Orientaion.Vertical => new Vector2(0, firstChild.GetComponent<RectTransform>().rect.height),
+                        TableOrientaion.Horizontal => new Vector2(firstChild.GetComponent<RectTransform>().rect.width, 0),
+                        TableOrientaion.Vertical => new Vector2(0, firstChild.GetComponent<RectTransform>().rect.height),
                         _ => CellSize
                     }
                     : firstChild.GetComponent<RectTransform>().rect.size;
@@ -73,18 +70,18 @@ namespace CustomUnity
             var contentRectLocalPosition = contentRectTransform.localPosition;
             var viewSize = ScrollRect.viewport.rect.size;
             switch(orientaion) {
-            case Orientaion.Vertical:
+            case TableOrientaion.Vertical:
                 {
-                    var contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
+                    var contentMargin = Mathf.Max(MinimumMergin, viewSize.y * MerginScaler);
                     if(contentRectLocalPosition.y < contentMargin) {
                         contentRectLocalPosition.y = contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }
                 break;
-            case Orientaion.Horizontal:
+            case TableOrientaion.Horizontal:
                 {
-                    var contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
+                    var contentMargin = Mathf.Max(MinimumMergin, viewSize.x * MerginScaler);
                     if(contentRectLocalPosition.x < contentMargin) {
                         contentRectLocalPosition.x = contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
@@ -111,10 +108,10 @@ namespace CustomUnity
             var contentRectLocalPosition = contentRectTransform.localPosition;
             var sizeDelta = contentRectTransform.sizeDelta;
             switch(orientaion) {
-            case Orientaion.Vertical:
+            case TableOrientaion.Vertical:
                 var contentSize = Math.CeilDiv(totalCount, columnCount) * CellSize.y;
                 if(repeat) {
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.y * merginScaler);
+                    contentMargin = Mathf.Max(MinimumMergin, viewSize.y * MerginScaler);
                     if(contentRectLocalPosition.y < contentMargin / 2 || contentRectLocalPosition.y + viewSize.y > (contentMargin + contentSize + contentMargin / 2)) {
                         contentRectLocalPosition.y = Math.Wrap(contentRectLocalPosition.y - contentMargin, contentSize) + contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
@@ -129,10 +126,10 @@ namespace CustomUnity
                 sizeDelta.x = CellSize.x * columnCount;
                 sizeDelta.y = contentSize + contentMargin * 2;
                 break;
-            case Orientaion.Horizontal:
+            case TableOrientaion.Horizontal:
                 contentSize = Math.CeilDiv(totalCount, columnCount) * CellSize.x;
                 if(repeat) {
-                    contentMargin = Mathf.Max(minimumMergin, viewSize.x * merginScaler);
+                    contentMargin = Mathf.Max(MinimumMergin, viewSize.x * MerginScaler);
                     if(contentRectLocalPosition.x > -contentMargin / 2 || contentRectLocalPosition.x - viewSize.x < -(contentMargin + contentSize + contentMargin / 2)) {
                         contentRectLocalPosition.x = -Math.Wrap(-contentRectLocalPosition.x - contentMargin, contentSize) - contentMargin;
                         contentRectTransform.localPosition = contentRectLocalPosition;
@@ -185,13 +182,13 @@ namespace CustomUnity
                         var rectTrans = cell.GetComponent<RectTransform>();
                         var localPosition = rectTrans.localPosition;
                         switch(orientaion) {
-                        case Orientaion.Vertical:
+                        case TableOrientaion.Vertical:
                             localPosition.y = -contentMargin - Math.FloorDiv(i, columnCount) * CellSize.y - CellSize.y * rectTrans.pivot.y;
                             if(columnCount > 1) {
                                 localPosition.x = Math.Wrap(i, columnCount) * CellSize.x + CellSize.x * rectTrans.pivot.x;
                             }
                             break;
-                        case Orientaion.Horizontal:
+                        case TableOrientaion.Horizontal:
                             localPosition.x = -contentMargin + Math.FloorDiv(i, columnCount) * CellSize.x + CellSize.x * rectTrans.pivot.x;
                             if(columnCount > 1) {
                                 localPosition.y = -Math.Wrap(i, columnCount) * CellSize.y - CellSize.y * rectTrans.pivot.y;
