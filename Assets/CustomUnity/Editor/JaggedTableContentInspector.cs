@@ -25,14 +25,14 @@ namespace CustomUnity
                     var c = tableContent.transform.GetChild(i);
                     if(c.TryGetComponent<RectTransform>(out var crt)) {
                         if(tableContent.orientaion == TableOrientaion.Horizontal) {
-                            if(!Mathf.Approximately(crt.pivot.x, 0.5f)) {
-                                EditorGUILayout.HelpBox("This component assumes that the pivot X of the cells is 0.5 when orientation is horizontal.\nThere are cells with a pivot X that is not 0.5.", MessageType.Warning);
+                            if(!Mathf.Approximately(crt.pivot.x, 0.5f) || !Mathf.Approximately(crt.anchorMin.x, crt.anchorMax.x)) {
+                                EditorGUILayout.HelpBox("This component assumes that the pivot X of the cells is 0.5 and X is not expandable when orientation is horizontal.\nThere are cells with a pivot X that is not 0.5 or horitontal is expandable.", MessageType.Warning);
                                 break;
                             }
                         }
                         else {
-                            if(!Mathf.Approximately(crt.pivot.y, 0.5f)) {
-                                EditorGUILayout.HelpBox("This component assumes that the pivot Y of the cells is 0.5 when orientation is vertical.\nThere are cells with a pivot Y that is not 0.5.", MessageType.Warning);
+                            if(!Mathf.Approximately(crt.pivot.y, 0.5f) || !Mathf.Approximately(crt.anchorMin.y, crt.anchorMax.y)) {
+                                EditorGUILayout.HelpBox("This component assumes that the pivot Y of the cells is 0.5 and Y is not expandable when orientation is vertical.\nThere are cells with a pivot Y that is not 0.5 or vertical is expandable.", MessageType.Warning);
                                 break;
                             }
                         }

@@ -554,6 +554,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allowDelayedDeactivation: 1
+  warnDelayedDeactivationHandlerAddedInRuntime: 1
 --- !u!1101 &1101456009183671936
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace CustomUnity
@@ -6,7 +7,7 @@ namespace CustomUnity
     /// <summary>
     /// DebugLog View Controller
     /// </summary>
-    public class DebugLogLine : MonoBehaviour
+    public class DebugLogLine : MonoBehaviour, IPointerClickHandler
     {
         public GameObject infoIcon;
         public GameObject warningIcon;
@@ -19,6 +20,9 @@ namespace CustomUnity
         public Text count;
         public string stackTrace;
 
+        public static string dateTimeFormatString = "u";
+        public static bool universalTime = false;
+
         DebugLogView _debugLogView;
 
         void Awake()
@@ -26,14 +30,9 @@ namespace CustomUnity
             _debugLogView = GetComponentInParent<DebugLogView>();
         }
 
-        public void ShowDetail()
-        {
-            _debugLogView.ShowDetail(this);
-        }
-
         public void SetUp(DebugLogDataSource.Log data, bool isCollapsed, bool isAltBackground)
         {
-            dateTime.text = data.dateTime.ToString("u");
+            dateTime.text = (universalTime ? data.dateTime : data.dateTime.ToLocalTime()).ToString(dateTimeFormatString);
             infoIcon.SetActive(data.type == LogType.Log);
             warningIcon.SetActive(data.type == LogType.Warning);
             errorIcon.SetActive(data.type == LogType.Error || data.type == LogType.Exception || data.type == LogType.Assert);
@@ -49,6 +48,11 @@ namespace CustomUnity
             altBackground.SetActive(isAltBackground);
 
             stackTrace = data.stackTrace;
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            _debugLogView.ShowDetail(this);
         }
     }
 }

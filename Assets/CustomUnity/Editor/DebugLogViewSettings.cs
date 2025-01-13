@@ -4,37 +4,42 @@ using UnityEditor;
 
 namespace CustomUnity
 {
-    [FilePath("ProjectSettings/" + nameof(CustomUnity) + "FPSCounterSettings.asset", FilePathAttribute.Location.ProjectFolder)]
-    public class FPSCounterSettings : ScriptableSingleton<FPSCounterSettings>
+    [FilePath("ProjectSettings/" + nameof(CustomUnity) + "DebugLogViewSettings.asset", FilePathAttribute.Location.ProjectFolder)]
+    public class DebugLogViewSettings : ScriptableSingleton<DebugLogViewSettings>
     {
-        public bool hideOnRuntime;
+        [Tooltip("Default is 'u'")]
+        public string dateTimeFormatString = "u";
+        public bool universalTime = false;
 
         public void Save() => Save(true);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void Initialize()
         {
-            if(instance) FPSCounter.hideOnRuntime = instance.hideOnRuntime;
+            if(instance) {
+                DebugLogLine.dateTimeFormatString = instance.dateTimeFormatString;
+                DebugLogLine.universalTime = instance.universalTime;
+            }
         }
     }
 
-    class FPSCounterSettingsProvider : SettingsProvider
+    class DebugLogViewSettingsProvider : SettingsProvider
     {
-        public FPSCounterSettingsProvider(string path, SettingsScope scopes) : base(path, scopes)
+        public DebugLogViewSettingsProvider(string path, SettingsScope scopes) : base(path, scopes)
         {
         }
 
         [SettingsProvider]
         public static SettingsProvider CreateSettingProvider()
         {
-            return new FPSCounterSettingsProvider($"Project/{nameof(CustomUnity)}/FPSCounter Settings", SettingsScope.Project);
+            return new DebugLogViewSettingsProvider($"Project/{nameof(CustomUnity)}/Debug Log View Settings", SettingsScope.Project);
         }
 
         private UnityEditor.Editor _editor;
 
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
-            var settings = FPSCounterSettings.instance;
+            var settings = DebugLogViewSettings.instance;
             // set to editable ScriptableSingleton
             settings.hideFlags = HideFlags.HideAndDontSave & ~HideFlags.NotEditable;
             // create default inspector
@@ -49,8 +54,9 @@ namespace CustomUnity
 
             if(EditorGUI.EndChangeCheck()) {
                 // 差分があったら保存
-                FPSCounterSettings.instance.Save();
-                FPSCounter.hideOnRuntime = FPSCounterSettings.instance.hideOnRuntime;
+                DebugLogViewSettings.instance.Save();
+                DebugLogLine.dateTimeFormatString = DebugLogViewSettings.instance.dateTimeFormatString;
+                DebugLogLine.universalTime = DebugLogViewSettings.instance.universalTime;
             }
         }
     }

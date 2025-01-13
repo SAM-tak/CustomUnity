@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 namespace CustomUnity
@@ -6,9 +5,11 @@ namespace CustomUnity
     /// <summary>
     /// Deactivate own GameObject on StateMachine exit
     /// </summary>
+    /// <see cref="DelayedDeactivationHandler"/>
     public class DeactivateOnExit : StateMachineBehaviour
     {
         public bool allowDelayedDeactivation = false;
+        public bool warnDelayedDeactivationHandlerAddedInRuntime = false;
 
         // OnStateMachineExit is called when exiting a statemachine via its Exit Node
         override public void OnStateMachineExit(Animator animator, int stateMachinePathHash)
@@ -32,20 +33,15 @@ namespace CustomUnity
             }
 #endif
             if(allowDelayedDeactivation) {
-                var delayedDeactivationHandler = animator.GetComponent<DelayedDeactivationHandler>();
-                if(!delayedDeactivationHandler) delayedDeactivationHandler = animator.gameObject.AddComponent<DelayedDeactivationHandler>();
-                delayedDeactivationHandler.StartCoroutine(DeactivateOnEndOfFrame(animator));
+                if(!animator.TryGetComponent<DelayedDeactivationHandler>(out var delayedDeactivationHandler)) {
+                    if(warnDelayedDeactivationHandlerAddedInRuntime) {
+                        Log.Warning(animator, $"DelayedDeactivationHandler was added in runtime.");
+                    }
+                    delayedDeactivationHandler = animator.gameObject.AddComponent<DelayedDeactivationHandler>();
+                }
+                delayedDeactivationHandler.Execute();
             }
             else animator.gameObject.SetActive(false);
-        }
-
-        // use coroutine for avoid depend to external library (via. UniTask)
-        internal class DelayedDeactivationHandler : MonoBehaviour { }
-        static readonly WaitForEndOfFrame _waitForEndOfFrame = new();
-        IEnumerator DeactivateOnEndOfFrame(Animator animator)
-        {
-            yield return _waitForEndOfFrame;
-            animator.gameObject.SetActive(false);
         }
     }
 }

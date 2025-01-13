@@ -10,8 +10,8 @@ namespace CustomUnity
     /// <summary>
     /// DebugLog ViewModel
     /// </summary>
-    [RequireComponent(typeof(JaggedTableContent))]
-    public class DebugLogDataSource : MonoBehaviour, JaggedTableContent.IDataSource
+    [RequireComponent(typeof(TableContent))]
+    public class DebugLogDataSource : MonoBehaviour, TableContent.IDataSource
     {
         public struct Log
         {
@@ -163,9 +163,9 @@ namespace CustomUnity
         int _prevLogCount = 0;
         int _prevTotalCount = 0;
 
-        JaggedTableContent _tableContent;
+        TableContent _tableContent;
 
-        void JaggedTableContent.IDataSource.OnPreUpdate()
+        public void OnPreUpdate()
         {
             bool needsRefresh = false;
             if(_prevLogCount != LogCount) {
@@ -181,47 +181,47 @@ namespace CustomUnity
             }
         }
 
-        float EstimateHeight(int lineCount)
-        {
-            return Mathf.Max(_minHeight, lineCount * (_fontSize + 2) + Mathf.Max(0, lineCount - 1) * _lineSpacing + _mergin * 2f);
-        }
+        // float EstimateHeight(int lineCount)
+        // {
+        //     return Mathf.Max(_minHeight, lineCount * (_fontSize + 2) + Mathf.Max(0, lineCount - 1) * _lineSpacing + _mergin * 2f);
+        // }
 
-        readonly Dictionary<int, float> _preferredHeightCache = new(256);
+        // readonly Dictionary<int, float> _preferredHeightCache = new(256);
 
-        public void ClearPreferredHeightCache()
-        {
-            _preferredHeightCache.Clear();
-        }
+        // public void ClearPreferredHeightCache()
+        // {
+        //     _preferredHeightCache.Clear();
+        // }
 
-        float JaggedTableContent.IDataSource.CellSize(int index)
-        {
-            if(index < 0 || _logData.Value.filtered.Count <= index) return _minHeight;
+        // public float CellSize(int index)
+        // {
+        //     if(index < 0 || _logData.Value.filtered.Count <= index) return _minHeight;
 
-            var log = _logData.Value.filtered.ElementAt(index);
+        //     var log = _logData.Value.filtered.ElementAt(index);
 
-            var trueIndex = _logData.Value.logs.IndexOf(log);
+        //     var trueIndex = _logData.Value.logs.IndexOf(log);
 
-            if(_preferredHeightCache.ContainsKey(trueIndex)) return _preferredHeightCache[trueIndex];
+        //     if(_preferredHeightCache.ContainsKey(trueIndex)) return _preferredHeightCache[trueIndex];
 
-            var cell = _tableContent.GetActiveCell(index);
-            if(cell && cell.activeInHierarchy) {
-                var text = cell.transform.Find("Message").GetComponent<Text>();
-                if(text.text.Equals(log.message)) {
-                    var preferredHeight = Mathf.Max(_minHeight, text.preferredHeight + _mergin * 2f);
-                    _preferredHeightCache[trueIndex] = preferredHeight;
-                    _tableContent.NeedsRelayout();
-                    return preferredHeight;
-                }
-            }
+        //     var cell = _tableContent.GetActiveCell(index);
+        //     if(cell && cell.activeInHierarchy) {
+        //         var text = cell.transform.Find("Message").GetComponent<Text>();
+        //         if(text.text.Equals(log.message)) {
+        //             var preferredHeight = Mathf.Max(_minHeight, text.preferredHeight + _mergin * 2f);
+        //             _preferredHeightCache[trueIndex] = preferredHeight;
+        //             _tableContent.NeedsRelayout();
+        //             return preferredHeight;
+        //         }
+        //     }
 
-            var lineCount = _wrapColumnCount > 0 ? log.message.LineCount(_wrapColumnCount) : log.message.LineCount();
-            //StopLogging();
-            //LogInfo($"lineCount = {lineCount} fontSize = {fontSize} lineSpacing = {lineSpacing} mergin = {mergin} height = {EstimateHeight(lineCount)}");
-            //StartLogging();
-            return EstimateHeight(lineCount);
-        }
+        //     var lineCount = _wrapColumnCount > 0 ? log.message.LineCount(_wrapColumnCount) : log.message.LineCount();
+        //     //StopLogging();
+        //     //LogInfo($"lineCount = {lineCount} fontSize = {fontSize} lineSpacing = {lineSpacing} mergin = {mergin} height = {EstimateHeight(lineCount)}");
+        //     //StartLogging();
+        //     return EstimateHeight(lineCount);
+        // }
 
-        void JaggedTableContent.IDataSource.SetUpCell(int index, GameObject cell)
+        public void SetUpCell(int index, GameObject cell)
         {
             var data = _logData.Value.filtered.ElementAt(index);
             if(cell.TryGetComponent<DebugLogLine>(out var logLine)) {
@@ -241,11 +241,11 @@ namespace CustomUnity
 
         void Awake()
         {
-            _tableContent = GetComponent<JaggedTableContent>();
+            _tableContent = GetComponent<TableContent>();
             StartLogging();
             OnLogAdded += SetDirty;
             OnLogCleared += SetDirty;
-            OnLogCleared += ClearPreferredHeightCache;
+            // OnLogCleared += ClearPreferredHeightCache;
 
             var firstChild = transform.GetChild(0);
 
@@ -270,7 +270,7 @@ namespace CustomUnity
         {
             OnLogAdded -= SetDirty;
             OnLogCleared -= SetDirty;
-            OnLogCleared -= ClearPreferredHeightCache;
+            // OnLogCleared -= ClearPreferredHeightCache;
         }
     }
 }

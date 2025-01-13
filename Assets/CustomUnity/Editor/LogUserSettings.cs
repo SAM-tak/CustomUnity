@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace CustomUnity
 {
-    [FilePath("UserSettings/CustomUnityLogSettings.asset", FilePathAttribute.Location.ProjectFolder)]
+    [FilePath("UserSettings/" + nameof(CustomUnity) + "LogSettings.asset", FilePathAttribute.Location.ProjectFolder)]
     public class LogUserSettings : ScriptableSingleton<LogUserSettings>
     {
         [Serializable]
@@ -142,7 +142,7 @@ namespace CustomUnity
         [SettingsProvider]
         public static SettingsProvider CreateSettingProvider()
         {
-            return new LogUserSettingsProvider("Preferences/CustomUnity/Log Settings", SettingsScope.User);
+            return new LogUserSettingsProvider($"Preferences/{nameof(CustomUnity)}/Log Settings", SettingsScope.User);
         }
 
         private UnityEditor.Editor _editor;

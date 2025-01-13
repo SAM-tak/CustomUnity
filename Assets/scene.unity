@@ -2896,7 +2896,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 751213321}
   m_Direction: 0
   m_Value: 1
-  m_Size: 0.99999994
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6398,7 +6398,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 895972625}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.5258973
+  m_Size: 0.56455
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7974,6 +7974,7 @@ GameObject:
   - component: {fileID: 2093497822}
   - component: {fileID: 2093497827}
   - component: {fileID: 2093497828}
+  - component: {fileID: 2093497829}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -8173,6 +8174,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2093497829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093497821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa328c39f862a7f4fb0e5fead2f6c0fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2103125990
 PrefabInstance:
   m_ObjectHideFlags: 0
