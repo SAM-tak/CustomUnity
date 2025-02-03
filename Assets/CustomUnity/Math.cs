@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace CustomUnity
@@ -101,6 +102,106 @@ namespace CustomUnity
         {
             Debug.Assert(alignment > 0);
             return value < 0 ? (value + 1) / alignment - 1 : value / alignment;
+        }
+
+        /// <summary>
+        /// Calc the smallest greater float value
+        /// </summary>
+        /// <param name="value">source value</param>
+        /// <returns>Smallest greater value</returns>
+        public static float GetSmallestGreater(float value)
+        {
+            if(float.IsNaN(value) || float.IsInfinity(value)) {
+                return value;
+            }
+            if(value == 0.0f) {
+                return float.Epsilon;
+            }
+
+            int bits = BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+            // check sign.
+            if(value > 0) {
+                bits++;
+            }
+            else {
+                bits--;
+            }
+            return BitConverter.ToSingle(BitConverter.GetBytes(bits), 0);
+        }
+
+        /// <summary>
+        /// Calc the smallest lesser float value
+        /// </summary>
+        /// <param name="value">source value</param>
+        /// <returns>Smallest lesser value</returns>
+        public static float GetSmallestLesser(float value)
+        {
+            if(float.IsNaN(value) || float.IsInfinity(value)) {
+                return value;
+            }
+            if(value == 0.0f) {
+                return -float.Epsilon;
+            }
+
+            int bits = BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+            // check sign.
+            if(value > 0) {
+                bits--;
+            }
+            else {
+                bits++;
+            }
+            return BitConverter.ToSingle(BitConverter.GetBytes(bits), 0);
+        }
+
+        /// <summary>
+        /// Calc the smallest greater double value
+        /// </summary>
+        /// <param name="value">source value</param>
+        /// <returns>Smallest greater value</returns>
+        public static double GetSmallestGreater(double value)
+        {
+            if(double.IsNaN(value) || double.IsInfinity(value)) {
+                return value;
+            }
+            if(value == 0.0f) {
+                return double.Epsilon;
+            }
+
+            long bits = BitConverter.ToInt64(BitConverter.GetBytes(value), 0);
+            // check sign.
+            if(value > 0) {
+                bits++;
+            }
+            else {
+                bits--;
+            }
+            return BitConverter.ToDouble(BitConverter.GetBytes(bits), 0);
+        }
+
+        /// <summary>
+        /// Calc the smallest lesser double value
+        /// </summary>
+        /// <param name="value">source value</param>
+        /// <returns>Smallest lesser value</returns>
+        public static double GetSmallestLesser(double value)
+        {
+            if(double.IsNaN(value) || double.IsInfinity(value)) {
+                return value;
+            }
+            if(value == 0.0f) {
+                return -double.Epsilon;
+            }
+
+            long bits = BitConverter.ToInt64(BitConverter.GetBytes(value), 0);
+            // check sign.
+            if(value > 0) {
+                bits--;
+            }
+            else {
+                bits++;
+            }
+            return BitConverter.ToDouble(BitConverter.GetBytes(bits), 0);
         }
 
         /// <summary>

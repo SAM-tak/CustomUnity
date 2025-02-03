@@ -92,7 +92,7 @@ namespace CustomUnity
             // プログレスバーを消す
             EditorUtility.ClearProgressBar();
 
-            Debug.Log(missingList.Count + " missings found.");
+            Debug.Log($"{missingList.Count} missings found.");
 
             return missingList;
         }

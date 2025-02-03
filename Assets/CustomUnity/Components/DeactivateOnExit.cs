@@ -9,7 +9,7 @@ namespace CustomUnity
     public class DeactivateOnExit : StateMachineBehaviour
     {
         public bool allowDelayedDeactivation = false;
-        public bool warnDelayedDeactivationHandlerAddedInRuntime = false;
+        public bool warnDelayedDeactivationHandlerWasAddedInRuntime = true;
 
         // OnStateMachineExit is called when exiting a statemachine via its Exit Node
         override public void OnStateMachineExit(Animator animator, int stateMachinePathHash)
@@ -34,7 +34,7 @@ namespace CustomUnity
 #endif
             if(allowDelayedDeactivation) {
                 if(!animator.TryGetComponent<DelayedDeactivationHandler>(out var delayedDeactivationHandler)) {
-                    if(warnDelayedDeactivationHandlerAddedInRuntime) {
+                    if(warnDelayedDeactivationHandlerWasAddedInRuntime) {
                         Log.Warning(animator, $"DelayedDeactivationHandler was added in runtime.");
                     }
                     delayedDeactivationHandler = animator.gameObject.AddComponent<DelayedDeactivationHandler>();

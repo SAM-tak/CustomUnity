@@ -1,7 +1,7 @@
-using System;
 using UnityEngine;
+using CustomUnity;
 
-namespace CustomUnity
+namespace YourProjectNamespace
 {
     public class CameraSwitchTest : MonoBehaviour
     {
@@ -48,32 +48,12 @@ namespace CustomUnity
             if(positions != null && positions.Length > 0) {
                 if(index < 0) index = 0;
                 if(index >= positions.Length) index = positions.Length - 1;
-
                 currentTarget = smoothMode switch {
-                    SmoothMode.RubberStep => ((Func<Vector3>)(() => {
-                        var newTarget = Math.RubberStep(currentTarget, positions[index].position, halfLife, Time.deltaTime);
-                        currentVelocity = newTarget - currentTarget;
-                        return newTarget;
-                    }))(),
+                    SmoothMode.RubberStep => Math.RubberStep(currentTarget, positions[index].position, halfLife, Time.deltaTime),
                     SmoothMode.SmoothDamp => Math.SmoothDamp(ref currentVelocity, currentTarget, positions[index].position, halfLife, Time.deltaTime),
                     SmoothMode.UnitySmoothDamp => Vector3.SmoothDamp(currentTarget, positions[index].position, ref currentVelocity, halfLife * 2, float.PositiveInfinity, Time.deltaTime),
-                    _ => Vector3.zero
+                    _ => positions[index].position
                 };
-
-                switch(smoothMode) {
-                case SmoothMode.RubberStep: {
-                        var prevTarget = currentTarget;
-                        currentTarget = Math.RubberStep(currentTarget, positions[index].position, halfLife, Time.deltaTime);
-                        currentVelocity = currentTarget - prevTarget;
-                    }
-                    break;
-                case SmoothMode.SmoothDamp:
-                    currentTarget = Math.SmoothDamp(ref currentVelocity, currentTarget, positions[index].position, halfLife, Time.deltaTime);
-                    break;
-                case SmoothMode.UnitySmoothDamp:
-                    currentTarget = Vector3.SmoothDamp(currentTarget, positions[index].position, ref currentVelocity, halfLife * 2, float.PositiveInfinity, Time.deltaTime);
-                    break;
-                }
                 var rotation = transform.rotation;
                 transform.LookAt(currentTarget);
                 targetRotation = transform.rotation;

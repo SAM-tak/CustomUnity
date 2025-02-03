@@ -1,10 +1,10 @@
-using UnityEngine.UI;
+using TMPro;
 
 namespace YourProjectNamespace
 {
     public class ChatLogViewTest : MonoBehaviour
     {
-        public TMPro.TMP_InputField inputField;
+        public TMP_InputField inputField;
 
         public int maxSentence = 80;
 

@@ -44,23 +44,32 @@ namespace YourProjectNamespace
 
         async void Awake()
         {
+            LogInfo("Awake Start");
             await gameObjectPools?.SetUpAsync();
             ready = true;
+            LogInfo("Awake End");
         }
 
         // Use this for initialization
         async void Start()
         {
+            LogInfo("Start Wainting...");
+            enabled = false; // async Start or Start coroutine don't stop on disabled. Then enabled flag can be used for controling do/do not Update.
             while(!ready) await Awaitable.NextFrameAsync();
+            enabled = true;
             gameObjectPools?.DeactivateAll();
             LogInfo("Start");
             LogInfo($"{"blahblah".Red().Bold()}\n{$"{"foobar".Grey()} {"hogehoge".Color(0x443322FF)}".Small()}");
             LogInfo(RichText.Sb.Bold(sb => sb.Red("blahblah")).Ln().Small(sb => sb.Grey("foobar").Space().Color(0x443322FF, "hogehoge")));
+            LogInfo("Start Finished");
         }
+
+        int _count;
 
         // Update is called once per frame
         void Update()
         {
+            if(_count < 3) LogInfo($"Update {_count++}");
             gameObjectPools?.CollectInactives();
         }
     }
