@@ -41,7 +41,12 @@ namespace CustomUnity
                             cloned.name = animationClip.name;
                             AssetDatabase.AddObjectToAsset(cloned, target);
                             replaceReference(animationClip, cloned);
-                            AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(animationClip));
+                            if(AssetDatabase.IsSubAsset(animationClip)) {
+                                Object.DestroyImmediate(animationClip, true);
+                            }
+                            else {
+                                AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(animationClip));
+                            }
                             dirty = true;
                         }
                     }
