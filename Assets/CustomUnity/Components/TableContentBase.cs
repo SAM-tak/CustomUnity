@@ -22,6 +22,10 @@ namespace CustomUnity
         [Tooltip("Number of cells to be active even outside the viewport for navigation.")]
         public int extraCells;
 
+        public bool autoCellAdding;
+
+        public bool reportLackOfCell;
+
         public int MaxCells => cellPool != null ? cellPool.Length : 0;
 
         public int MaxCellsRequired { get; protected set; }
@@ -59,6 +63,21 @@ namespace CustomUnity
                 cellPool[candidate].index = index;
                 return cellPool[candidate].cell;
             }
+            if(autoCellAdding) {
+                if(reportLackOfCell) {
+                    LogWarning($"TableContentBase : adding new cell. Count = {cellPool.Length}");
+                }
+                @new = true;
+                Array.Resize(ref cellPool, cellPool.Length + 1);
+                var newCell = Instantiate(cellPool[0].cell, transform);
+                newCell.SetActive(false);
+                cellPool[^1].cell = newCell;
+                cellPool[^1].index = index;
+                return newCell;
+            }
+            if(reportLackOfCell) {
+                LogWarning($"TableContentBase : Lack of cell. Count = {cellPool.Length}");
+            }
             return null;
         }
 
@@ -76,9 +95,10 @@ namespace CustomUnity
         {
             var cellRectTransform = cell.GetComponent<RectTransform>();
             var rect = cellRectTransform.rect;
-            rect.position = ScrollRect.viewport.InverseTransformPoint(cellRectTransform.TransformPoint(rect.position));
-            rect.size = cellRectTransform.InverseTransformVector(cellRectTransform.TransformVector(rect.size));
-            return !ScrollRect.viewport.rect.Overlaps(rect);
+            return !ScrollRect.viewport.rect.Overlaps(new Rect(
+                ScrollRect.viewport.InverseTransformPoint(cellRectTransform.TransformPoint(rect.position)),
+                cellRectTransform.InverseTransformVector(cellRectTransform.TransformVector(rect.size))
+            ));
         }
 
         public Vector3 GetPositionFromScrollAmount(float scrollAmount) => orientaion switch {

@@ -128,23 +128,28 @@ namespace CustomUnity
                 for(int i = startIndex; i <= endIndex; ++i) {
                     int wrapedIndex = Math.Wrap(i, totalCount);
                     var cell = GetCell(i, out var @new);
+                    if(_cellPositions.Length < transform.childCount) {
+                        Array.Resize(ref _cellPositions, transform.childCount);
+                        UpdateContent();
+                        return;
+                    }
                     if(cell && !(i - startIndex < 0 || i - startIndex >= _cellPositions.Length)) {
-                        var rectTrans = cell.GetComponent<RectTransform>();
-                        var localPosition = rectTrans.localPosition;
-                        var size = rectTrans.sizeDelta;
+                        var rectTransform = cell.GetComponent<RectTransform>();
+                        var localPosition = rectTransform.localPosition;
+                        var size = rectTransform.sizeDelta;
                         var cellPosition = _cellPositions[i - startIndex];
                         switch(orientaion) {
                         case TableOrientaion.Vertical:
                             size.y = cellPosition.size;
-                            localPosition.y = -cellPosition.position - size.y * rectTrans.pivot.y;
+                            localPosition.y = -cellPosition.position - size.y * rectTransform.pivot.y;
                             break;
                         case TableOrientaion.Horizontal:
                             size.x = cellPosition.size;
-                            localPosition.x = cellPosition.position + size.x * rectTrans.pivot.x;
+                            localPosition.x = cellPosition.position + size.x * rectTransform.pivot.x;
                             break;
                         }
-                        rectTrans.sizeDelta = size;
-                        rectTrans.localPosition = localPosition;
+                        rectTransform.sizeDelta = size;
+                        rectTransform.localPosition = localPosition;
                         if(@new) {
                             DataSource.SetUpCell(wrapedIndex, cell);
                             cell.SetActive(true);
