@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace CustomUnity
 {
@@ -69,38 +70,38 @@ namespace CustomUnity
             return new WeakReference<PlayHandle>(playHandle);
         }
 
-        public void PlayOneShot(AudioClip clip)
+        public void PlayOneShot(AudioResource resource)
         {
             var audioSource = GetAudioSource();
-            audioSource.clip = clip;
+            audioSource.resource = resource;
             audioSource.loop = false;
             if(audioSource.isActiveAndEnabled) audioSource.Play();
         }
 
-        public void TryPlayOneShot(AudioClip clip)
+        public void TryPlayOneShot(AudioResource resource)
         {
             var audioSource = TryGetAudioSource();
             if(audioSource) {
-                audioSource.clip = clip;
+                audioSource.resource = resource;
                 audioSource.loop = false;
                 if(audioSource.isActiveAndEnabled) audioSource.Play();
             }
         }
 
-        public WeakReference<PlayHandle> Play(AudioClip clip, bool loop = false)
+        public WeakReference<PlayHandle> Play(AudioResource resource, bool loop = false)
         {
             var audioSource = GetAudioSource();
-            audioSource.clip = clip;
+            audioSource.resource = resource;
             audioSource.loop = loop;
             audioSource.Play();
             return NewPlayHandle(audioSource);
         }
 
-        public WeakReference<PlayHandle> TryPlay(AudioClip clip, bool loop = false)
+        public WeakReference<PlayHandle> TryPlay(AudioResource resource, bool loop = false)
         {
             var audioSource = TryGetAudioSource();
             if(audioSource) {
-                audioSource.clip = clip;
+                audioSource.resource = resource;
                 audioSource.loop = loop;
                 audioSource.Play();
                 return NewPlayHandle(audioSource);
