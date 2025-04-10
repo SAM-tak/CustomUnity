@@ -10,8 +10,6 @@ namespace CustomUnity
     [RequireComponent(typeof(ScrollRect))]
     public class ScrollToSelected : ScrollToItemBase, IScrollHandler
     {
-        public EventSystem eventSystem;
-
         // フォーカスが外れてもしばらくスクロールの対象にするため
         GameObject _lastSelected;
         // フォーカスされているオブジェクトがいつまでもスクロールの対象にならないようにする時間の計測用
@@ -20,10 +18,10 @@ namespace CustomUnity
         protected override void ScrollToTarget()
         {
             targetItem = _lastSelected;
-            if(eventSystem.currentSelectedGameObject
-                && eventSystem.currentSelectedGameObject.transform.IsChildOf(ScrollRect.content.transform)
-                && eventSystem.currentSelectedGameObject.GetComponentInParent<ScrollRect>() == ScrollRect) {
-                _lastSelected = targetItem = eventSystem.currentSelectedGameObject;
+            if(EventSystem.current.currentSelectedGameObject
+            && EventSystem.current.currentSelectedGameObject.transform.IsChildOf(ScrollRect.content.transform)
+            && EventSystem.current.currentSelectedGameObject.GetComponentInParent<ScrollRect>() == ScrollRect) {
+                _lastSelected = targetItem = EventSystem.current.currentSelectedGameObject;
                 _lastSelectedInterval = 0;
             }
             else if(_lastSelectedInterval < halfLife * 2) _lastSelectedInterval += DeltaTime;
@@ -34,7 +32,7 @@ namespace CustomUnity
 
         public void OnScroll(PointerEventData eventData)
         {
-            eventSystem.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(null);
             _lastSelected = null;
         }
     }
