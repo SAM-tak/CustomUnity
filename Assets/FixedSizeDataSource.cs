@@ -79,7 +79,7 @@ namespace YourProjectNamespace
             cell.transform.Find("Button/Text").GetComponent<Text>().text = data.buttonTitle;
         }
 
-        public void CellDeactivated(GameObject cell)
+        public void CellDeactivated(GameObject _)
         {
             _needsUpdateNavigation = true;
         }

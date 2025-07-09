@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 [assembly: InternalsVisibleTo("CustomUnity.Editor.Log")]
 namespace CustomUnity
@@ -15,7 +16,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         static public void Info(object message)
         {
             if(!PassFilter(message)) return;
@@ -31,7 +32,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         static public void Info(string message)
         {
             if(!PassFilter(message)) return;
@@ -50,7 +51,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         static public void Info(UnityEngine.Object context, object message)
         {
             if(!PassFilter(context, message)) return;
@@ -69,7 +70,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         static public void Info(UnityEngine.Object context, string message)
         {
             if(!PassFilter(context, message)) return;
@@ -85,7 +86,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Error(object message)
         {
             if(!PassFilter(message)) return;
@@ -101,7 +102,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Error(string message)
         {
             if(!PassFilter(message)) return;
@@ -120,7 +121,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Error(UnityEngine.Object context, object message)
         {
             if(!PassFilter(context, message)) return;
@@ -139,7 +140,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Error(UnityEngine.Object context, string message)
         {
             if(!PassFilter(message)) return;
@@ -155,6 +156,7 @@ namespace CustomUnity
         // パラメーター:
         //   exception:
         //     Runtime Exception.
+        [HideInCallstack]
         public static void Exception(System.Exception exception)
         {
             UnityEngine.Debug.LogException(exception);
@@ -172,6 +174,7 @@ namespace CustomUnity
         //
         //   exception:
         //     Runtime Exception.
+        [HideInCallstack]
         public static void Exception(UnityEngine.Object context, System.Exception exception)
         {
             UnityEngine.Debug.LogException(exception, context);
@@ -186,7 +189,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Warning(object message)
         {
             if(!PassFilter(message)) return;
@@ -202,7 +205,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Warning(string message)
         {
             if(!PassFilter(message)) return;
@@ -221,7 +224,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Warning(UnityEngine.Object context, object message)
         {
             if(!PassFilter(context, message)) return;
@@ -240,7 +243,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Warning(UnityEngine.Object context, string message)
         {
             if(!PassFilter(context, message)) return;
@@ -253,7 +256,7 @@ namespace CustomUnity
         //     Logs a trace message to the Unity Console.
         //     ///
         //
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Trace()
         {
             var callerFrame = new StackFrame(1, true);
@@ -271,7 +274,7 @@ namespace CustomUnity
         // パラメーター:
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
         public static void Trace(UnityEngine.Object context)
         {
             var callerFrame = new StackFrame(1, true);

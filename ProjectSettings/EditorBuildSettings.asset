@@ -4,7 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/DebugLogScene.unity
+    guid: 88506a0d01083d740906c6941deb001f
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 9ae050bfc1dce17468dfcdd8bd011b61,
       type: 2}
+  m_UseUCBPForAssetBundles: 0
