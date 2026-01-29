@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
+// using System.Reflection;
 
 namespace CustomUnity
 {
@@ -125,7 +126,7 @@ namespace CustomUnity
 
         public static void ReplaceReference(AnimatorController animatorController, AnimationClip from, AnimationClip to)
         {
-            if (animatorController != null) {
+            if(animatorController != null) {
                 foreach(var i in animatorController.layers) {
                     foreach(var j in i.stateMachine.states) {
                         if(j.state.motion == from) j.state.motion = to;
@@ -136,13 +137,13 @@ namespace CustomUnity
 
         public static void ReplaceReference(AnimatorOverrideController animatorOverrideController, AnimationClip from, AnimationClip to)
         {
-            if (animatorOverrideController != null) {
+            if(animatorOverrideController != null) {
                 var overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>();
                 animatorOverrideController.GetOverrides(overrides);
                 for(int i = 0; i < animatorOverrideController.overridesCount; ++i) {
                     var tmp = overrides[i];
-                    if (tmp.Key == from) tmp = new KeyValuePair<AnimationClip, AnimationClip>(to, tmp.Value);
-                    if (tmp.Value == from) tmp = new KeyValuePair<AnimationClip, AnimationClip>(tmp.Key, to);
+                    if(tmp.Key == from) tmp = new KeyValuePair<AnimationClip, AnimationClip>(to, tmp.Value);
+                    if(tmp.Value == from) tmp = new KeyValuePair<AnimationClip, AnimationClip>(tmp.Key, to);
                     overrides[i] = tmp;
                 }
                 animatorOverrideController.ApplyOverrides(overrides);
@@ -155,7 +156,7 @@ namespace CustomUnity
         Object target;
         const string menuString = "Assets/Enclose AnimationClip";
         const int priority = 51;
-        readonly EncloseAnimationClip encloseAnimationClip = new ();
+        readonly EncloseAnimationClip encloseAnimationClip = new();
 
         [MenuItem(menuString, priority = priority)]
         static public void Open()
@@ -195,4 +196,45 @@ namespace CustomUnity
             encloseAnimationClip.DrawGUI(target, (from, to) => EncloseAnimationClip.ReplaceReference(target as AnimatorController, from, to));
         }
     }
+
+    // 何をやってもダメ
+    // [CustomEditor(typeof(AnimatorOverrideController))]
+    // public class AnimatorOverrideControllerCustomInspector : Editor
+    // {
+    //     readonly EncloseAnimationClip encloseAnimationClip = new();
+
+    //     UnityEditor.Editor internalInspector;
+    //     MethodInfo internalOnEnable;
+    //     MethodInfo internalOnDisable;
+
+    //     void OnEnable()
+    //     {
+    //         if(!internalInspector) {
+    //             var type = typeof(Editor).Assembly.GetType("UnityEditor.AnimatorOverrideControllerInspector");
+    //             internalInspector = CreateEditor(target, type);
+    //             internalOnEnable = type.GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.NonPublic);
+    //             internalOnDisable = type.GetMethod("OnDisable", BindingFlags.Instance | BindingFlags.NonPublic);
+    //         }
+    //         internalOnEnable?.Invoke(internalInspector, null);
+    //     }
+
+    //     void OnDisable()
+    //     {
+    //         internalOnDisable?.Invoke(internalInspector, null);
+    //     }
+
+    //     void OnDestroy()
+    //     {
+    //         DestroyImmediate(internalInspector);
+    //     }
+
+    //     public override void OnInspectorGUI()
+    //     {
+    //         // base.OnInspectorGUI();
+    //         if(internalInspector) {
+    //             internalInspector.OnInspectorGUI();
+    //         }
+    //         encloseAnimationClip.DrawGUI(target, (from, to) => EncloseAnimationClip.ReplaceReference(target as AnimatorOverrideController, from, to));
+    //     }
+    // }
 }
