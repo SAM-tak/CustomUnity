@@ -274,7 +274,7 @@ Library/
 UserSettings/
 Logs/
 Temp/
-/*.sln
+/*.slnx
 /*.csproj
 !Packages/manifest.json
 Packages/packages-lock.json*
