@@ -116,18 +116,18 @@ namespace CustomUnity
 
                 while(property.Next(true)) {
                     // プロパティの種類がオブジェクト（アセット）への参照で、
-                    // その参照がnullなのにもかかわらず、参照先インスタンスIDが0でないものはMissing状態！
+                    // その参照がnullなのにもかかわらず、参照先エンティティIDが有効でないものはMissing状態！
                     if(property.propertyType == SerializedPropertyType.ObjectReference
                        && (componentOnly ? property.name == "component" || property.name == "m_Script" : property.name != "component" && property.name != "m_Script")
                        && property.objectReferenceValue == null
-                       && property.objectReferenceInstanceIDValue != 0) {
+                       && property.objectReferenceEntityIdValue.IsValid()) {
                         // Missing状態のプロパティリストに追加する
                         missingList.Add(new Entry {
                             asset = asset,
                             path = path,
                             propertyName = property.name,
                             propertyPath = property.propertyPath,
-                            instanceID = property.objectReferenceInstanceIDValue
+                            entityId = property.objectReferenceEntityIdValue
                         });
                     }
                 }

@@ -29,7 +29,7 @@ namespace CustomUnity
                 foreach(var data in assetList) {
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.ObjectField(data.asset, data.asset.GetType(), true, GUILayout.Width(200));
-                    EditorGUILayout.TextField($"{data.propertyName} : {data.instanceID}", GUILayout.Width(200));
+                    EditorGUILayout.TextField($"{data.propertyName} : {data.entityId}", GUILayout.Width(200));
                     EditorGUILayout.TextField(data.path);
                     EditorGUILayout.EndHorizontal();
                 }
@@ -48,7 +48,7 @@ namespace CustomUnity
             /// プロパティパス
             public string propertyPath;
             /// インスタンスID
-            public int instanceID;
+            public EntityId entityId;
         }
     }
 }

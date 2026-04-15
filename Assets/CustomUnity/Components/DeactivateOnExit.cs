@@ -39,7 +39,7 @@ namespace CustomUnity
                     }
                     delayedDeactivationHandler = animator.gameObject.AddComponent<DelayedDeactivationHandler>();
                 }
-                delayedDeactivationHandler.Execute();
+                delayedDeactivationHandler.Execute(animator);
             }
             else animator.gameObject.SetActive(false);
         }

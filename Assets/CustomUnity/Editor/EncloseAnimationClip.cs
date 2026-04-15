@@ -171,6 +171,7 @@ namespace CustomUnity
             if(Selection.activeObject == null) return false;
             var assetPath = AssetDatabase.GetAssetPath(Selection.activeObject);
             if(string.IsNullOrEmpty(assetPath)) return false;
+            if(AssetDatabase.IsValidFolder(assetPath)) return false;
             if(Path.GetFileNameWithoutExtension(assetPath) != Selection.activeObject.name) return false;
             var ext = Path.GetExtension(assetPath);
             return ext != ".fbx" && ext != ".dae" && ext != ".3ds" && ext != ".dxf" && ext != ".obj" && ext != ".skp" && ext != ".blender";

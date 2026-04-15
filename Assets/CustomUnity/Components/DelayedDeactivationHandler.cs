@@ -16,16 +16,29 @@ namespace CustomUnity
     [AddComponentMenu("CustomUnity/DelayedDeactivationHandler")]
     public class DelayedDeactivationHandler : MonoBehaviour
     {
-        public void Execute()
+        public void Execute(Animator animator)
         {
-            StartCoroutine(DeactivateOnEndOfFrame());
+            if(animator.updateMode == AnimatorUpdateMode.Fixed) {
+                StartCoroutine(DeactivateOnLateFixedUpdate());
+            }
+            else {
+                StartCoroutine(DeactivateOnEndOfFrame());
+            }
         }
 
         static readonly WaitForEndOfFrame _waitForEndOfFrame = new();
 
+        static readonly WaitForFixedUpdate _waitForFixedUpdate = new();
+
         IEnumerator DeactivateOnEndOfFrame()
         {
             yield return _waitForEndOfFrame;
+            gameObject.SetActive(false);
+        }
+
+        IEnumerator DeactivateOnLateFixedUpdate()
+        {
+            yield return _waitForFixedUpdate;
             gameObject.SetActive(false);
         }
     }
