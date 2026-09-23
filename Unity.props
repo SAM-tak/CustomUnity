@@ -1,0 +1,49 @@
+<Project>
+
+  <!--
+    Shared Unity reference paths for the hand-built plugin projects
+    (CustomUnity.Log, CustomUnity.Editor.Log).
+
+    The editor install is derived from ProjectSettings/ProjectVersion.txt, so bumping
+    the Unity version no longer means editing hard-coded HintPaths.
+
+    Override the detection with either of:
+      dotnet build -c Release -p:UnityEditorDir="<...>/Unity/Hub/Editor/<version>/Editor"
+      UNITY_EDITOR_DIR=<...>/Editor        (environment variable; required off Windows)
+  -->
+
+  <PropertyGroup>
+    <UnityProjectDir>$(MSBuildThisFileDirectory)</UnityProjectDir>
+    <UnityProjectVersionFile>$(UnityProjectDir)ProjectSettings\ProjectVersion.txt</UnityProjectVersionFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(UnityEditorDir)' == ''">
+    <UnityEditorDir>$(UNITY_EDITOR_DIR)</UnityEditorDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(UnityEditorDir)' == ''">
+    <_UnityProjectVersionText Condition="Exists('$(UnityProjectVersionFile)')">$([System.IO.File]::ReadAllText($(UnityProjectVersionFile)))</_UnityProjectVersionText>
+    <UnityVersion Condition="'$(_UnityProjectVersionText)' != ''">$([System.Text.RegularExpressions.Regex]::Replace($(_UnityProjectVersionText), '(?s)^.*?m_EditorVersion:[ \t]*([^\r\n]+).*$', '$1'))</UnityVersion>
+    <UnityHubEditorDir Condition="'$(UnityHubEditorDir)' == ''">$(ProgramFiles)\Unity\Hub\Editor</UnityHubEditorDir>
+    <UnityEditorDir Condition="'$(UnityVersion)' != ''">$(UnityHubEditorDir)\$(UnityVersion)\Editor</UnityEditorDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- UnityEngine.*Module.dll / UnityEditor.*Module.dll live here. -->
+    <UnityManagedDir>$(UnityEditorDir)\Data\Managed\UnityEngine</UnityManagedDir>
+    <!-- Assemblies Unity compiles from packages (UnityEngine.UI, ...). Only exists
+         after the editor has imported the project at least once. -->
+    <UnityScriptAssembliesDir>$(UnityProjectDir)Library\ScriptAssemblies</UnityScriptAssembliesDir>
+  </PropertyGroup>
+
+  <Target Name="VerifyUnityReferenceDirs" BeforeTargets="ResolveAssemblyReferences">
+    <PropertyGroup>
+      <_UnityVersionNote Condition="'$(UnityVersion)' != ''"> for version $(UnityVersion), taken from ProjectVersion.txt</_UnityVersionNote>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(UnityManagedDir)')"
+           Text="Unity managed assemblies not found at &quot;$(UnityManagedDir)&quot;$(_UnityVersionNote). Install that editor version, or pass -p:UnityEditorDir=&lt;path&gt;\Editor, or set UNITY_EDITOR_DIR." />
+    <Error Condition="'$(RequiresUnityScriptAssemblies)' == 'true' And !Exists('$(UnityScriptAssembliesDir)')"
+           Text="&quot;$(UnityScriptAssembliesDir)&quot; not found. Open the project in the Unity editor once so it compiles its package assemblies, then build again." />
+  </Target>
+
+</Project>

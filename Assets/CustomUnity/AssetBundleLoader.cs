@@ -68,9 +68,7 @@ namespace CustomUnity
     /// </summary>
     public class AssetBundleLoader : MonoBehaviour
     {
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
         public const string DevelopmentAssetBundleServer = "http://127.0.0.1:7888";
-#endif
 #if UNITY_EDITOR
         static bool? simulatesAssetBundleInEditor;
         const string kSimulatesAssetBundles = nameof(AssetBundleLoader) + ".SimulatesAssetBundles";
@@ -216,15 +214,16 @@ namespace CustomUnity
                 SetSourceAssetBundleURL(localAssetBundleServerURL);
                 return;
             }
+#else
+            // Development Build only: a shipping player must keep its real source URL.
+            if(!Debug.isDebugBuild) return;
 #endif
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
             if(string.IsNullOrEmpty(DevelopmentAssetBundleServer)) {
                 if(LogsErrr) Log.Error("[AssetBundelLoader] Development Server URL could not be found.");
             }
             else {
                 SetSourceAssetBundleURL(DevelopmentAssetBundleServer);
             }
-#endif
         }
 
         /// <summary>

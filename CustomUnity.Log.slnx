@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CustomUnity.Editor.Log/CustomUnity.Editor.Log.csproj" />
+  <Project Path="CustomUnity.Log/CustomUnity.Log.csproj" />
+</Solution>

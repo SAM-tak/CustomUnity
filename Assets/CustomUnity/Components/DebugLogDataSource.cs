@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Diagnostics;
 
 namespace CustomUnity
 {
@@ -80,7 +80,11 @@ namespace CustomUnity
         static event Action OnLogCleared;
         static bool _isStarted;
 
+#if UNITY_6000_6_OR_NEWER
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION")]
+#else
         [Conditional("DEVELOPMENT_BUILD")]
+#endif
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void StartLogging()
         {

@@ -1,8 +1,17 @@
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
-[assembly: InternalsVisibleTo("CustomUnity.Editor.Log")]
+// These wrappers ship as a precompiled plugin, so #if cannot adapt them to the Unity
+// version that consumes them - whatever was defined when the dll was built is baked in.
+// [Conditional] is different: the caller's compiler evaluates it, and several of them
+// are OR'd together. Listing both instrumentation symbols therefore covers every
+// supported editor from one dll:
+//   UNITY_INCLUDE_INSTRUMENTATION  Unity 6.6+, defined by the Debug/Checked/Instrumented
+//                                  Managed Code Variant (the default Release defines it
+//                                  for no variant, so diagnostics need Checked or above).
+//   DEVELOPMENT_BUILD              Unity 6.5 and older, where the symbol above does not
+//                                  exist yet; deprecated in 6.6 and removed in 6.8.
+// Drop DEVELOPMENT_BUILD once package.json requires 6000.6 or newer.
 namespace CustomUnity
 {
     static public class Log
@@ -16,10 +25,10 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         static public void Info(object message)
         {
-            if(!PassFilter(message)) return;
+            if (!PassFilter(message)) return;
             UnityEngine.Debug.Log(message);
         }
 
@@ -32,7 +41,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         static public void Info(string message)
         {
             if(!PassFilter(message)) return;
@@ -51,7 +60,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         static public void Info(UnityEngine.Object context, object message)
         {
             if(!PassFilter(context, message)) return;
@@ -70,7 +79,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         static public void Info(UnityEngine.Object context, string message)
         {
             if(!PassFilter(context, message)) return;
@@ -86,7 +95,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Error(object message)
         {
             if(!PassFilter(message)) return;
@@ -102,7 +111,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Error(string message)
         {
             if(!PassFilter(message)) return;
@@ -121,7 +130,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Error(UnityEngine.Object context, object message)
         {
             if(!PassFilter(context, message)) return;
@@ -140,7 +149,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Error(UnityEngine.Object context, string message)
         {
             if(!PassFilter(message)) return;
@@ -179,7 +188,7 @@ namespace CustomUnity
         {
             UnityEngine.Debug.LogException(exception, context);
         }
-        
+
         //
         // 概要:
         //     ///
@@ -189,7 +198,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Warning(object message)
         {
             if(!PassFilter(message)) return;
@@ -205,7 +214,7 @@ namespace CustomUnity
         // パラメーター:
         //   message:
         //     String or object to be converted to string representation for display.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Warning(string message)
         {
             if(!PassFilter(message)) return;
@@ -224,7 +233,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Warning(UnityEngine.Object context, object message)
         {
             if(!PassFilter(context, message)) return;
@@ -243,7 +252,7 @@ namespace CustomUnity
         //
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Warning(UnityEngine.Object context, string message)
         {
             if(!PassFilter(context, message)) return;
@@ -256,7 +265,7 @@ namespace CustomUnity
         //     Logs a trace message to the Unity Console.
         //     ///
         //
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Trace()
         {
             var callerFrame = new StackFrame(1, true);
@@ -274,7 +283,7 @@ namespace CustomUnity
         // パラメーター:
         //   context:
         //     Object to which the message applies.
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         public static void Trace(UnityEngine.Object context)
         {
             var callerFrame = new StackFrame(1, true);

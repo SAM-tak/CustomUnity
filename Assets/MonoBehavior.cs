@@ -11,9 +11,8 @@ namespace YourProjectNamespace
         /// <param name="message"></param>
         protected void DebugLog(string message)
         {
-#if(UNITY_EDITOR || DEVELOPMENT_BUILD)
+            if(!UnityEngine.Debug.isDebugBuild) return;
             UnityEngine.Debug.Log(message, this);
-#endif
         }
 
         /// <summary>
@@ -21,13 +20,12 @@ namespace YourProjectNamespace
         /// </summary>
         protected void DebugBreak()
         {
-#if(UNITY_EDITOR || DEVELOPMENT_BUILD)
+            if(!UnityEngine.Debug.isDebugBuild) return;
             UnityEngine.Debug.Log("DebugBreak", this);
             UnityEngine.Debug.Break();
-#endif
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("ENABLE_PROFILER")]
         protected void Profiling(string memberName, int id = 0)
         {
             if(id == 0) ProfileSampler.Begin(this, memberName, id);

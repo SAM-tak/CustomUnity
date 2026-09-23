@@ -278,9 +278,7 @@ Temp/
 /*.csproj
 !Packages/manifest.json
 Packages/packages-lock.json*
-!CustomUnity.Log.sln
-!CustomUnity.Log.csproj
-!CustomUnity.Editor.Log.csproj
+!/CustomUnity.Log.slnx
 !CustomUnity.Log/
 !CustomUnity.Editor.Log/
 AssetBundles/

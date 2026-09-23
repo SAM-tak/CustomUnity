@@ -51,13 +51,23 @@ namespace CustomUnity
             memberCache?.Clear();
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+#if UNITY_6000_6_OR_NEWER
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION")]
+#else
+        [Conditional("DEVELOPMENT_BUILD")]
+#endif
+        [Conditional("UNITY_EDITOR")]
         static public void Profiling(this Object obj, string memberName)
         {
             ProfileSampler.Begin(obj, memberName, 0);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+#if UNITY_6000_6_OR_NEWER
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION")]
+#else
+        [Conditional("DEVELOPMENT_BUILD")]
+#endif
+        [Conditional("UNITY_EDITOR")]
         static public void Profiling(this Object obj, string memberName, int id)
         {
             ProfileSampler.EndAndBegin(obj, memberName, id);

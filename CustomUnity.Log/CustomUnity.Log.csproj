@@ -1,75 +1,53 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\Unity.props" />
+
   <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>9.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4E845C21-358C-4562-9BFB-E9C3053E1FE6}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CustomUnity</RootNamespace>
     <AssemblyName>CustomUnity.Log</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Product>CustomUnity.Log</Product>
+    <Version>1.0.0</Version>
+
+    <!--
+      These log wrappers only exist as a precompiled plugin so that double-clicking a
+      message in Unity's Console jumps to the call site instead of landing here.
+      Unity resolves the click target from the first stack frame that carries file and
+      line info, which comes from the assembly's debug symbols - so the assembly must
+      ship without any. [HideInCallstack] alone is not enough: it only removes the
+      frame from the displayed callstack, not from the click target.
+      Keep DebugType none, and never place these sources in an .asmdef assembly.
+    -->
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\Assets\CustomUnity\Plugins\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <DebugSymbols>false</DebugSymbols>
+
+    <Deterministic>true</Deterministic>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <!-- Unity imports whatever lands in Assets, so build to bin\ and copy only the dll. -->
+    <UnityPluginDir>$(UnityProjectDir)Assets\CustomUnity\Plugins</UnityPluginDir>
+    <RequiresUnityScriptAssemblies>true</RequiresUnityScriptAssemblies>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="UnityEditor.CoreModule">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\6000.0.51f1\Editor\Data\Managed\UnityEngine\UnityEditor.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\6000.0.51f1\Editor\Data\Managed\UnityEngine\UnityEngine.AnimationModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\6000.0.51f1\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <InternalsVisibleTo Include="CustomUnity.Editor.Log" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="UIBehaviour.cs" />
-    <Compile Include="ScriptableObject.cs" />
-    <Compile Include="StateMachineBehaviour.cs" />
-    <Compile Include="Log.cs" />
-    <Compile Include="MonoBehaviour.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(UnityManagedDir)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.AnimationModule" HintPath="$(UnityManagedDir)\UnityEngine.AnimationModule.dll" Private="false" />
+    <Reference Include="UnityEditor.CoreModule" HintPath="$(UnityManagedDir)\UnityEditor.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.UI" HintPath="$(UnityScriptAssembliesDir)\UnityEngine.UI.dll" Private="false" />
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+
+  <Target Name="CopyToUnityPlugins" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(UnityPluginDir)" SkipUnchangedFiles="true" />
+    <Message Importance="high" Text="$(AssemblyName).dll -> $(UnityPluginDir)" />
+  </Target>
+
 </Project>

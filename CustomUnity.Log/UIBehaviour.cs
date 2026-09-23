@@ -5,42 +5,42 @@ namespace CustomUnity
 {
     public abstract class UIBehaviour : UnityEngine.EventSystems.UIBehaviour
     {
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         protected void LogInfo(object message)
         {
             if(!Log.PassFilter(this, message)) return;
             UnityEngine.Debug.Log(message, this);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         protected void LogInfo(string message)
         {
             if(!Log.PassFilter(this, message)) return;
             UnityEngine.Debug.Log(message, this);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         protected void LogWarning(object message)
         {
             if(!Log.PassFilter(this, message)) return;
             UnityEngine.Debug.LogWarning(message, this);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         protected void LogWarning(string message)
         {
             if(!Log.PassFilter(this, message)) return;
             UnityEngine.Debug.LogWarning(message, this);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         protected void LogError(object message)
         {
             if(!Log.PassFilter(this, message)) return;
             UnityEngine.Debug.LogError(message, this);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         protected void LogError(string message)
         {
             if(!Log.PassFilter(this, message)) return;
@@ -53,7 +53,7 @@ namespace CustomUnity
             UnityEngine.Debug.LogException(exception, this);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), HideInCallstack]
+        [Conditional("UNITY_INCLUDE_INSTRUMENTATION"), Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR"), HideInCallstack]
         protected void LogTrace()
         {
             var callerFrame = new StackFrame(1, true);
