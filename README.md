@@ -46,3 +46,37 @@ dotnet build CustomUnity.Log.slnx -c Release -p:UnityEditorDir="<...>/Unity/Hub/
 
 `UnityEngine.UI.dll` is taken from `Library/ScriptAssemblies`, so the project must have
 been imported by the editor at least once.
+
+## Releasing
+
+Unity 6.3 and newer verify a signature on every tarball package. A package installed
+from OpenUPM without one reports *"Unity can't verify this package because it doesn't
+have a signature."* Installing from the git URL above is unaffected - only the registry
+tarball needs signing.
+
+The signature covers the exact bytes of the tarball, so it cannot be committed here:
+OpenUPM has to distribute a tarball we signed ourselves rather than one it built from
+the tag. `.github/workflows/release.yml` does that on every `v*` tag - it checks the tag
+against `version` in `Assets/CustomUnity/package.json`, signs the package with Unity's
+UPM CLI, verifies the result contains `package/.attestation.p7m`, and attaches the
+`.tgz` to the GitHub Release.
+
+To release: bump `version` in `Assets/CustomUnity/package.json`, then push a matching
+`v<version>` tag.
+
+One-time setup:
+
+- Create a Unity Cloud service account in the organization that owns the package and
+  give it the **Package Manager Package Signer** role.
+- Add its credentials as repository secrets `UPM_SERVICE_ACCOUNT_KEY_ID` and
+  `UPM_SERVICE_ACCOUNT_KEY_SECRET`, and the organization ID as `UPM_ORG_ID`.
+- Switch the package's OpenUPM entry to `trackingMode: githubRelease` so OpenUPM
+  downloads the signed asset instead of packing the tag itself. Versions released
+  before this stay unsigned; there is no way to sign them after the fact.
+
+To sign locally instead, install the CLI with
+`curl -fsSL https://cdn.packages.unity.com/upm-cli/install.sh | sh` (Windows:
+`irm https://cdn.packages.unity.com/upm-cli/install.ps1 | iex`) and run
+`upm pack Assets/CustomUnity --organization-id <org id> --destination dist`. The Package
+Manager window can also export a signed tarball, but it only lists packages it knows
+about, which does not include a package folder living under `Assets`.

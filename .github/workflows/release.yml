@@ -1,0 +1,77 @@
+name: Release
+
+# Publishes a signed UPM tarball as a GitHub Release asset.
+#
+# Unity 6.3 and newer verify a signature on every tarball package. A package installed
+# from OpenUPM without one reports "Unity can't verify this package because it doesn't
+# have a signature." The signature covers the exact bytes of the tarball, so it cannot
+# be committed to this repository - OpenUPM has to distribute a tarball we signed
+# ourselves, which is why the package's OpenUPM entry uses trackingMode: githubRelease.
+# Installing straight from the git URL needs no signature and is unaffected.
+#
+# Required repository secrets (Unity Cloud service account with the
+# "Package Manager Package Signer" role):
+#   UPM_SERVICE_ACCOUNT_KEY_ID
+#   UPM_SERVICE_ACCOUNT_KEY_SECRET
+#   UPM_ORG_ID
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_DIR: Assets/CustomUnity
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the tag against package.json
+        run: |
+          tag_version="${GITHUB_REF_NAME#v}"
+          manifest_version="$(jq -r .version "$PACKAGE_DIR/package.json")"
+          if [ "$tag_version" != "$manifest_version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match version $manifest_version in $PACKAGE_DIR/package.json." >&2
+            exit 1
+          fi
+
+      - name: Install Unity Package Manager CLI
+        run: |
+          curl -fsSL https://cdn.packages.unity.com/upm-cli/install.sh | sh
+          echo "$HOME/.upm/bin" >> "$GITHUB_PATH"
+
+      - name: Pack and sign
+        env:
+          UPM_SERVICE_ACCOUNT_KEY_ID: ${{ secrets.UPM_SERVICE_ACCOUNT_KEY_ID }}
+          UPM_SERVICE_ACCOUNT_KEY_SECRET: ${{ secrets.UPM_SERVICE_ACCOUNT_KEY_SECRET }}
+          UPM_ORG_ID: ${{ secrets.UPM_ORG_ID }}
+        run: |
+          upm --version
+          upm pack "$PACKAGE_DIR" --organization-id "$UPM_ORG_ID" --destination dist
+
+      - name: Verify the tarball is signed
+        run: |
+          tarball="$(ls dist/*.tgz)"
+          echo "Packed $tarball"
+          contents="$(tar -tzf "$tarball")"
+          for entry in package/package.json package/.attestation.p7m; do
+            case "$contents" in
+              *"$entry"*) ;;
+              *) echo "$tarball is missing $entry." >&2; exit 1 ;;
+            esac
+          done
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/*.tgz --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/*.tgz --title "$GITHUB_REF_NAME" --generate-notes
+          fi
