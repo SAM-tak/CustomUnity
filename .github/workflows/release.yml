@@ -29,7 +29,7 @@ jobs:
     env:
       PACKAGE_DIR: Assets/CustomUnity
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check the tag against package.json
         run: |
