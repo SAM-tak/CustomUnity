@@ -305,3 +305,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]cene[Dd]ependency[Cc]ache/*
 
 ProjectSettings/Packages/com.unity.probuilder/Settings.json
+Recordings/
+UIElementsSchema/
+StandaloneWindows64/
