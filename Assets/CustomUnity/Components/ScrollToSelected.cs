@@ -17,6 +17,7 @@ namespace CustomUnity
 
         protected override void ScrollToTarget()
         {
+            if(!EventSystem.current || !ScrollRect.content) return;
             targetItem = _lastSelected;
             if(EventSystem.current.currentSelectedGameObject
             && EventSystem.current.currentSelectedGameObject.transform.IsChildOf(ScrollRect.content.transform)
