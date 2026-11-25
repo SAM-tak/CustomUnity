@@ -91,6 +91,15 @@ namespace CustomUnity
             }
         }
 
+        /// <summary>
+        /// Keep cell identity across wrap-around so that selected cells stay bound to the same data.
+        /// </summary>
+        void ShiftCellIndices(int delta)
+        {
+            if(delta == 0 || cellPool == null) return;
+            for(int j = 0; j < cellPool.Length; ++j) cellPool[j].index += delta;
+        }
+
         protected override void UpdateContent()
         {
             if(!ScrollRect) return;
@@ -113,7 +122,9 @@ namespace CustomUnity
                 if(repeat) {
                     contentMargin = Mathf.Max(MinimumMergin, viewSize.y * MerginScaler);
                     if(contentRectLocalPosition.y < contentMargin / 2 || contentRectLocalPosition.y + viewSize.y > (contentMargin + contentSize + contentMargin / 2)) {
-                        contentRectLocalPosition.y = Math.Wrap(contentRectLocalPosition.y - contentMargin, contentSize) + contentMargin;
+                        var wrappedY = Math.Wrap(contentRectLocalPosition.y - contentMargin, contentSize) + contentMargin;
+                        ShiftCellIndices(Mathf.RoundToInt((wrappedY - contentRectLocalPosition.y) / CellSize.y) * columnCount);
+                        contentRectLocalPosition.y = wrappedY;
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }
@@ -131,7 +142,9 @@ namespace CustomUnity
                 if(repeat) {
                     contentMargin = Mathf.Max(MinimumMergin, viewSize.x * MerginScaler);
                     if(contentRectLocalPosition.x > -contentMargin / 2 || contentRectLocalPosition.x - viewSize.x < -(contentMargin + contentSize + contentMargin / 2)) {
-                        contentRectLocalPosition.x = -Math.Wrap(-contentRectLocalPosition.x - contentMargin, contentSize) - contentMargin;
+                        var wrappedX = -Math.Wrap(-contentRectLocalPosition.x - contentMargin, contentSize) - contentMargin;
+                        ShiftCellIndices(-Mathf.RoundToInt((wrappedX - contentRectLocalPosition.x) / CellSize.x) * columnCount);
+                        contentRectLocalPosition.x = wrappedX;
                         contentRectTransform.localPosition = contentRectLocalPosition;
                     }
                 }

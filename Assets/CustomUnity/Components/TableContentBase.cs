@@ -68,17 +68,51 @@ namespace CustomUnity
                     LogWarning($"TableContentBase : adding new cell. Count = {cellPool.Length}");
                 }
                 @new = true;
-                Array.Resize(ref cellPool, cellPool.Length + 1);
-                var newCell = Instantiate(cellPool[0].cell, transform);
-                newCell.SetActive(false);
-                cellPool[^1].cell = newCell;
+                AppendCells(1);
                 cellPool[^1].index = index;
-                return newCell;
+                return cellPool[^1].cell;
             }
             if(reportLackOfCell) {
                 LogWarning($"TableContentBase : Lack of cell. Count = {cellPool.Length}");
             }
             return null;
+        }
+
+        void AppendCells(int count)
+        {
+            var start = cellPool.Length;
+            Array.Resize(ref cellPool, start + count);
+            for(int i = start; i < cellPool.Length; ++i) {
+                var newCell = Instantiate(cellPool[0].cell, transform);
+                newCell.SetActive(false);
+                cellPool[i].cell = newCell;
+            }
+        }
+
+        bool _reportedLackOfCellCount;
+
+        /// <summary>
+        /// Ensure the cell pool has at least <paramref name="required"/> cells.
+        /// Adds cells when autoCellAdding is enabled, otherwise reports an error (once) and returns false.
+        /// </summary>
+        protected bool EnsureCellCount(int required)
+        {
+            if(cellPool.Length >= required) {
+                _reportedLackOfCellCount = false;
+                return true;
+            }
+            if(autoCellAdding && cellPool.Length > 0) {
+                if(reportLackOfCell) {
+                    LogWarning($"TableContentBase : adding {required - cellPool.Length} cell(s). Count = {cellPool.Length}");
+                }
+                AppendCells(required - cellPool.Length);
+                return true;
+            }
+            if(!_reportedLackOfCellCount) {
+                _reportedLackOfCellCount = true;
+                LogError($"TableContentBase : {name} needs at least {required} child cells (extraCells = {extraCells}), but has only {cellPool.Length}. Add child cells or enable autoCellAdding.");
+            }
+            return false;
         }
 
         public GameObject GetActiveCell(int index)

@@ -60,6 +60,8 @@ namespace CustomUnity
         protected override void UpdateContent()
         {
             if(!ScrollRect) return;
+            if(!EnsureCellCount(extraCells + 1)) return;
+            if(_cellPositions.Length < cellPool.Length) Array.Resize(ref _cellPositions, cellPool.Length);
 
             var totalCount = DataSource != null ? DataSource.TotalCount : 0;
             var contentRectLocalPosition = contentRectTransform.localPosition;
@@ -90,8 +92,12 @@ namespace CustomUnity
                         _cellPositions[Mathf.Min(startIndex, extraCells)] = cellPosition;
                     }
                     else if(extraCells > 0) {
-                        for(var n = Mathf.Min(i, extraCells - 1); n > 0; --n) _cellPositions[n - 1] = _cellPositions[n];
-                        _cellPositions[Mathf.Min(i, extraCells - 1)] = cellPosition;
+                        // keep last extraCells positions before the viewport as a sliding window
+                        if(i < extraCells) _cellPositions[i] = cellPosition;
+                        else {
+                            for(var n = 1; n < extraCells; ++n) _cellPositions[n - 1] = _cellPositions[n];
+                            _cellPositions[extraCells - 1] = cellPosition;
+                        }
                     }
                 }
                 else {

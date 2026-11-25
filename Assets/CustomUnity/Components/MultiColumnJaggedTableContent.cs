@@ -64,6 +64,8 @@ namespace CustomUnity
         protected override void UpdateContent()
         {
             if(!ScrollRect) return;
+            if(!EnsureCellCount(extraCells + 1)) return;
+            if(_cellRects.Length < cellPool.Length) Array.Resize(ref _cellRects, cellPool.Length);
 
             var viewSize = ScrollRect.viewport.rect.size;
             var rowWidth = orientaion switch {
@@ -143,8 +145,12 @@ namespace CustomUnity
                             _cellRects[Mathf.Min(startIndex, extraCells)] = rect;
                         }
                         else if(extraCells > 0) {
-                            for(var n = Mathf.Min(index, extraCells - 1); n > 0; --n) _cellRects[n - 1] = _cellRects[n];
-                            _cellRects[Mathf.Min(index, extraCells - 1)] = rect;
+                            // keep last extraCells rects before the viewport as a sliding window
+                            if(index < extraCells) _cellRects[index] = rect;
+                            else {
+                                for(var n = 1; n < extraCells; ++n) _cellRects[n - 1] = _cellRects[n];
+                                _cellRects[extraCells - 1] = rect;
+                            }
                         }
                     }
                     else {
