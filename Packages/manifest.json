@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.bgtools.playerprefseditor": "https://github.com/SAM-tak/bgTools-playerPrefsEditor.git?path=Packages/PlayerPrefsEditor",
+    "com.starasgames.tmpro-dynamic-data-cleaner": "https://github.com/STARasGAMES/tmpro-dynamic-data-cleaner.git#upm",
     "com.unity.addressables": "2.11.2",
     "com.unity.feature.2d": "2.0.2",
     "com.unity.ide.visualstudio": "2.0.29",
